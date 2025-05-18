@@ -1,0 +1,19 @@
+.international-Payment {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+div.payment-container>iframe[_kpayment] {
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 25vh;
+}
+
+.payment-container[_kpayment].show {
+    background: white;
+}
+

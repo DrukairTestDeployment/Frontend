@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation Placed</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2%;
+            padding: 0;
+            font-size: 14px;
+        }
+
+        .email-container,
+        .email-container * {
+            color: #000000 !important;
+            /* Force black for all text */
+        }
+
+        .email-header {
+            margin-bottom: 20px;
+        }
+
+        .email-content {
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .highlight {
+            color: #1E306D;
+            font-weight: bold;
+        }
+
+        .signature {
+            font-style: italic;
+        }
+
+        .email-footer p:nth-child(2) {
+            margin-top: -10px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px 0;
+            margin-left: 5%;
+            padding: 20px;
+            border: 2px solid #22326e;
+            border-radius: 5px;
+            color: black !important;
+        }
+
+        .header {
+            border-bottom: 2px solid #000000;
+            padding: 20px 0;
+            display: table;
+            width: 100%;
+        }
+
+        .terms-containerss {
+            width: 100%;
+            max-width: 360px;
+            margin: 0 auto;
+            margin-top: 5%;
+            margin-bottom: 5%;
+            justify-content: center;
+        }
+
+        .payment-section-header {
+            background-color: #22326e;
+            color: white;
+            padding: 10px;
+            margin: 20px 0 10px 0;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+
+<body style="color: #000000 !important;">
+    <div class="email-container">
+        <div class="email-header">
+            <p style="color: #000000 !important;">Respected Sir/Madam,</p>
+        </div>
+        <div class="email-content" style="color: #000000 !important;">
+            Thank you for placing your reservation with us. We are currently processing your request and will send you a
+            confirmation email once your reservation has been approved. To check the status or track your booking,
+            please use the following reference ID:<strong>${bookingID}</strong>. We appreciate your trust in our
+            services and look forward to assisting you further.
+        </div>
+        <div class="email-footer" style="color: #000000 !important;">
+            <p class="signature">Best regards,</p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <div class="header-text">
+                Terms & Conditions <span style="color: #22326e;">DRUKAIR HELI-RESERVATION</span>
+            </div>
+        </div>
+        <div class="payment-section-header">TERMS AND CONDITIONS</div>
+        <div class="terms-containerss">
+            <ol>
+                ${terms.map(term => `<li>${term}</li>`).join('')}
+            </ol>
+        </div>
+    </div>
+</body>
+
+</html>

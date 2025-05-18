@@ -1,0 +1,283 @@
+{
+    "flightDetails": [
+      {
+        "agent": {
+          "name": "Pema Wangdi",
+          "emailAddress": "pema.wangdi@example.bt",
+          "agentCID": "11308006095",
+          "code":"H0026",
+          "contactNo": "17123456"
+        },
+        "bookingId" : "A1b2C3",
+        "destination": "Paro International Airport",
+        "pickUpPoint": "Thimphu Helipad",
+        "groundTime": "30 minutes",
+        "dateOfFlight": "2024-09-15",
+        "timeOfDeparture": "10:00 AM",
+        "permissionForPrivateHelipad": true,
+        "assignPilot": "Captain Tshering Dorji",
+        "status": "Confirmed",
+        "serviceType": "VIP Charter",
+        "bookingType": "One-way",
+        "paymentStatus": "Paid",
+        "assignedPilot":"Dorji",
+        "bookingStatus":"onBoard",
+        "paymentType":"Online",
+        "paymentImg": "../../Assets/logo.png",
+        "journalNo": "123456",
+        
+        "passengers": [
+          {
+            "name": "Sonam Choden",
+            "gender": "Female",
+            "weightKg": 55,
+            "passport": "BT987654321",
+            "CID": "BT000123456",
+            "contactNo": "17654321",
+            "baggageWeightKg": 20,
+            "medicalIssue": "None"
+          },
+          {
+            "name": "Jigme Namgyal",
+            "gender": "Male",
+            "weightKg": 70,
+            "passport": "BT123987654",
+            "CID": "BT000654321",
+            "contactNo": "17456789",
+            "baggageWeightKg": 15,
+            "medicalIssue": "Asthma"
+          },
+          {
+            "name": "Sonam Choden",
+            "gender": "Female",
+            "weightKg": 55,
+            "passport": "BT987654321",
+            "CID": "BT000123456",
+            "contactNo": "17654321",
+            "baggageWeightKg": 20,
+            "medicalIssue": "None"
+          },
+          {
+            "name": "Sonam Choden",
+            "gender": "Female",
+            "weightKg": 55,
+            "passport": "BT987654321",
+            "CID": "BT000123456",
+            "contactNo": "17654321",
+            "baggageWeightKg": 20,
+            "medicalIssue": "None"
+          },
+
+          {
+            "name": "Sonam Choden",
+            "gender": "Female",
+            "weightKg": 55,
+            "passport": "BT987654321",
+            "CID": "BT000123456",
+            "contactNo": "17654321",
+            "baggageWeightKg": 20,
+            "medicalIssue": "None"
+          }
+        ]
+      },
+      {
+        "agent": {
+          "name": "Pema Wangdi",
+          "code":"H0027",
+          "emailAddress": "pema.wangdi@example.bt",
+          "agentCID": "11508003788",
+          "contactNo": "17123456"
+        },
+        "bookingId" : "A235fd",
+        "destination": "Bumthang Domestic Airport",
+        "pickUpPoint": "Phuntsholing Helipad",
+        "groundTime": "20 minutes",
+        "dateOfFlight": "2024-09-20",
+        "timeOfDeparture": "12:00 PM",
+        "permissionForPrivateHelipad": false,
+        "assignPilot": "Captain Dawa Zangpo",
+        "status": "Pending",
+        "serviceType": "Medical Evacuation",
+        "bookingType": "Round-trip",
+        "paymentStatus": "Pending",
+        "assignedPilot":"Pema wANGDI",
+        "bookingStatus":"Confirmed",
+        "paymentType":"Phone",
+        "passengers": [
+          {
+            "name": "Karma Dorji",
+            "gender": "Male",
+            "weightKg": 65,
+            "passport": "BT456123789",
+            "CID": "BT001234567",
+            "contactNo": "17543210",
+            "baggageWeightKg": 10,
+            "medicalIssue": "Diabetes"
+          },
+          {
+            "name": "Deki Lhamo",
+            "gender": "Female",
+            "weightKg": 60,
+            "passport": "BT654987321",
+            "CID": "BT002345678",
+            "contactNo": "17345678",
+            "baggageWeightKg": 12,
+            "medicalIssue": "None"
+          }
+        ]
+      },
+      {
+        "agent": {
+          "name": "Pema Wangdi",
+          "emailAddress": "pema.wangdi@example.bt",
+          "code":"H0029",
+          "agentCID": "BT123456789",
+          "contactNo": "17123456"
+        },
+        "destination": "Trashigang Helipad",
+        "pickUpPoint": "Paro International Airport",
+        "groundTime": "45 minutes",
+        "dateOfFlight": "2024-09-25",
+        "timeOfDeparture": "2:30 PM",
+        "permissionForPrivateHelipad": true,
+        "assignPilot": "Captain Phuntsho Wangchuk",
+        "status": "Confirmed",
+        "serviceType": "Cargo",
+        "bookingType": "One-way",
+        "paymentStatus": "Paid",
+        "assignedPilot":"Pema wANGDI",
+        "bookingStatus":"Completed",
+        "paymentType":"Phone",
+        "passengers": [
+          {
+            "name": "Tshering Yangzom",
+            "gender": "Female",
+            "weightKg": 50,
+            "passport": "BT789654123",
+            "CID": "BT003456789",
+            "contactNo": "17234567",
+            "baggageWeightKg": 25,
+            "medicalIssue": "None"
+          }
+        ]
+      },
+      {
+        "agent": {
+          "name": "Pema Wangdi",
+          "emailAddress": "pema.wangdi@example.bt",
+          "code":"H0100",
+          "agentCID": "11308006095",
+          "contactNo": "17123456"
+        },
+        "bookingId" : "A23423s",
+        "destination": "Paro International Airport",
+        "pickUpPoint": "Thimphu Helipad",
+        "groundTime": "30 minutes",
+        "dateOfFlight": "2024-10-01",
+        "timeOfDeparture": "3:00 PM",
+        "permissionForPrivateHelipad": true,
+        "assignPilot": "Captain Sangay Dorji",
+        "status": "Confirmed",
+        "serviceType": "VIP Charter",
+        "bookingType": "One-way",
+        "paymentStatus": "Paid",
+        "assignedPilot":"Pema wANGDI",
+        "bookingStatus":"Confirmed",
+        "paymentType":"Phone",
+        "passengers": [
+          {
+            "name": "Karma Choden",
+            "gender": "Female",
+            "weightKg": 58,
+            "passport": "BT321654987",
+            "CID": "BT004567890",
+            "contactNo": "17865432",
+            "baggageWeightKg": 22,
+            "medicalIssue": "None"
+          }
+        ]
+      },
+      {
+        "agent": {
+          "name": "Pema Wangdi",
+          "emailAddress": "pema.wangdi@example.bt",
+          "code":"H0030",
+          "agentCID": "11508003777",
+          "contactNo": "17123456"
+        },
+        "bookingId" : "A2356d",
+        "destination": "Gasa Helipad",
+        "pickUpPoint": "Thimphu Helipad",
+        "groundTime": "25 minutes",
+        "dateOfFlight": "2024-10-05",
+        "timeOfDeparture": "11:00 AM",
+        "permissionForPrivateHelipad": false,
+        "assignPilot": "Captain Tashi Dorji",
+        "status": "Pending",
+        "serviceType": "Medical Evacuation",
+        "bookingType": "Round-trip",
+        "paymentStatus": "Pending",
+        "assignedPilot":"Pema wANGDI",
+        "bookingStatus":"Cancelled",
+        "paymentType":"Phone",
+        "passengers": [
+          {
+            "name": "Dorji Wangchuk",
+            "gender": "Male",
+            "weightKg": 75,
+            "passport": "BT987123456",
+            "CID": "BT005678901",
+            "contactNo": "17987654",
+            "baggageWeightKg": 30,
+            "medicalIssue": "Heart Condition"
+          },
+          {
+            "name": "Pema Deki",
+            "gender": "Female",
+            "weightKg": 55,
+            "passport": "BT654321987",
+            "CID": "BT006789012",
+            "contactNo": "17123456",
+            "baggageWeightKg": 15,
+            "medicalIssue": "None"
+          }
+        ]
+      },
+      {
+        "agent": {
+          "name": "Pema Wangdi",
+          "emailAddress": "pema.wangdi@example.bt",
+          "code":"H0031",
+          "agentCID": "11308006095",
+          "contactNo": "+975 17123456"
+        },
+        "bookingId" : "A1234B",
+        "destination": "Lhuentse Helipad",
+        "pickUpPoint": "Paro International Airport",
+        "groundTime": "40 minutes",
+        "dateOfFlight": "2024-10-10",
+        "timeOfDeparture": "1:00 PM",
+        "permissionForPrivateHelipad": true,
+        "assignPilot": "Captain Ugyen Tshering",
+        "status": "Confirmed",
+        "serviceType": "Cargo",
+        "bookingType": "One-way",
+        "paymentStatus": "Paid",
+        "assignedPilot":"Pema wANGDI",
+        "bookingStatus":"Pending",
+        "paymentType":"Phone",
+        "passengers": [
+          {
+            "name": "Sonam Tashi",
+            "gender": "Female",
+            "weightKg": 48,
+            "passport": "BT321987654",
+            "CID": "BT007890123",
+            "contactNo": "+975 17234568",
+            "baggageWeightKg": 20,
+            "medicalIssue": "None"
+          }
+        ]
+      }
+    ]
+  }

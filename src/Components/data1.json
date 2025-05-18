@@ -1,0 +1,914 @@
+[
+    {
+      "year": "2024",
+      "month": "January",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 100000,
+          "target": 120000,
+          "actual_hours": 50,
+          "target_hours": 60
+        },
+        "LC_subsidized": {
+          "actual": 80000,
+          "target": 90000,
+          "actual_hours": 40,
+          "target_hours": 45
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 150000,
+          "target": 160000,
+          "actual_hours": 75,
+          "target_hours": 80
+        },
+        "LC": {
+          "actual": 200000,
+          "target": 220000,
+          "actual_hours": 100,
+          "target_hours": 110
+        },
+        "TC": {
+          "actual": 300000,
+          "target": 320000,
+          "actual_hours": 150,
+          "target_hours": 160
+        }
+      }
+    },
+    {
+      "year": "2024",
+      "month": "February",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 110000,
+          "target": 125000,
+          "actual_hours": 55,
+          "target_hours": 62
+        },
+        "LC_subsidized": {
+          "actual": 85000,
+          "target": 95000,
+          "actual_hours": 42,
+          "target_hours": 47
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 155000,
+          "target": 165000,
+          "actual_hours": 77,
+          "target_hours": 82
+        },
+        "LC": {
+          "actual": 210000,
+          "target": 230000,
+          "actual_hours": 105,
+          "target_hours": 115
+        },
+        "TC": {
+          "actual": 310000,
+          "target": 330000,
+          "actual_hours": 155,
+          "target_hours": 165
+        }
+      }
+    },
+    {
+      "year": "2024",
+      "month": "March",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 115000,
+          "target": 130000,
+          "actual_hours": 57,
+          "target_hours": 64
+        },
+        "LC_subsidized": {
+          "actual": 87000,
+          "target": 97000,
+          "actual_hours": 43,
+          "target_hours": 48
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 160000,
+          "target": 170000,
+          "actual_hours": 80,
+          "target_hours": 85
+        },
+        "LC": {
+          "actual": 215000,
+          "target": 235000,
+          "actual_hours": 107,
+          "target_hours": 118
+        },
+        "TC": {
+          "actual": 320000,
+          "target": 340000,
+          "actual_hours": 160,
+          "target_hours": 170
+        }
+      }
+    },
+    {
+      "year": "2024",
+      "month": "April",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 120000,
+          "target": 135000,
+          "actual_hours": 60,
+          "target_hours": 65
+        },
+        "LC_subsidized": {
+          "actual": 90000,
+          "target": 100000,
+          "actual_hours": 45,
+          "target_hours": 50
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 165000,
+          "target": 175000,
+          "actual_hours": 82,
+          "target_hours": 87
+        },
+        "LC": {
+          "actual": 220000,
+          "target": 240000,
+          "actual_hours": 110,
+          "target_hours": 120
+        },
+        "TC": {
+          "actual": 330000,
+          "target": 350000,
+          "actual_hours": 165,
+          "target_hours": 175
+        }
+      }
+    },
+    {
+      "year": "2024",
+      "month": "May",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 125000,
+          "target": 140000,
+          "actual_hours": 62,
+          "target_hours": 67
+        },
+        "LC_subsidized": {
+          "actual": 93000,
+          "target": 103000,
+          "actual_hours": 47,
+          "target_hours": 52
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 170000,
+          "target": 180000,
+          "actual_hours": 85,
+          "target_hours": 90
+        },
+        "LC": {
+          "actual": 225000,
+          "target": 245000,
+          "actual_hours": 112,
+          "target_hours": 122
+        },
+        "TC": {
+          "actual": 340000,
+          "target": 360000,
+          "actual_hours": 170,
+          "target_hours": 180
+        }
+      }
+    },
+    {
+      "year": "2024",
+      "month": "June",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 130000,
+          "target": 145000,
+          "actual_hours": 65,
+          "target_hours": 70
+        },
+        "LC_subsidized": {
+          "actual": 95000,
+          "target": 105000,
+          "actual_hours": 48,
+          "target_hours": 53
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 175000,
+          "target": 185000,
+          "actual_hours": 87,
+          "target_hours": 92
+        },
+        "LC": {
+          "actual": 230000,
+          "target": 250000,
+          "actual_hours": 115,
+          "target_hours": 125
+        },
+        "TC": {
+          "actual": 350000,
+          "target": 370000,
+          "actual_hours": 175,
+          "target_hours": 185
+        }
+      }
+    },
+    {
+      "year": "2024",
+      "month": "July",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 135000,
+          "target": 150000,
+          "actual_hours": 67,
+          "target_hours": 72
+        },
+        "LC_subsidized": {
+          "actual": 97000,
+          "target": 107000,
+          "actual_hours": 50,
+          "target_hours": 55
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 180000,
+          "target": 190000,
+          "actual_hours": 90,
+          "target_hours": 95
+        },
+        "LC": {
+          "actual": 235000,
+          "target": 255000,
+          "actual_hours": 117,
+          "target_hours": 127
+        },
+        "TC": {
+          "actual": 360000,
+          "target": 380000,
+          "actual_hours": 180,
+          "target_hours": 190
+        }
+      }
+    },
+    {
+      "year": "2024",
+      "month": "August",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 140000,
+          "target": 155000,
+          "actual_hours": 70,
+          "target_hours": 75
+        },
+        "LC_subsidized": {
+          "actual": 100000,
+          "target": 110000,
+          "actual_hours": 52,
+          "target_hours": 57
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 185000,
+          "target": 195000,
+          "actual_hours": 92,
+          "target_hours": 97
+        },
+        "LC": {
+          "actual": 240000,
+          "target": 260000,
+          "actual_hours": 120,
+          "target_hours": 130
+        },
+        "TC": {
+          "actual": 370000,
+          "target": 390000,
+          "actual_hours": 185,
+          "target_hours": 195
+        }
+      }
+    },
+    {
+      "year": "2024",
+      "month": "September",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 145000,
+          "target": 160000,
+          "actual_hours": 72,
+          "target_hours": 77
+        },
+        "LC_subsidized": {
+          "actual": 102000,
+          "target": 112000,
+          "actual_hours": 53,
+          "target_hours": 58
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 190000,
+          "target": 200000,
+          "actual_hours": 95,
+          "target_hours": 100
+        },
+        "LC": {
+          "actual": 245000,
+          "target": 265000,
+          "actual_hours": 122,
+          "target_hours": 132
+        },
+        "TC": {
+          "actual": 380000,
+          "target": 400000,
+          "actual_hours": 190,
+          "target_hours": 200
+        }
+      }
+    },
+    {
+      "year": "2024",
+      "month": "October",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 150000,
+          "target": 165000,
+          "actual_hours": 75,
+          "target_hours": 80
+        },
+        "LC_subsidized": {
+          "actual": 105000,
+          "target": 115000,
+          "actual_hours": 55,
+          "target_hours": 60
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 195000,
+          "target": 205000,
+          "actual_hours": 97,
+          "target_hours": 102
+        },
+        "LC": {
+          "actual": 250000,
+          "target": 270000,
+          "actual_hours": 125,
+          "target_hours": 135
+        },
+        "TC": {
+          "actual": 390000,
+          "target": 410000,
+          "actual_hours": 195,
+          "target_hours": 205
+        }
+      }
+    },
+    {
+      "year": "2024",
+      "month": "November",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 155000,
+          "target": 170000,
+          "actual_hours": 77,
+          "target_hours": 82
+        },
+        "LC_subsidized": {
+          "actual": 107000,
+          "target": 117000,
+          "actual_hours": 57,
+          "target_hours": 62
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 200000,
+          "target": 210000,
+          "actual_hours": 100,
+          "target_hours": 105
+        },
+        "LC": {
+          "actual": 255000,
+          "target": 275000,
+          "actual_hours": 127,
+          "target_hours": 137
+        },
+        "TC": {
+          "actual": 400000,
+          "target": 420000,
+          "actual_hours": 200,
+          "target_hours": 210
+        }
+      }
+    },
+    {
+      "year": "2024",
+      "month": "December",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 160000,
+          "target": 175000,
+          "actual_hours": 80,
+          "target_hours": 85
+        },
+        "LC_subsidized": {
+          "actual": 110000,
+          "target": 120000,
+          "actual_hours": 58,
+          "target_hours": 63
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 205000,
+          "target": 215000,
+          "actual_hours": 102,
+          "target_hours": 107
+        },
+        "LC": {
+          "actual": 260000,
+          "target": 280000,
+          "actual_hours": 130,
+          "target_hours": 140
+        },
+        "TC": {
+          "actual": 410000,
+          "target": 430000,
+          "actual_hours": 205,
+          "target_hours": 215
+        }
+      }
+    },
+    {
+      "year": "2023",
+      "month": "January",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 100000,
+          "target": 120000,
+          "actual_hours": 50,
+          "target_hours": 60
+        },
+        "LC_subsidized": {
+          "actual": 80000,
+          "target": 90000,
+          "actual_hours": 40,
+          "target_hours": 45
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 150000,
+          "target": 160000,
+          "actual_hours": 75,
+          "target_hours": 80
+        },
+        "LC": {
+          "actual": 200000,
+          "target": 220000,
+          "actual_hours": 100,
+          "target_hours": 110
+        },
+        "TC": {
+          "actual": 300000,
+          "target": 320000,
+          "actual_hours": 150,
+          "target_hours": 160
+        }
+      }
+    },
+    {
+      "year": "2023",
+      "month": "February",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 110000,
+          "target": 125000,
+          "actual_hours": 55,
+          "target_hours": 62
+        },
+        "LC_subsidized": {
+          "actual": 85000,
+          "target": 95000,
+          "actual_hours": 42,
+          "target_hours": 47
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 155000,
+          "target": 165000,
+          "actual_hours": 77,
+          "target_hours": 82
+        },
+        "LC": {
+          "actual": 210000,
+          "target": 230000,
+          "actual_hours": 105,
+          "target_hours": 115
+        },
+        "TC": {
+          "actual": 310000,
+          "target": 330000,
+          "actual_hours": 155,
+          "target_hours": 165
+        }
+      }
+    },
+    {
+      "year": "2023",
+      "month": "March",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 115000,
+          "target": 130000,
+          "actual_hours": 57,
+          "target_hours": 64
+        },
+        "LC_subsidized": {
+          "actual": 87000,
+          "target": 97000,
+          "actual_hours": 43,
+          "target_hours": 48
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 160000,
+          "target": 170000,
+          "actual_hours": 80,
+          "target_hours": 85
+        },
+        "LC": {
+          "actual": 215000,
+          "target": 235000,
+          "actual_hours": 107,
+          "target_hours": 118
+        },
+        "TC": {
+          "actual": 320000,
+          "target": 340000,
+          "actual_hours": 160,
+          "target_hours": 170
+        }
+      }
+    },
+    {
+      "year": "2023",
+      "month": "April",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 120000,
+          "target": 135000,
+          "actual_hours": 60,
+          "target_hours": 65
+        },
+        "LC_subsidized": {
+          "actual": 90000,
+          "target": 100000,
+          "actual_hours": 45,
+          "target_hours": 50
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 165000,
+          "target": 175000,
+          "actual_hours": 82,
+          "target_hours": 87
+        },
+        "LC": {
+          "actual": 220000,
+          "target": 240000,
+          "actual_hours": 110,
+          "target_hours": 120
+        },
+        "TC": {
+          "actual": 330000,
+          "target": 350000,
+          "actual_hours": 165,
+          "target_hours": 175
+        }
+      }
+    },
+    {
+      "year": "2023",
+      "month": "May",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 125000,
+          "target": 140000,
+          "actual_hours": 62,
+          "target_hours": 67
+        },
+        "LC_subsidized": {
+          "actual": 93000,
+          "target": 103000,
+          "actual_hours": 47,
+          "target_hours": 52
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 170000,
+          "target": 180000,
+          "actual_hours": 85,
+          "target_hours": 90
+        },
+        "LC": {
+          "actual": 225000,
+          "target": 245000,
+          "actual_hours": 112,
+          "target_hours": 122
+        },
+        "TC": {
+          "actual": 340000,
+          "target": 360000,
+          "actual_hours": 170,
+          "target_hours": 180
+        }
+      }
+    },
+    {
+      "year": "2023",
+      "month": "June",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 130000,
+          "target": 145000,
+          "actual_hours": 65,
+          "target_hours": 70
+        },
+        "LC_subsidized": {
+          "actual": 95000,
+          "target": 105000,
+          "actual_hours": 48,
+          "target_hours": 53
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 175000,
+          "target": 185000,
+          "actual_hours": 87,
+          "target_hours": 92
+        },
+        "LC": {
+          "actual": 230000,
+          "target": 250000,
+          "actual_hours": 115,
+          "target_hours": 125
+        },
+        "TC": {
+          "actual": 350000,
+          "target": 370000,
+          "actual_hours": 175,
+          "target_hours": 185
+        }
+      }
+    },
+    {
+      "year": "2023",
+      "month": "July",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 135000,
+          "target": 150000,
+          "actual_hours": 67,
+          "target_hours": 72
+        },
+        "LC_subsidized": {
+          "actual": 97000,
+          "target": 107000,
+          "actual_hours": 50,
+          "target_hours": 55
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 180000,
+          "target": 190000,
+          "actual_hours": 90,
+          "target_hours": 95
+        },
+        "LC": {
+          "actual": 235000,
+          "target": 255000,
+          "actual_hours": 117,
+          "target_hours": 127
+        },
+        "TC": {
+          "actual": 360000,
+          "target": 380000,
+          "actual_hours": 180,
+          "target_hours": 190
+        }
+      }
+    },
+    {
+      "year": "2023",
+      "month": "August",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 140000,
+          "target": 155000,
+          "actual_hours": 70,
+          "target_hours": 75
+        },
+        "LC_subsidized": {
+          "actual": 100000,
+          "target": 110000,
+          "actual_hours": 52,
+          "target_hours": 57
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 185000,
+          "target": 195000,
+          "actual_hours": 92,
+          "target_hours": 97
+        },
+        "LC": {
+          "actual": 240000,
+          "target": 260000,
+          "actual_hours": 120,
+          "target_hours": 130
+        },
+        "TC": {
+          "actual": 370000,
+          "target": 390000,
+          "actual_hours": 185,
+          "target_hours": 195
+        }
+      }
+    },
+    {
+      "year": "2023",
+      "month": "September",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 145000,
+          "target": 160000,
+          "actual_hours": 72,
+          "target_hours": 77
+        },
+        "LC_subsidized": {
+          "actual": 102000,
+          "target": 112000,
+          "actual_hours": 53,
+          "target_hours": 58
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 190000,
+          "target": 200000,
+          "actual_hours": 95,
+          "target_hours": 100
+        },
+        "LC": {
+          "actual": 245000,
+          "target": 265000,
+          "actual_hours": 122,
+          "target_hours": 132
+        },
+        "TC": {
+          "actual": 380000,
+          "target": 400000,
+          "actual_hours": 190,
+          "target_hours": 200
+        }
+      }
+    },
+    {
+      "year": "2023",
+      "month": "October",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 150000,
+          "target": 165000,
+          "actual_hours": 75,
+          "target_hours": 80
+        },
+        "LC_subsidized": {
+          "actual": 105000,
+          "target": 115000,
+          "actual_hours": 55,
+          "target_hours": 60
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 195000,
+          "target": 205000,
+          "actual_hours": 97,
+          "target_hours": 102
+        },
+        "LC": {
+          "actual": 250000,
+          "target": 270000,
+          "actual_hours": 125,
+          "target_hours": 135
+        },
+        "TC": {
+          "actual": 390000,
+          "target": 410000,
+          "actual_hours": 195,
+          "target_hours": 205
+        }
+      }
+    },
+    {
+      "year": "2023",
+      "month": "November",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 155000,
+          "target": 170000,
+          "actual_hours": 77,
+          "target_hours": 82
+        },
+        "LC_subsidized": {
+          "actual": 107000,
+          "target": 117000,
+          "actual_hours": 57,
+          "target_hours": 62
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 200000,
+          "target": 210000,
+          "actual_hours": 100,
+          "target_hours": 105
+        },
+        "LC": {
+          "actual": 255000,
+          "target": 275000,
+          "actual_hours": 127,
+          "target_hours": 137
+        },
+        "TC": {
+          "actual": 400000,
+          "target": 420000,
+          "actual_hours": 200,
+          "target_hours": 210
+        }
+      }
+    },
+    {
+      "year": "2023",
+      "month": "December",
+      "emergency_services": {
+        "HEMS": {
+          "actual": 160000,
+          "target": 175000,
+          "actual_hours": 80,
+          "target_hours": 85
+        },
+        "LC_subsidized": {
+          "actual": 110000,
+          "target": 120000,
+          "actual_hours": 58,
+          "target_hours": 63
+        }
+      },
+      "charter_services": {
+        "LC_RGOB": {
+          "actual": 205000,
+          "target": 215000,
+          "actual_hours": 102,
+          "target_hours": 107
+        },
+        "LC": {
+          "actual": 260000,
+          "target": 280000,
+          "actual_hours": 130,
+          "target_hours": 140
+        },
+        "TC": {
+          "actual": 410000,
+          "target": 430000,
+          "actual_hours": 205,
+          "target_hours": 215
+        }
+      }
+    }
+  ]

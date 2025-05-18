@@ -1,0 +1,15 @@
+{
+    "admins": [
+      { "id": 1, "name": "Tenzin Sonam", "status": "Inactive", "recruitmentDate": "03/02/2023", "contactNumber": "17271244", "address": "Thimphu", "email": "12210097.gcit@rub.edu.bt" },
+      { "id": 2, "name": "Tandin Penjor", "status": "Active", "recruitmentDate": "03/02/2023", "contactNumber": "17341233", "address": "Paro", "email": "12210097.gcit@rub.edu.bt" },
+      { "id": 3, "name": "Tenzin Wangchuk", "status": "Active", "recruitmentDate": "03/02/2023", "contactNumber": "17653211", "address": "Gasa", "email": "12210097.gcit@rub.edu.bt" },
+      { "id": 4, "name": "Nim Dorji", "status": "Active", "recruitmentDate": "03/02/2023", "contactNumber": "17633133", "address": "Haa", "email": "12210097.gcit@rub.edu.bt" },
+      { "id": 5, "name": "Phuntsho Wangmo", "status": "Inactive", "recruitmentDate": "04/15/2022", "contactNumber": "17123456", "address": "Mongar", "email": "phuntsho.w@gcit.bt" },
+      { "id": 6, "name": "Karma Tshering", "status": "Active", "recruitmentDate": "05/01/2021", "contactNumber": "17234567", "address": "Punakha", "email": "karma.tshering@gcit.bt" },
+      { "id": 7, "name": "Dorji Wangdi", "status": "Active", "recruitmentDate": "06/10/2020", "contactNumber": "17654321", "address": "Trongsa", "email": "dorji.wangdi@gcit.bt" },
+      { "id": 8, "name": "Sangay Dorji", "status": "Inactive", "recruitmentDate": "08/18/2019", "contactNumber": "17111111", "address": "Bumthang", "email": "sangay.dorji@gcit.bt" },
+      { "id": 9, "name": "Dechen Wangmo", "status": "Active", "recruitmentDate": "11/12/2018", "contactNumber": "17222222", "address": "Sarpang", "email": "dechen.wangmo@gcit.bt" },
+      { "id": 10, "name": "Ugyen Tenzin", "status": "Inactive", "recruitmentDate": "02/25/2017", "contactNumber": "17333333", "address": "Samdrup Jongkhar", "email": "ugyen.tenzin@gcit.bt" }
+    ]
+  }
+  

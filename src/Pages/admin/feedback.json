@@ -1,0 +1,29 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "question": "How would you rate our service?",
+      "rating": 5
+    },
+    {
+      "id": 2,
+      "question": "How likely are you to recommend us?",
+      "rating": 4
+    },
+    {
+      "id": 3,
+      "question": "What did you think about the response time?",
+      "rating": 3
+    },
+    {
+      "id": 4,
+      "question": "How satisfied are you with the support provided?",
+      "rating": 5
+    },
+    {
+      "id": 5,
+      "question": "How would you rate the quality of our product?",
+      "rating": 4
+    }
+  ]
+}

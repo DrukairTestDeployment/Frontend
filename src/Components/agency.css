@@ -1,0 +1,131 @@
+.agency-table-container {
+    max-width: 70%;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    margin: 0;
+    margin-top: 50px;
+    margin-left: 85px;
+  }
+  
+  .agency-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .agency-table th,
+  .agency-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .agency-table-title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2rem;
+  }
+  
+  .agency-action-icons button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 8px;
+  }
+  
+  .agency-edit-button {
+    color: #4CAF50;
+  }
+  
+  .agency-delete-button {
+    color: #F44336;
+  }
+  
+  .agency-pagination {
+    display: flex;
+    justify-content: left;
+    margin-top: 20px;
+  }
+  
+  .agency-pagination button {
+    margin: 0 5px;
+    padding: 8px 16px;
+    border: none;
+    background-color: #22326E;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .agency-pagination button.active-page {
+    background-color: #22326E;
+  }
+  
+  .agency-pagination button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .agency-results-count {
+    text-align: right;
+    margin-top: 15px;
+    font-size: 1rem; 
+    color: #555;
+  }
+  
+  .agency-table-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .agency-search-bar {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+    width: 200px;
+  }
+  
+  .agency-add-button {
+    padding: 8px 12px;
+    background-color: #22326E;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  /* Media Queries for Responsiveness */
+  @media (max-width: 768px) {
+    .agency-table-title {
+      font-size: 1.5rem;
+    }
+    
+    .agency-table-controls {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .agency-search-bar {
+      margin-right: 0;
+      margin-bottom: 10px;
+      width: 100%;
+    }
+  
+    .agency-table th,
+    .agency-table td {
+      font-size: 0.9rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .agency-table-title {
+      font-size: 1.2rem;
+    }
+  
+    .agency-pagination button {
+      padding: 6px 12px;
+    }
+  }

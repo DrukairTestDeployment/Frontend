@@ -1,0 +1,146 @@
+[
+  {
+    "month": "January",
+    "emergency_services": {
+      "HEMS": { "actual": 3 },
+      "LC_subsidized": { "actual": 5 }
+    },
+    "charter_services": {
+      "LC_RGOB": { "actual": 4 },
+      "LC": { "actual": 7 },
+      "TC": { "actual": 6 }
+    }
+  },
+  {
+    "month": "February",
+    "emergency_services": {
+      "HEMS": { "actual": 4 },
+      "LC_subsidized": { "actual": 7 }
+    },
+    "charter_services": {
+      "LC_RGOB": { "actual": 8 },
+      "LC": { "actual": 9 },
+      "TC": { "actual": 5 }
+    }
+  },
+  {
+    "month": "March",
+    "emergency_services": {
+      "HEMS": { "actual": 7 },
+      "LC_subsidized": { "actual": 9 }
+    },
+    "charter_services": {
+      "LC_RGOB": { "actual": 10 },
+      "LC": { "actual": 6 },
+      "TC": { "actual": 8 }
+    }
+  },
+  {
+    "month": "April",
+    "emergency_services": {
+      "HEMS": { "actual": 5 },
+      "LC_subsidized": { "actual": 8 }
+    },
+    "charter_services": {
+      "LC_RGOB": { "actual": 7 },
+      "LC": { "actual": 9 },
+      "TC": { "actual": 4 }
+    }
+  },
+  {
+    "month": "May",
+    "emergency_services": {
+      "HEMS": { "actual": 6 },
+      "LC_subsidized": { "actual": 9 }
+    },
+    "charter_services": {
+      "LC_RGOB": { "actual": 8 },
+      "LC": { "actual": 7 },
+      "TC": { "actual": 5 }
+    }
+  },
+  {
+    "month": "June",
+    "emergency_services": {
+      "HEMS": { "actual": 7 },
+      "LC_subsidized": { "actual": 8 }
+    },
+    "charter_services": {
+      "LC_RGOB": { "actual": 6 },
+      "LC": { "actual": 9 },
+      "TC": { "actual": 4 }
+    }
+  },
+  {
+    "month": "July",
+    "emergency_services": {
+      "HEMS": { "actual": 8 },
+      "LC_subsidized": { "actual": 9 }
+    },
+    "charter_services": {
+      "LC_RGOB": { "actual": 10 },
+      "LC": { "actual": 8 },
+      "TC": { "actual": 6 }
+    }
+  },
+  {
+    "month": "August",
+    "emergency_services": {
+      "HEMS": { "actual": 6 },
+      "LC_subsidized": { "actual": 8 }
+    },
+    "charter_services": {
+      "LC_RGOB": { "actual": 7 },
+      "LC": { "actual": 6 },
+      "TC": { "actual": 5 }
+    }
+  },
+  {
+    "month": "September",
+    "emergency_services": {
+      "HEMS": { "actual": 5 },
+      "LC_subsidized": { "actual": 7 }
+    },
+    "charter_services": {
+      "LC_RGOB": { "actual": 6 },
+      "LC": { "actual": 9 },
+      "TC": { "actual": 8 }
+    }
+  },
+  {
+    "month": "October",
+    "emergency_services": {
+      "HEMS": { "actual": 4 },
+      "LC_subsidized": { "actual": 5 }
+    },
+    "charter_services": {
+      "LC_RGOB": { "actual": 5 },
+      "LC": { "actual": 6 },
+      "TC": { "actual": 9 }
+    }
+  },
+  {
+    "month": "November",
+    "emergency_services": {
+      "HEMS": { "actual": 3 },
+      "LC_subsidized": { "actual": 4 }
+    },
+    "charter_services": {
+      "LC_RGOB": { "actual": 6 },
+      "LC": { "actual": 5 },
+      "TC": { "actual": 7 }
+    }
+  },
+  {
+    "month": "December",
+    "emergency_services": {
+      "HEMS": { "actual": 2 },
+      "LC_subsidized": { "actual": 3 }
+    },
+    "charter_services": {
+      "LC_RGOB": { "actual": 5 },
+      "LC": { "actual": 4 },
+      "TC": { "actual": 6 }
+    }
+  }
+]

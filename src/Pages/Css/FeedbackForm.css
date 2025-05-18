@@ -1,0 +1,103 @@
+.feedbackFormWrapper {
+    width: 90%;
+    margin: 0 auto;
+    height: auto;
+    border: 1px solid red;
+    margin-top: 70px;
+    border: 1px solid #A1A7C4;
+    border-radius: 5px;
+}
+
+.feedback-form-container {
+    width: 100%;
+    padding: 30px 40px;
+}
+
+.feedback-ins {
+    color: rgb(0, 0, 0, 0.7);
+    font-size: clamp(18px, 3vw, 20px);
+}
+
+.feedback-ins-dzo {
+    font-size: clamp(20px, 3vw, 22px);
+    color: rgb(0, 0, 0, 0.7);
+    margin: 5px 0 20px 0;
+}
+
+.dzoLabel {
+    display: flex;
+    gap: 4px;
+}
+
+.dzoLabel .dzo-span {
+
+    position: relative;
+    top: -4px;
+}
+
+.booking-form-group .dzo-span {
+    font-size: clamp(18px, 3vw, 20px);
+}
+
+ .feedback-radio-input {
+    height: 25px !important;
+    width: 25px !important;
+}
+
+.feedback-radios .radio-label {
+    display: flex;
+    gap: 10px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100% !important;
+    margin-top: 10px;
+}
+
+.scaleInput{
+    width: 600px !important;
+}
+
+.scaleBox{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.scaleBox :nth-child(2){
+    font-size: 16px;
+    font-family: 'Bold';
+}
+
+
+.improvement {
+    width: 100%;
+    padding: 10px; 
+    border: 1px solid #ccc;
+    border-radius: 4px; 
+    resize: none; 
+    margin-top: 20px;
+    outline: none;
+}
+
+.FeedbackFormBtn{
+    text-decoration: none;
+    font-family: "Medium";
+    font-size: clamp(12px, 3vw, 14px);
+    width: 180px;
+    height: 40px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.3s all ease-in-out;
+    background: #1E306D;
+    color: #FFFFFF;
+    cursor: pointer;
+    outline: none;
+    border: none;
+}
+
+.FeedbackFormBtn:hover{
+    filter: brightness(0.8);
+}

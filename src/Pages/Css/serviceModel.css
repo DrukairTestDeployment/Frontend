@@ -1,0 +1,159 @@
+/* Service Modal Overlay */
+.service-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.popup-title {
+  display: flex;
+  justify-content: space-between;
+  font-family: "Bold";
+  padding-bottom: 10px;
+}
+/* Service Modal Content */
+.service-modal-content {
+  background-color: white;
+  padding: 20px;
+  width: 730px;
+  border-radius: 10px;
+  position: relative;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease;
+}
+
+/* Modal Close Button */
+.service-modal-close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+}
+
+
+/* Modal Title */
+.service-modal-content .form-title {
+  padding-bottom: 20px;
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+  border-bottom: 3px solid #979bb4;
+}
+
+/* Form Structure */
+.service-form-columns {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.service-form-column-left, 
+.service-form-column-right {
+  flex: 1;
+}
+
+/* Input Group */
+.service-form-group {
+  margin-bottom: 15px;
+}
+
+.service-form-group label {
+  display: block;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.service-form-group input,
+.service-form-group select {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  height: 50px; 
+}
+
+
+.service-form-group input:focus,
+.service-form-group select:focus {
+  outline: none;
+  border-color: #22326E;
+}
+.service-form-group textarea {
+  width: 100%;
+  height: 150px;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  resize: none; 
+}
+  
+.service-form-group select {
+  width: 100%;
+  height: 50px;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  resize: none; 
+}
+.service-form-group .userdropdown {
+  width: 100%;
+  height: 50px;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  resize: none; 
+}
+
+/* Submit Button */
+.admin-submit-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #22326E;
+  border: none;
+  color: white;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.admin-submit-button:hover {
+  background-color: #22326E;
+}
+
+/* Divider */
+.service-divider {
+  margin-top: 20px;
+  border: none;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,151 @@
+.booking-card-wrapper {
+  width: 90%;
+  height: auto;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.booking-card-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3rem 2rem;
+  margin: 20px 0;
+}
+
+.booking-card-item {
+  background: #1E306D;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: space-between;
+  gap: 20px;
+  padding: 30px;
+  padding-bottom: 20px;
+  width: 100%;
+  border-radius: 5px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.booking-card-item::before {
+  content: "";
+  position: absolute;
+  left: -0.5%;
+  top: 50%;
+  height: 80%;
+  width: 10px;
+  background: #E35205;
+  border-radius: 100px;
+  transform: translateY(-50%);
+}
+
+.booking-content {
+  display: flex;
+  gap: 10px;
+}
+
+.booking-content-left {
+  flex: 2;
+}
+
+.booking-content-right {
+  flex: 2;
+}
+
+.booking-content-left,
+.booking-content-right {
+  display: flex;
+  gap: 5px;
+  color: #FFFFFF;
+  font-size: clamp(14px, 3vw, 16px)
+}
+
+.booking-content-left :nth-child(1),
+.booking-content-right :nth-child(1) {
+  font-family: "Bold";
+
+}
+
+.booking-content-left :nth-child(2),
+.booking-content-right :nth-child(2) {
+  font-family: "Roman";
+}
+
+.booking-link {
+  justify-self: flex-end;
+  text-align: end;
+  margin-top: 10px;
+}
+
+.booking-link a, .manageBookingLinks a {
+  font-family: "Roman";
+  font-size: clamp(14px, 3vw, 16px);
+  color: #FFFFFF;
+  padding-right: 10px;
+  transition: all 0.3s ease-in;
+}
+
+.booking-link a:hover {
+  filter: brightness(0.8);
+}
+
+.manageBookingLinks{
+  display: block;
+}
+
+.manageBookingLinks a{
+  color: #1E306D;
+  text-decoration: underline;
+}
+
+.manageBookingLinks a:hover{
+  padding-left: 5px;
+}
+
+
+.noData {
+  font-size: clamp(36px, 3vw, 40px);
+  color: #000000;
+  font-family: "Roman";
+  margin-top: 200px;
+  text-transform: capitalize;
+}
+
+@media (max-width: 1900px) {
+  .booking-card-container {
+    width: 90%;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3rem 5rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .booking-card-container {
+    gap: 3rem 2rem;
+    width: 100%;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
+@media (max-width: 1000px) {
+  .booking-card-container {
+    width: 70%;
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+@media (max-width: 769px) {
+  .booking-card-container {
+    width: 90%;
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+@media (max-width: 426px) {
+  .booking-card-container {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}

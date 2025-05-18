@@ -1,0 +1,138 @@
+.BookingHeaderWrapper {
+  width: 90%;
+  margin-top: 50px !important;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Adjust header title and spacing for smaller screens */
+.header-Topic {
+  color: #000000;
+  font-size: clamp(30px, 3vw, 35px);
+  font-family: "DemiBold";
+  position: relative;
+}
+
+/* Adjust icon size and position for responsiveness */
+.header-topic-icon {
+  position: absolute;
+  font-size: 80px;
+  color: rgba(240, 94, 15, 0.1);
+  top: 50%;
+  right: -20%;
+  transform: translate(-50%, -50%);
+}
+
+.header-Topic::before {
+  content: "";
+  position: absolute;
+  background: #e35205;
+  height: 2px;
+  width: 100px;
+  bottom: -5px;
+  left: 0;
+}
+
+/* Maintain button container's alignment and spacing */
+.headerBtnsContainer {
+  display: flex;
+  gap: 30px;
+}
+
+/* Ensure links are responsive */
+.headerBtnsContainer a {
+  text-decoration: none;
+  font-family: "Medium";
+  font-size: clamp(12px, 3vw, 14px);
+  width: 180px;
+  height: 40px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  transition: 0.3s all ease-in-out;
+}
+
+.feedbackBtn {
+  border: 2px solid #1e306d;
+  color: #1e306d;
+}
+
+.headerBtnsContainer a :nth-child(2) {
+  font-size: 20px;
+  position: relative;
+  top: -1px;
+}
+
+.bookNowBtn {
+  background-color: #1e306d;
+  border: 2px solid #1e306d;
+  color: #ffffff;
+}
+
+.headerBtnsContainer a:hover {
+  filter: brightness(0.8);
+}
+
+/* Maintain spacing above the header */
+.whiteSpace {
+  height: 30px;
+}
+
+/* Responsive adjustments */
+@media only screen and (max-width: 768px) {
+  .BookingHeaderWrapper {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .header-Topic {
+    font-size: clamp(20px, 6vw, 28px);
+    margin-bottom: 20px;
+  }
+
+  .header-topic-icon {
+    display: none; /* Hide large icons on small screens for better visibility */
+  }
+
+  .headerBtnsContainer {
+    flex-direction: row; /* Stack buttons vertically */
+    gap: 15px; /* Reduce gap for smaller screens */
+  }
+
+  .headerBtnsContainer a {
+    width: 160px;
+    height: 35px;
+    gap: 15px;
+    font-size: clamp(10px, 3vw, 12px);
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .BookingHeaderWrapper {
+    width: 100%;
+  }
+
+  .header-Topic {
+    font-size: clamp(18px, 5vw, 22px);
+  }
+
+  .headerBtnsContainer {
+    align-items: center;
+    gap: 10px;
+  }
+
+  .headerBtnsContainer a {
+    width: 140px;
+    height: 30px;
+  }
+
+  .whiteSpace {
+    height: 0px;
+  }
+}

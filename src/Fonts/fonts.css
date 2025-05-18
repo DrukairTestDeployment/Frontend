@@ -1,0 +1,61 @@
+@font-face {
+    font-family: 'Normal';
+    src: url('./fonts/OptimaLTPro-Black.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'BlackItalic';
+    src: url('./fonts/OptimaLTPro-BlackItalic.otf') format('opentype');
+
+}
+
+@font-face {
+    font-family: 'Bold';
+    src: url('./fonts/OptimaLTPro-Bold.otf') format('opentype');
+
+}
+
+@font-face {
+    font-family: 'BoldItalic';
+    src: url('./fonts/OptimaLTPro-BoldItalic.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'DemiBold';
+    src: url('./fonts/OptimaLTPro-DemiBold.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'DemiBoldItalic';
+    src: url('./fonts/OptimaLTPro-DemiBoldItalic.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'ExtraBlack';
+    src: url('./fonts/OptimaLTPro-ExtraBlack.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'ExtraBlackItalic';
+    src: url('./fonts/OptimaLTPro-ExtraBlackIta.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'Italic';
+    src: url('./fonts/OptimaLTPro-Italic.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'Medium';
+    src: url('./fonts/OptimaLTPro-Medium.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'MediumItalic';
+    src: url('./fonts/OptimaLTPro-MediumItalic.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'Roman';
+    src: url('./fonts/OptimaLTPro-Roman.otf') format('opentype');
+}

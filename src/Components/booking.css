@@ -1,0 +1,129 @@
+.booking-table-container {
+  max-width: 90%; /* Change from fixed width to percentage */
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.booking-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.booking-table th,
+.booking-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.booking-table-title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2rem; /* Use rem for better scalability */
+}
+
+.booking-action-icons button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.booking-edit-button {
+  color: #4CAF50;
+}
+
+.booking-delete-button {
+  color: #F44336;
+}
+
+.booking-pagination {
+  display: flex;
+  justify-content: left;
+  margin-top: 20px;
+}
+
+.booking-pagination button {
+  margin: 0 5px;
+  padding: 8px 16px;
+  border: none;
+  background-color: #22326E;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.booking-pagination button.active-page {
+  background-color: #22326E;
+}
+
+.booking-pagination button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.booking-results-count {
+  text-align: right;
+  margin-top: 15px;
+  font-size: 1rem; 
+  color: #555;
+}
+
+.booking-table-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.booking-search-bar,
+.booking-filter-select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.booking-add-button {
+  padding: 8px 12px;
+  background-color: #22326E;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+  .booking-table-title {
+    font-size: 1.5rem; /* Reduce font size on smaller screens */
+  }
+  
+  .booking-table-controls {
+    flex-direction: column; /* Stack controls vertically */
+    align-items: center;
+  }
+
+  .booking-search-bar,
+  .booking-filter-select {
+    margin-right: 0; /* Remove right margin on small screens */
+    margin-bottom: 10px; /* Add bottom margin for spacing */
+  }
+
+  .booking-table th,
+  .booking-table td {
+    font-size: 0.9rem; /* Adjust font size for better readability */
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-table-title {
+    font-size: 1.2rem; /* Further reduce font size for extra small screens */
+  }
+
+  .booking-pagination button {
+    padding: 6px 12px; /* Adjust button padding for smaller screens */
+  }
+}

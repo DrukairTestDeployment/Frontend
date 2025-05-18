@@ -1,0 +1,95 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.loaderMain {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100dvh;
+    z-index: 1000;
+    background: white;
+    padding: 1rem;
+}
+
+.loaderWrapper {
+    /* width: 100%; */
+    max-width: 1200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(20px, 5vw, 180px);
+    padding: 1rem;
+}
+
+.helicopter-description {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.LoaderImgContainer {
+    height: clamp(80px, 15vw, 180px);
+    width: auto;
+    transition: all 0.3s ease;
+}
+
+.LoaderImgContainer img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+
+.helicopter-loader {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.helicopter {
+    position: absolute;
+    color: #22326E;
+    transition: all 0.3s ease;
+}
+
+.loaderDes {
+    font-size: clamp(16px, 2.5vw, 26px);
+    color: #22326E;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-align: center;
+    margin-top: 2rem;
+}
+
+@media screen and (max-width: 768px) {
+    .loaderWrapper {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .helicopter-description {
+        justify-content: center;
+    }
+
+    .LoaderImgContainer {
+        height: clamp(100px, 40vw, 120px);
+    }
+
+    .loaderDes {
+        font-size: clamp(14px, 2vw, 20px);
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .LoaderImgContainer {
+        height: clamp(70px, 30vw, 100px);
+    }
+
+    .loaderDes {
+        font-size: clamp(12px, 1.8vw, 16px);
+    }
+}

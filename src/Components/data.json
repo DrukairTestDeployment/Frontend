@@ -1,0 +1,519 @@
+[
+  {
+    "month": "January",
+    "emergency_services": {
+      "HEMS": {
+        "actual": 3807500,
+        "target": 3810000,
+        "actual_hours": 5,
+        "target_hours": 6
+      },
+      "LC_subsidized": {
+        "actual": 9091533,
+        "target": 4520000,
+        "actual_hours": 4,
+        "target_hours": 5
+      }
+    },
+    "charter_services": {
+      "LC_RGOB": {
+        "actual": 83333,
+        "target": 80000,
+        "actual_hours": 3,
+        "target_hours": 2
+      },
+      "LC": {
+        "actual": 452667,
+        "target": 450000,
+        "actual_hours": 2,
+        "target_hours": 3
+      },
+      "TC": {
+        "actual": 4320000,
+        "target": 4320000,
+        "actual_hours": 5,
+        "target_hours": 4
+      }
+    },
+    "total": {
+      "actual": 17755033,
+      "target": 13180000,
+      "actual_hours": 19,
+      "target_hours": 20
+    }
+  },
+  {
+    "month": "February",
+    "emergency_services": {
+      "HEMS": {
+        "actual": 1842500,
+        "target": 1840000,
+        "actual_hours": 4,
+        "target_hours": 5
+      },
+      "LC_subsidized": {
+        "actual": 5135200,
+        "target": 9380000,
+        "actual_hours": 5,
+        "target_hours": 4
+      }
+    },
+    "charter_services": {
+      "LC_RGOB": {
+        "actual": 553333,
+        "target": 560000,
+        "actual_hours": 3,
+        "target_hours": 3
+      },
+      "LC": {
+        "actual": 358333,
+        "target": 360000,
+        "actual_hours": 2,
+        "target_hours": 3
+      },
+      "TC": {
+        "actual": 840000,
+        "target": 840000,
+        "actual_hours": 5,
+        "target_hours": 5
+      }
+    },
+    "total": {
+      "actual": 8729366,
+      "target": 12980000,
+      "actual_hours": 19,
+      "target_hours": 20
+    }
+  },
+  {
+    "month": "March",
+    "emergency_services": {
+      "HEMS": {
+        "actual": 1112500,
+        "target": 1110000,
+        "actual_hours": 3,
+        "target_hours": 4
+      },
+      "LC_subsidized": {
+        "actual": 3700400,
+        "target": 3760000,
+        "actual_hours": 4,
+        "target_hours": 5
+      }
+    },
+    "charter_services": {
+      "LC_RGOB": {
+        "actual": 225000,
+        "target": 230000,
+        "actual_hours": 2,
+        "target_hours": 2
+      },
+      "LC": {
+        "actual": 183333,
+        "target": 180000,
+        "actual_hours": 2,
+        "target_hours": 2
+      },
+      "TC": {
+        "actual": 2100000,
+        "target": 2100000,
+        "actual_hours": 5,
+        "target_hours": 4
+      }
+    },
+    "total": {
+      "actual": 7321233,
+      "target": 7380000,
+      "actual_hours": 16,
+      "target_hours": 17
+    }
+  },
+  {
+    "month": "April",
+    "emergency_services": {
+      "HEMS": {
+        "actual": 1400000,
+        "target": 1570000,
+        "actual_hours": 4,
+        "target_hours": 5
+      },
+      "LC_subsidized": {
+        "actual": 1844255,
+        "target": 1840000,
+        "actual_hours": 5,
+        "target_hours": 4
+      }
+    },
+    "charter_services": {
+      "LC_RGOB": {
+        "actual": 2685000,
+        "target": 2680000,
+        "actual_hours": 3,
+        "target_hours": 3
+      },
+      "LC": {
+        "actual": 826667,
+        "target": 330000,
+        "actual_hours": 2,
+        "target_hours": 2
+      },
+      "TC": {
+        "actual": 3860000,
+        "target": 3860000,
+        "actual_hours": 5,
+        "target_hours": 5
+      }
+    },
+    "total": {
+      "actual": 10615922,
+      "target": 10280000,
+      "actual_hours": 19,
+      "target_hours": 19
+    }
+  },
+  {
+    "month": "May",
+    "emergency_services": {
+      "HEMS": {
+        "actual": 1982500,
+        "target": 2000000,
+        "actual_hours": 5,
+        "target_hours": 6
+      },
+      "LC_subsidized": {
+        "actual": 6784000,
+        "target": 6700000,
+        "actual_hours": 5,
+        "target_hours": 4
+      }
+    },
+    "charter_services": {
+      "LC_RGOB": {
+        "actual": 299333,
+        "target": 300000,
+        "actual_hours": 3,
+        "target_hours": 3
+      },
+      "LC": {
+        "actual": 452000,
+        "target": 460000,
+        "actual_hours": 2,
+        "target_hours": 2
+      },
+      "TC": {
+        "actual": 2100000,
+        "target": 2200000,
+        "actual_hours": 5,
+        "target_hours": 5
+      }
+    },
+    "total": {
+      "actual": 11991233,
+      "target": 11760000,
+      "actual_hours": 20,
+      "target_hours": 20
+    }
+  },
+  {
+    "month": "June",
+    "emergency_services": {
+      "HEMS": {
+        "actual": 2100000,
+        "target": 2100000,
+        "actual_hours": 5,
+        "target_hours": 5
+      },
+      "LC_subsidized": {
+        "actual": 6540000,
+        "target": 6500000,
+        "actual_hours": 5,
+        "target_hours": 6
+      }
+    },
+    "charter_services": {
+      "LC_RGOB": {
+        "actual": 183333,
+        "target": 200000,
+        "actual_hours": 2,
+        "target_hours": 2
+      },
+      "LC": {
+        "actual": 510000,
+        "target": 500000,
+        "actual_hours": 3,
+        "target_hours": 3
+      },
+      "TC": {
+        "actual": 2200000,
+        "target": 2200000,
+        "actual_hours": 5,
+        "target_hours": 4
+      }
+    },
+    "total": {
+      "actual": 11573333,
+      "target": 11600000,
+      "actual_hours": 20,
+      "target_hours": 20
+    }
+  },
+  {
+    "month": "July",
+    "emergency_services": {
+      "HEMS": {
+        "actual": 1750000,
+        "target": 1800000,
+        "actual_hours": 5,
+        "target_hours": 5
+      },
+      "LC_subsidized": {
+        "actual": 6120000,
+        "target": 6000000,
+        "actual_hours": 5,
+        "target_hours": 6
+      }
+    },
+    "charter_services": {
+      "LC_RGOB": {
+        "actual": 500000,
+        "target": 480000,
+        "actual_hours": 3,
+        "target_hours": 2
+      },
+      "LC": {
+        "actual": 400000,
+        "target": 410000,
+        "actual_hours": 2,
+        "target_hours": 3
+      },
+      "TC": {
+        "actual": 2000000,
+        "target": 2100000,
+        "actual_hours": 5,
+        "target_hours": 4
+      }
+    },
+    "total": {
+      "actual": 10740000,
+      "target": 10790000,
+      "actual_hours": 20,
+      "target_hours": 20
+    }
+  },
+  {
+    "month": "August",
+    "emergency_services": {
+      "HEMS": {
+        "actual": 2200000,
+        "target": 2150000,
+        "actual_hours": 4,
+        "target_hours": 5
+      },
+      "LC_subsidized": {
+        "actual": 5780000,
+        "target": 5700000,
+        "actual_hours": 5,
+        "target_hours": 5
+      }
+    },
+    "charter_services": {
+      "LC_RGOB": {
+        "actual": 510000,
+        "target": 520000,
+        "actual_hours": 3,
+        "target_hours": 3
+      },
+      "LC": {
+        "actual": 400000,
+        "target": 390000,
+        "actual_hours": 2,
+        "target_hours": 3
+      },
+      "TC": {
+        "actual": 1900000,
+        "target": 1800000,
+        "actual_hours": 5,
+        "target_hours": 4
+      }
+    },
+    "total": {
+      "actual": 11460000,
+      "target": 11350000,
+      "actual_hours": 19,
+      "target_hours": 20
+    }
+  },
+  {
+    "month": "September",
+    "emergency_services": {
+      "HEMS": {
+        "actual": 2300000,
+        "target": 2280000,
+        "actual_hours": 5,
+        "target_hours": 6
+      },
+      "LC_subsidized": {
+        "actual": 5690000,
+        "target": 5600000,
+        "actual_hours": 5,
+        "target_hours": 5
+      }
+    },
+    "charter_services": {
+      "LC_RGOB": {
+        "actual": 410000,
+        "target": 400000,
+        "actual_hours": 2,
+        "target_hours": 2
+      },
+      "LC": {
+        "actual": 300000,
+        "target": 290000,
+        "actual_hours": 3,
+        "target_hours": 3
+      },
+      "TC": {
+        "actual": 2500000,
+        "target": 2600000,
+        "actual_hours": 5,
+        "target_hours": 4
+      }
+    },
+    "total": {
+      "actual": 10860000,
+      "target": 10920000,
+      "actual_hours": 20,
+      "target_hours": 20
+    }
+  },
+  {
+    "month": "October",
+    "emergency_services": {
+      "HEMS": {
+        "actual": 2400000,
+        "target": 2450000,
+        "actual_hours": 5,
+        "target_hours": 6
+      },
+      "LC_subsidized": {
+        "actual": 5590000,
+        "target": 5500000,
+        "actual_hours": 5,
+        "target_hours": 5
+      }
+    },
+    "charter_services": {
+      "LC_RGOB": {
+        "actual": 510000,
+        "target": 500000,
+        "actual_hours": 2,
+        "target_hours": 3
+      },
+      "LC": {
+        "actual": 200000,
+        "target": 210000,
+        "actual_hours": 3,
+        "target_hours": 3
+      },
+      "TC": {
+        "actual": 1800000,
+        "target": 1900000,
+        "actual_hours": 5,
+        "target_hours": 4
+      }
+    },
+    "total": {
+      "actual": 10340000,
+      "target": 10460000,
+      "actual_hours": 20,
+      "target_hours": 21
+    }
+  },
+  {
+    "month": "November",
+    "emergency_services": {
+      "HEMS": {
+        "actual": 2200000,
+        "target": 2200000,
+        "actual_hours": 4,
+        "target_hours": 5
+      },
+      "LC_subsidized": {
+        "actual": 5700000,
+        "target": 5750000,
+        "actual_hours": 5,
+        "target_hours": 4
+      }
+    },
+    "charter_services": {
+      "LC_RGOB": {
+        "actual": 490000,
+        "target": 480000,
+        "actual_hours": 3,
+        "target_hours": 2
+      },
+      "LC": {
+        "actual": 300000,
+        "target": 310000,
+        "actual_hours": 2,
+        "target_hours": 3
+      },
+      "TC": {
+        "actual": 1800000,
+        "target": 1900000,
+        "actual_hours": 5,
+        "target_hours": 4
+      }
+    },
+    "total": {
+      "actual": 10340000,
+      "target": 10520000,
+      "actual_hours": 19,
+      "target_hours": 18
+    }
+  },
+  {
+    "month": "December",
+    "emergency_services": {
+      "HEMS": {
+        "actual": 2100000,
+        "target": 2050000,
+        "actual_hours": 5,
+        "target_hours": 6
+      },
+      "LC_subsidized": {
+        "actual": 6400000,
+        "target": 6450000,
+        "actual_hours": 5,
+        "target_hours": 4
+      }
+    },
+    "charter_services": {
+      "LC_RGOB": {
+        "actual": 530000,
+        "target": 520000,
+        "actual_hours": 3,
+        "target_hours": 3
+      },
+      "LC": {
+        "actual": 400000,
+        "target": 390000,
+        "actual_hours": 2,
+        "target_hours": 3
+      },
+      "TC": {
+        "actual": 1900000,
+        "target": 1800000,
+        "actual_hours": 5,
+        "target_hours": 4
+      }
+    },
+    "total": {
+      "actual": 11030000,
+      "target": 11040000,
+      "actual_hours": 305,
+      "target_hours": 350
+    }
+  }
+]
+

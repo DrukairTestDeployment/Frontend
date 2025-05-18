@@ -1,0 +1,348 @@
+.manageBookingFormContainer,
+.search-booking-form-container {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 30px 60px;
+    margin: 40px auto !important;
+    width: 90%;
+}
+
+.search-booking-form-container {
+    margin-top: 70px;
+}
+
+.search-booking-form-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 40px;
+}
+
+.search-booking-form-group input {
+    border: 1px solid #D9E1EC;
+    padding: 0.75rem 0.5rem;
+    width: 100%;
+    height: 40px;
+    border-radius: 4px;
+    outline: none;
+    font-size: clamp(12px, 3vw, 14px);
+}
+
+.search-booking-form-group label {
+    flex: 2;
+}
+
+.search-booking-form-group button {
+    flex: 1;
+    height: 40px;
+}
+
+.no-bookings {
+    width: 90%;
+    margin: 40px auto;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 40px 60px;
+    font-size: clamp(18px, 3vw, 28px);
+    color: #000000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: capitalize;
+}
+
+.booking-flight-status-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.booking-flight-status-topic {
+    font-size: clamp(16px, 3vw, 18px);
+    color: #131523;
+    font-family: 'DemiBold', sans-serif;
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.booking-flight-status-topic::after {
+    content: "";
+    position: absolute;
+    background: #E35205;
+    bottom: -5px;
+    left: 50%;
+    width: 70%;
+    height: 3px;
+    border-radius: 3px;
+    transform: translateX(-50%);
+}
+
+.flight-status-icon-container {
+    display: flex;
+    gap: 140px;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    flex-wrap: wrap;
+}
+
+.flight-status-icon-container::before {
+    content: '';
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    right: 30px;
+    height: 2px;
+    background-color: #E35205;
+    z-index: 0;
+}
+
+.status-icon-container {
+    height: 60px;
+    width: 60px;
+    background: transparent;
+    border: 1px solid #1E306D;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.flight-status-icons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    z-index: 1;
+}
+
+.flight-status-icon {
+    height: 28px;
+    width: 28px;
+    color: #1E306D;
+}
+
+.FeedbackFormBtn {
+    height: 40px !important;
+    border: 1px solid #D9E1EC;
+    padding: 0.75rem 0.5rem;
+    border-radius: 4px;
+    background-color: #1E306D;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.passenger-tabs-container {
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+.passenger-tab-wrapper {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    white-space: nowrap;
+}
+
+.passenger-tab {
+    padding: 6px 10px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, font-size 0.3s ease;
+    font-size: 14px;
+    flex: 1;
+    text-align: center;
+    min-width: 0;
+}
+
+.passenger-tab.active {
+    background-color: #1E306D;
+    color: #ffffff;
+}
+
+@media screen and (max-width: 1024px) {
+
+    .manageBookingFormContainer,
+    .search-booking-form-container {
+        padding: 20px;
+        margin-top: 40px;
+        max-width: 1200px;
+    }
+
+    .search-booking-form-group {
+        flex-direction: column;
+        gap: 20px;
+        align-items: stretch;
+    }
+
+    .search-booking-form-group label,
+    .search-booking-form-group button {
+        flex: 1;
+    }
+
+    .flight-status-icon-container {
+        gap: 70px;
+    }
+
+    .flight-status-icon-container::before {
+        top: 25px;
+        left: 25px;
+        right: 25px;
+    }
+
+    .status-icon-container {
+        height: 50px;
+        width: 50px;
+    }
+
+    .flight-status-icon {
+        height: 24px;
+        width: 24px;
+    }
+
+    .passenger-tab {
+        font-size: 13px;
+        padding: 5px 8px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    .manageBookingFormContainer,
+    .search-booking-form-container {
+        padding: 15px;
+        width: 95%;
+    }
+
+    .booking-form-group {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .search-booking-form-container {
+        margin-top: 20px;
+    }
+
+    .search-booking-form-group {
+        gap: 15px;
+    }
+
+    .flight-status-icon-container {
+        gap: 35px;
+    }
+
+    .flight-status-icon-container::before {
+        top: 20px;
+        left: 20px;
+        right: 20px;
+    }
+
+    .status-icon-container {
+        height: 40px;
+        width: 40px;
+    }
+
+    .flight-status-icon {
+        height: 20px;
+        width: 20px;
+    }
+
+    .booking-flight-status-wrapper {
+        padding: 10px;
+    }
+
+    .no-bookings {
+        padding: 20px;
+        font-size: 20px;
+    }
+
+    .passenger-tab {
+        font-size: 12px;
+        padding: 4px 6px;
+    }
+}
+
+@media screen and (max-width: 484px) {
+
+    .manageBookingFormContainer,
+    .search-booking-form-container {
+        padding: 10px;
+        width: 100%;
+    }
+
+    .search-booking-form-group {
+        gap: 10px;
+    }
+
+    .booking-flight-status-wrapper {
+        padding: 5px;
+    }
+
+    .booking-flight-status-topic {
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    .flight-status-icon-container {
+        gap: 18px;
+    }
+
+    .flight-status-icon-container::before {
+        top: 15px;
+        left: 15px;
+        right: 15px;
+    }
+
+    .status-icon-container {
+        height: 30px;
+        width: 30px;
+    }
+
+    .flight-status-icon {
+        height: 16px;
+        width: 16px;
+    }
+
+    .flight-status-icons p {
+        font-size: 10px;
+    }
+
+    .no-bookings {
+        padding: 15px;
+        font-size: 18px;
+    }
+
+    .passenger-tab {
+        font-size: 9px;
+        padding: 3px 5px;
+    }
+}
+
+@media screen and (max-width: 320px) {
+    .passenger-tab {
+        font-size: 7px;
+        padding: 2px 4px;
+    }
+}
+
+@media screen and (max-width: 200px) {
+    .booking-flight-status-wrapper {
+        display: none;
+    }
+
+    .passenger-tab {
+        font-size: 9px;
+        padding: 2px 3px;
+    }
+}

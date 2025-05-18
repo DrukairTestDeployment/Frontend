@@ -1,0 +1,6 @@
+.booking-progress{
+    height: "4px";
+    background: "#ddd";
+    width: 100%;
+    transition: all 0.5s ease-in;
+}
