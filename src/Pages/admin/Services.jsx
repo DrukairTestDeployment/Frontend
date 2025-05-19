@@ -32,7 +32,7 @@ function Services() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:4001/api/services');
+        const response = await axios.get('https://helistaging.drukair.com.bt/api/services');
         setServices(Array.isArray(response.data.data) ? response.data.data : []);
       } catch (error) {
         Swal.fire({
@@ -81,7 +81,7 @@ function Services() {
       description: ""
     });
     try {
-      const response = await axios.post('http://localhost:4001/api/services', {
+      const response = await axios.post('https://helistaging.drukair.com.bt/api/services', {
         name: newService.service,
         priceInUSD: newService.priceInUSD,
         priceInBTN: newService.priceInBTN,
@@ -131,7 +131,7 @@ function Services() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.delete(`http://localhost:4001/api/services/${sid}`);
+          const response = await axios.delete(`https://helistaging.drukair.com.bt/api/services/${sid}`);
           if (response.data.status === "success") {
             Swal.fire({
               title: 'Success!',
@@ -184,7 +184,7 @@ function Services() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.patch(`http://localhost:4001/api/services/${id}`, {
+          const response = await axios.patch(`https://helistaging.drukair.com.bt/api/services/${id}`, {
             name: selectedService.name,
             priceInUSD: selectedService.priceInUSD,
             status: selectedService.status,

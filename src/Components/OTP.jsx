@@ -25,7 +25,7 @@ function OTP() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:4001/api/users/email/${email}`);
+        const response = await axios.get(`https://helistaging.drukair.com.bt/api/users/email/${email}`);
         setUsers(response.data.data);
         console.log(response)
       } catch (error) {

@@ -146,8 +146,8 @@ function CategorizedReports() {
       setError(null);
 
       const [response, response1] = await Promise.all([
-        axios.get("http://localhost:4001/api/performance"),
-        axios.get("http://localhost:4001/api/bookings"),
+        axios.get("https://helistaging.drukair.com.bt/api/performance"),
+        axios.get("https://helistaging.drukair.com.bt/api/bookings"),
       ]);
 
       const performance = response.data.data;
@@ -190,7 +190,7 @@ function CategorizedReports() {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:4001/api/services");
+      const response = await axios.get("https://helistaging.drukair.com.bt/api/services");
       const services = response.data.data;
       const serviceNames = services.map(service => service.name);
       setCategory(serviceNames);
@@ -320,12 +320,12 @@ function CategorizedReports() {
       let response;
       if (isEditing && existingId) {
         response = await axios.patch(
-          `http://localhost:4001/api/performance/${existingId}`,
+          `https://helistaging.drukair.com.bt/api/performance/${existingId}`,
           formData
         );
       } else {
         response = await axios.post(
-          "http://localhost:4001/api/performance",
+          "https://helistaging.drukair.com.bt/api/performance",
           formData
         );
       }

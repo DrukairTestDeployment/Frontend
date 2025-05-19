@@ -43,7 +43,7 @@ function AdminUser() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:4001/api/users', {
+        const response = await axios.get('https://helistaging.drukair.com.bt/api/users', {
           headers: {
             Authorization: `Bearer ${token}`
         },
@@ -67,7 +67,7 @@ function AdminUser() {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const response = await axios.get('http://localhost:4001/api/roles');
+        const response = await axios.get('https://helistaging.drukair.com.bt/api/roles');
         setRoles(Array.isArray(response.data.data) ? response.data.data : []);
       } catch (error) {
         Swal.fire({
@@ -144,7 +144,7 @@ function AdminUser() {
     }
 
     try {
-      const response = await axios.post('http://localhost:4001/api/users/register', {
+      const response = await axios.post('https://helistaging.drukair.com.bt/api/users/register', {
         name: newUsers.name,
         email: newUsers.email,
         contactNo: newUsers.contact,
@@ -232,7 +232,7 @@ function AdminUser() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.patch(`http://localhost:4001/api/users/${uid}`, {
+          const response = await axios.patch(`https://helistaging.drukair.com.bt/api/users/${uid}`, {
             status: "Inactive",
           });
           if (response.data.status === "success") {
@@ -279,7 +279,7 @@ function AdminUser() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.patch(`http://localhost:4001/api/users/${uid}`, {
+          const response = await axios.patch(`https://helistaging.drukair.com.bt/api/users/${uid}`, {
             status: "Active"
           });
           if (response.data.status === "success") {

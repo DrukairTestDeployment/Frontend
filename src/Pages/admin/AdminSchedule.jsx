@@ -192,7 +192,7 @@ function AdminSchedule() {
     for (const passenger of passengers) {
       try {
         if (passenger._id) {
-          await axios.patch(`http://localhost:4001/api/passengers/${passenger._id}`, {
+          await axios.patch(`https://helistaging.drukair.com.bt/api/passengers/${passenger._id}`, {
             name: passenger.name,
             weight: passenger.weight,
             cid: passenger.cid,
@@ -203,7 +203,7 @@ function AdminSchedule() {
             remarks : passenger.remarks
           });
         } else {
-          await axios.post("http://localhost:4001/api/passengers", {
+          await axios.post("https://helistaging.drukair.com.bt/api/passengers", {
             name: passenger.name,
             weight: passenger.weight,
             cid: passenger.cid,
@@ -244,7 +244,7 @@ function AdminSchedule() {
         setLoading(true);
         try {
           const response = await axios.patch(
-            `http://localhost:4001/api/bookings/${updatedBookingData._id}`,
+            `https://helistaging.drukair.com.bt/api/bookings/${updatedBookingData._id}`,
             {
               status: updatedBookingData.status,
               assigned_pilot: updatedBookingData.assigned_pilot || null,
@@ -371,7 +371,7 @@ function AdminSchedule() {
           formData.append('cType', updatedBookingData.cType);
               
           const response = await axios.patch(
-            `http://localhost:4001/api/bookings/imageupdate/${updatedBookingData._id}`, formData,
+            `https://helistaging.drukair.com.bt/api/bookings/imageupdate/${updatedBookingData._id}`, formData,
             {
               headers: {
                 'Content-Type': 'multipart/form-data'
@@ -467,7 +467,7 @@ function AdminSchedule() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:4001/api/bookings');
+        const response = await axios.get('https://helistaging.drukair.com.bt/api/bookings');
         const fetchedBookings = response.data.data || [];
         const processedBookings = fetchedBookings
           .filter((booking) => booking.status !== "Booked")
@@ -516,7 +516,7 @@ function AdminSchedule() {
     const fetchPassengers = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:4001/api/passengers"
+          "https://helistaging.drukair.com.bt/api/passengers"
         );
         setPassengers(response.data.data);
       } catch (error) {

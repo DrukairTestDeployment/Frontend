@@ -28,7 +28,7 @@ function AdminDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:4001/api/users", {withCredentials: true});
+        const response = await axios.get("https://helistaging.drukair.com.bt/api/users", {withCredentials: true});
         const users = response.data.data;
 
         const userRoleCount = users.filter(user => user.role.name === "USER").length;
@@ -84,7 +84,7 @@ function AdminDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:4001/api/bookings/");
+        const response = await axios.get("https://helistaging.drukair.com.bt/api/bookings/");
         const paidBookings = response.data.data.filter(
           booking => booking.payment_status === "Paid"
         );
@@ -147,7 +147,7 @@ function AdminDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:4001/api/routes/");
+        const response = await axios.get("https://helistaging.drukair.com.bt/api/routes/");
         const routes = response.data.data.length;
         setRoutesCount(routes)
       } catch (error) {

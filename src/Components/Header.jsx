@@ -16,7 +16,7 @@ const Header = () => {
     if (id) {
       const fetchData = async () => {
         try {
-          const response = await axios.get(`http://localhost:4001/api/users/${id}`);
+          const response = await axios.get(`https://helistaging.drukair.com.bt/api/users/${id}`);
           if(response.data.data.role.name === "USER"){
             setUser(response.data.data);
           }
@@ -48,7 +48,7 @@ const Header = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.get(`http://localhost:4001/api/users/logout`, { withCredentials: true });
+          const response = await axios.get(`https://helistaging.drukair.com.bt/api/users/logout`, { withCredentials: true });
           if (response.data.status === "success") {
             Cookies.remove('token', { path: '/' });
             Swal.fire({

@@ -21,7 +21,7 @@ function PaymentConfirmation() {
       const fetchBookingData = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:4001/api/bookings/${id}`
+            `https://helistaging.drukair.com.bt/api/bookings/${id}`
           );
           setBooking(response.data.data);
         } catch (error) {
@@ -79,7 +79,7 @@ function PaymentConfirmation() {
           transData?.status === "success"
         ) {
           const response = await axios.patch(
-            `http://localhost:4001/api/bookings/${id}`,
+            `https://helistaging.drukair.com.bt/api/bookings/${id}`,
             {
               payment_status: "Paid",
               cType: "USD",

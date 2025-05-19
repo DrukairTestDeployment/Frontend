@@ -48,7 +48,7 @@ function ForgotPassword() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:4001/api/users/send-otp', {
+      const response = await axios.post('https://helistaging.drukair.com.bt/api/users/send-otp', {
         email: email
       });
 

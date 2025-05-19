@@ -31,7 +31,7 @@ function Refund() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:4001/api/refund');
+        const response = await axios.get('https://helistaging.drukair.com.bt/api/refund');
         setRefunds(Array.isArray(response.data.data) ? response.data.data : []);
         setFilteredRefunds(Array.isArray(response.data.data) ? response.data.data : []);
       } catch (error) {
@@ -57,7 +57,7 @@ function Refund() {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:4001/api/refund', {
+      const response = await axios.post('https://helistaging.drukair.com.bt/api/refund', {
         name: newRefund.refundName,
         plan: newRefund.refundPlanPercent,
         description: newRefund.description
@@ -136,7 +136,7 @@ function Refund() {
     }).then( async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.delete(`http://localhost:4001/api/refund/${rid}`);
+          const response = await axios.delete(`https://helistaging.drukair.com.bt/api/refund/${rid}`);
           if(response.data.status === "success"){
             Swal.fire({
               title: 'Success!',
@@ -177,7 +177,7 @@ function Refund() {
     }).then( async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.patch(`http://localhost:4001/api/refund/${id}`, {
+          const response = await axios.patch(`https://helistaging.drukair.com.bt/api/refund/${id}`, {
             name: selectedRefund.name,
             plan: selectedRefund.plan,
             status: selectedRefund.status,

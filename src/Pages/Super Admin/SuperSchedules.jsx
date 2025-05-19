@@ -59,7 +59,7 @@ function SuperAdminSchedules() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:4001/api/bookings');
+        const response = await axios.get('https://helistaging.drukair.com.bt/api/bookings');
         const fetchedBookings = response.data.data || [];
         const processedBookings = fetchedBookings
           .filter((booking) => booking.status !== "Booked")
@@ -98,7 +98,7 @@ function SuperAdminSchedules() {
   useEffect(() => {
     const fetchPassenger = async () => {
       try {
-        const response = await axios.get("http://localhost:4001/api/passengers");
+        const response = await axios.get("https://helistaging.drukair.com.bt/api/passengers");
         setPassenger(response.data.data);
       } catch (error) {
         Swal.fire({

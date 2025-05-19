@@ -63,7 +63,7 @@ function ChangePassword() {
           const params = new URLSearchParams(location.search);
           const remail = params.get('email');
           const rotp = params.get('otp');
-          const response = await axios.post(`http://localhost:4001/api/users/reset-password`, {
+          const response = await axios.post(`https://helistaging.drukair.com.bt/api/users/reset-password`, {
             email: remail,
             otp: rotp,
             newPassword: password

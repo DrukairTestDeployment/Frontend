@@ -31,7 +31,7 @@ function Charter() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:4001/api/charter');
+        const response = await axios.get('https://helistaging.drukair.com.bt/api/charter');
         setCharters(Array.isArray(response.data.data) ? response.data.data : []);
         setFilteredCharters(Array.isArray(response.data.data) ? response.data.data : []);
       } catch (error) {
@@ -61,7 +61,7 @@ function Charter() {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:4001/api/charter', {
+      const response = await axios.post('https://helistaging.drukair.com.bt/api/charter', {
         name: newCharter.charter,
         description: newCharter.description
       });
@@ -116,7 +116,7 @@ function Charter() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.patch(`http://localhost:4001/api/charter/${id}`, {
+          const response = await axios.patch(`https://helistaging.drukair.com.bt/api/charter/${id}`, {
             name: selectedCharter.name,
             status: selectedCharter.status,
             description: selectedCharter.description,
@@ -185,7 +185,7 @@ function Charter() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.delete(`http://localhost:4001/api/charter/${cid}`);
+          const response = await axios.delete(`https://helistaging.drukair.com.bt/api/charter/${cid}`);
           if (response.data.status === "success") {
             Swal.fire({
               title: 'Success!',

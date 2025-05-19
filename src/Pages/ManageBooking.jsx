@@ -76,7 +76,7 @@ function ManageBooking() {
       bfs_benfTxnTime,
     };
     try {
-      const response = await axios.post("http://localhost:4001/api/bookings/signchecksum", formData);
+      const response = await axios.post("https://helistaging.drukair.com.bt/api/bookings/signchecksum", formData);
       document.getElementById('bfs_checkSum').value = response.data.f_signature;
       document.getElementById('bfs_txnAmount').value = selectedBooking.price === 0 ? selectedBooking.bookingPriceBTN : selectedBooking.price;
       finalPost();
@@ -102,7 +102,7 @@ function ManageBooking() {
   const handleSearch = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:4001/api/bookings/${bookingId}/${agentCID}`
+        `https://helistaging.drukair.com.bt/api/bookings/${bookingId}/${agentCID}`
       );
       if (response.data.status === "success") {
         if (response.data.data !== null) {
@@ -128,7 +128,7 @@ function ManageBooking() {
   const fetchPassengers = async (id) => {
     try {
       const response = await axios.get(
-        `http://localhost:4001/api/passengers/all/${id}`
+        `https://helistaging.drukair.com.bt/api/passengers/all/${id}`
       );
       if (response.data.status === "success") {
         if (response.data.data !== null) {
@@ -174,7 +174,7 @@ function ManageBooking() {
   useEffect(() => {
     const fetchCommision = async () => {
       try {
-        const response = await axios.get(`http://localhost:4001/api/commision/`);
+        const response = await axios.get(`https://helistaging.drukair.com.bt/api/commision/`);
         const commision = response.data.data[0].commisionValue
         setCommision(parseFloat(commision) / 100)
       } catch (error) {

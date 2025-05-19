@@ -9,7 +9,7 @@ function BookingDetailsModal({ isOpen, onClose, booking, passengers }) {
     useEffect(() => {
         const fetchCommision = async () => {
             try {
-                const response = await axios.get(`http://localhost:4001/api/commision/`);
+                const response = await axios.get(`https://helistaging.drukair.com.bt/api/commision/`);
                 const commision = response.data.data[0].commisionValue
                 setCommision(parseFloat(commision) / 100)
             } catch (error) {

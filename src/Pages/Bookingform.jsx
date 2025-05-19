@@ -48,7 +48,7 @@ export function Personal({
         if (id) {
             const fetchData = async () => {
                 try {
-                    const response = await axios.get(`http://localhost:4001/api/users/${id}`);
+                    const response = await axios.get(`https://helistaging.drukair.com.bt/api/users/${id}`);
                     if (response.data.data.role.name === "USER") {
                         setUser(response.data.data);
                     }
@@ -193,7 +193,7 @@ export function FlightDetails({ secondFormData, setSecondFormData, flightErrors,
 
     const getPrice = async (id) => {
         try {
-            const response = await axios.get(`http://localhost:4001/api/services/${id}`);
+            const response = await axios.get(`https://helistaging.drukair.com.bt/api/services/${id}`);
             const priceUSD = response.data.data.priceInUSD;
             const priceBTN = response.data.data.priceInBTN;
             priceInUSD = Number(priceUSD * duration).toFixed(2)
@@ -213,7 +213,7 @@ export function FlightDetails({ secondFormData, setSecondFormData, flightErrors,
         if (id === "Others") {
         } else {
             try {
-                const response = await axios.get(`http://localhost:4001/api/routes/${id}`);
+                const response = await axios.get(`https://helistaging.drukair.com.bt/api/routes/${id}`);
                 duration = parseInt(response.data.data.duration) / 60
                 winterWeight = parseFloat(response.data.data.winterWeight)
                 summerWeight = parseFloat(response.data.data.summerWeight)
@@ -232,7 +232,7 @@ export function FlightDetails({ secondFormData, setSecondFormData, flightErrors,
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get("http://localhost:4001/api/routes");
+                const response = await axios.get("https://helistaging.drukair.com.bt/api/routes");
                 setRoutes(Array.isArray(response.data.data) ? response.data.data : []);
 
             } catch (error) {
@@ -252,7 +252,7 @@ export function FlightDetails({ secondFormData, setSecondFormData, flightErrors,
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                const response = await axios.get('http://localhost:4001/api/services');
+                const response = await axios.get('https://helistaging.drukair.com.bt/api/services');
                 setServices(Array.isArray(response.data.data) ? response.data.data : []);
             } catch (error) {
                 Swal.fire({
@@ -692,7 +692,7 @@ export function PaymentDetails() {
     useEffect(() => {
         const fetchCommision = async () => {
             try {
-                const response = await axios.get(`http://localhost:4001/api/commision/`);
+                const response = await axios.get(`https://helistaging.drukair.com.bt/api/commision/`);
                 const commision = response.data.data[0].commisionValue
                 setCommision(parseFloat(commision) / 100)
             } catch (error) {
@@ -751,7 +751,7 @@ export function PaymentDetails() {
             bfs_benfTxnTime,
         };
         try {
-            const response = await axios.post("http://localhost:4001/api/bookings/signchecksum", formData);
+            const response = await axios.post("https://helistaging.drukair.com.bt/api/bookings/signchecksum", formData);
             document.getElementById('bfs_checkSum').value = response.data.f_signature;
             finalPost();
         } catch (error) {
@@ -971,7 +971,7 @@ function BookingForm() {
     //         if (result.isConfirmed) {
 
     //             try {
-    //                 const response = await axios.post(`http://localhost:4001/api/bookings`, {
+    //                 const response = await axios.post(`https://helistaging.drukair.com.bt/api/bookings`, {
     //                     bookingID: generateBookingId(),
     //                     booking_type: "online`",
     //                     agent_name: formData.agentName,
@@ -1027,7 +1027,7 @@ function BookingForm() {
     const postPassenger = async (id) => {
         for (const passenger of thirdFormData.passengers) {
             try {
-                await axios.post('http://localhost:4001/api/passengers', {
+                await axios.post('https://helistaging.drukair.com.bt/api/passengers', {
                     name: passenger.name,
                     weight: passenger.weight,
                     cid: passenger.cidPassport,
@@ -1088,7 +1088,7 @@ function BookingForm() {
     const saveBooking = async () => {
         setLoading(true);
         try {
-            const response = await axios.post(`http://localhost:4001/api/bookings`, {
+            const response = await axios.post(`https://helistaging.drukair.com.bt/api/bookings`, {
                 bookingID: generateBookingId(),
                 layap: formData.layap,
                 booking_type: "Online",

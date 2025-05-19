@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 
 const PaymentHandle = () => {
   useEffect(() => {
-    fetch('http://localhost:4001/cancelrmapayment', {
+    fetch('https://helistaging.drukair.com.bt/cancelrmapayment', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

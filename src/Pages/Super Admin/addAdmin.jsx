@@ -38,7 +38,7 @@ const AdminTable = () => {
     useEffect(() => {
         const fetchAdmin = async () => {
             try {
-                const response = await axios.get('http://localhost:4001/api/users');
+                const response = await axios.get('https://helistaging.drukair.com.bt/api/users');
                 const admins = response.data.data.filter(user => user.role.name === 'ADMIN');
                 setAdmins(Array.isArray(admins) ? admins : []);
                 setFilteredAdmin(Array.isArray(admins) ? admins : []);
@@ -59,7 +59,7 @@ const AdminTable = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:4001/api/roles');
+                const response = await axios.get('https://helistaging.drukair.com.bt/api/roles');
                 const userRole = response.data.data.find(role => role.name === 'ADMIN');
                 if (userRole) {
                     setRole(userRole._id);
@@ -122,7 +122,7 @@ const AdminTable = () => {
             Swal.fire("Error", "Passwords do not match!", "error");
         }else {
             try {
-                const response = await axios.post('http://localhost:4001/api/users/register', {
+                const response = await axios.post('https://helistaging.drukair.com.bt/api/users/register', {
                     name: newAdmin.name,
                     email: newAdmin.email,
                     contactNo: newAdmin.contactNumber,
@@ -181,7 +181,7 @@ const AdminTable = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const response = await axios.patch(`http://localhost:4001/api/users/${uid}`, {
+                    const response = await axios.patch(`https://helistaging.drukair.com.bt/api/users/${uid}`, {
                         status: "Inactive",
                     });
                     if (response.data.status === "success") {
@@ -227,7 +227,7 @@ const AdminTable = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const response = await axios.patch(`http://localhost:4001/api/users/${uid}`, {
+                    const response = await axios.patch(`https://helistaging.drukair.com.bt/api/users/${uid}`, {
                         status: "Active"
                     });
                     if (response.data.status === "success") {

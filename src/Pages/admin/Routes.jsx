@@ -37,7 +37,7 @@ function ARoutes() {
   useEffect(() => {
     const fetchCharter = async () => {
       try {
-        const response = await axios.get("http://localhost:4001/api/charter");
+        const response = await axios.get("https://helistaging.drukair.com.bt/api/charter");
         setCharter(Array.isArray(response.data.data) ? response.data.data : []);
       } catch (error) {
         Swal.fire({
@@ -56,7 +56,7 @@ function ARoutes() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:4001/api/routes");
+        const response = await axios.get("https://helistaging.drukair.com.bt/api/routes");
         setRoutes(Array.isArray(response.data.data) ? response.data.data : []);
       } catch (error) {
         Swal.fire({
@@ -85,7 +85,7 @@ function ARoutes() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:4001/api/routes", {
+      const response = await axios.post("https://helistaging.drukair.com.bt/api/routes", {
         sector: newRoutes.sector,
         duration: newRoutes.duration,
         summerWeight: newRoutes.summerWeightKg,
@@ -177,7 +177,7 @@ function ARoutes() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.delete(`http://localhost:4001/api/routes/${rid}`);
+          const response = await axios.delete(`https://helistaging.drukair.com.bt/api/routes/${rid}`);
           if (response.data.status === "success") {
             Swal.fire({
               title: 'Success!',
@@ -220,7 +220,7 @@ function ARoutes() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.patch(`http://localhost:4001/api/routes/${id}`, {
+          const response = await axios.patch(`https://helistaging.drukair.com.bt/api/routes/${id}`, {
             sector: selectedRoutes.sector,
             duration: selectedRoutes.duration,
             summerWeight: selectedRoutes.summerWeight,

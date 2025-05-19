@@ -41,8 +41,8 @@ function ServiceRevenueComponent() {
     setIsLoading(true);
     try {
       const [servicesResponse, bookingsResponse] = await Promise.all([
-        axios.get("http://localhost:4001/api/services/"),
-        axios.get("http://localhost:4001/api/bookings/")
+        axios.get("https://helistaging.drukair.com.bt/api/services/"),
+        axios.get("https://helistaging.drukair.com.bt/api/bookings/")
       ]);
 
       
@@ -83,7 +83,7 @@ function ServiceRevenueComponent() {
   useEffect(() => {
     const fetchCommision = async () => {
       try {
-        const response = await axios.get(`http://localhost:4001/api/commision/`);
+        const response = await axios.get(`https://helistaging.drukair.com.bt/api/commision/`);
         const commision = response.data.data[0].commisionValue
         const commissionId = response.data.data[0]._id
         setCommisionId(commissionId)
@@ -119,7 +119,7 @@ function ServiceRevenueComponent() {
       if (result.isConfirmed) {
         try {
           const response = await axios.patch(
-            `http://localhost:4001/api/commision/${commisionId}`,
+            `https://helistaging.drukair.com.bt/api/commision/${commisionId}`,
             {
               commisionValue: updatedCommisionValue,
             }

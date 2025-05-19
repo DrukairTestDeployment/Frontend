@@ -13,7 +13,7 @@ const ProtectedRoute = ({ children, role }) => {
         const fetchUserRole = async () => {
             if (id && role) {
                 try {
-                    const response = await axios.get(`http://localhost:4001/api/users/${id}`,{
+                    const response = await axios.get(`https://helistaging.drukair.com.bt/api/users/${id}`,{
                         withCredentials:true
                     });
                     const fetchedRole = response.data.data.role.name;

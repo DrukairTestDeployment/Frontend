@@ -39,7 +39,7 @@ const SuperProfile = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:4001/api/users/${id}`);
+        const response = await axios.get(`https://helistaging.drukair.com.bt/api/users/${id}`);
         setUser(response.data.data);
       } catch (error) {
         Swal.fire({
@@ -57,7 +57,7 @@ const SuperProfile = () => {
 
   const logout = async () => {
     try {
-      const response = await axios.get(`http://localhost:4001/api/users/logout`, { withCredentials: true });
+      const response = await axios.get(`https://helistaging.drukair.com.bt/api/users/logout`, { withCredentials: true });
       if (response.data.status === "success") {
         Cookies.remove('token', { path: '/' });
         navigate('/login')
@@ -88,7 +88,7 @@ const SuperProfile = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.patch(`http://localhost:4001/api/users/${id}`, {
+      const response = await axios.patch(`https://helistaging.drukair.com.bt/api/users/${id}`, {
         name: user.name,
         email: user.email,
         contactNo: user.contactNo,
@@ -127,7 +127,7 @@ const SuperProfile = () => {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            const response = await axios.patch(`http://localhost:4001/api/users/updatepassword/${id}`, {
+            const response = await axios.patch(`https://helistaging.drukair.com.bt/api/users/updatepassword/${id}`, {
               currentPassword: password.currentPassword,
               newPassword: password.newPassword
             });

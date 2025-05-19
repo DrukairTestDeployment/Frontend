@@ -22,7 +22,7 @@ function OTPEmail() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:4001/api/users/email/${email}`);
+        const response = await axios.get(`https://helistaging.drukair.com.bt/api/users/email/${email}`);
         console.log(response)
         setUsers(response.data.data);
       } catch (error) {
@@ -53,7 +53,7 @@ function OTPEmail() {
 
   const userStatus = async (id) => {
     try {
-      const response = await axios.patch(`http://localhost:4001/api/users/${id}`, {
+      const response = await axios.patch(`https://helistaging.drukair.com.bt/api/users/${id}`, {
         otpVerified: true,
       });
       if (response.data.status === 'success') {

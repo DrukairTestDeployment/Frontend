@@ -23,7 +23,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     let summerWeight = 450
 
     const getImage = async (image) => {
-        const response = await axios.get(`http://localhost:4001/api/bookings/image/get/${image}`);
+        const response = await axios.get(`https://helistaging.drukair.com.bt/api/bookings/image/get/${image}`);
 
         const pic = response.data.data
         setUrl(pic);
@@ -40,7 +40,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
             setDuration(0)
         } else {
             try {
-                const response = await axios.get(`http://localhost:4001/api/routes/${id}`);
+                const response = await axios.get(`https://helistaging.drukair.com.bt/api/routes/${id}`);
                 const durations = parseInt(response.data.data.duration)
                 setBookingUpdate((prev) => ({
                     ...prev,
@@ -63,7 +63,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get("http://localhost:4001/api/routes");
+                const response = await axios.get("https://helistaging.drukair.com.bt/api/routes");
                 setRoutes(Array.isArray(response.data.data) ? response.data.data : []);
             } catch (error) {
                 Swal.fire({
@@ -82,7 +82,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                const response = await axios.get('http://localhost:4001/api/services');
+                const response = await axios.get('https://helistaging.drukair.com.bt/api/services');
                 setServices(Array.isArray(response.data.data) ? response.data.data : []);
             } catch (error) {
                 Swal.fire({
@@ -101,7 +101,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     // Price dynamic
     const getPrice = async (id) => {
         try {
-            const response = await axios.get(`http://localhost:4001/api/services/${id}`);
+            const response = await axios.get(`https://helistaging.drukair.com.bt/api/services/${id}`);
             const priceUSD = response.data.data.priceInUSD;
             const priceBTN = response.data.data.priceInBTN;
 
@@ -321,7 +321,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                 if (passengerToRemove._id) {
                     try {
                         const response = await axios.delete(
-                            `http://localhost:4001/api/passengers/${passengerToRemove._id}`
+                            `https://helistaging.drukair.com.bt/api/passengers/${passengerToRemove._id}`
                         );
 
                         if (response.data.status === "success") {
@@ -378,7 +378,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     useEffect(() => {
         const fetchRefund = async () => {
             try {
-                const response = await axios.get("http://localhost:4001/api/refund");
+                const response = await axios.get("https://helistaging.drukair.com.bt/api/refund");
                 const enabledRefunds = response.data.data.filter(
                     (refund) => refund.status === "Enabled"
                 );
@@ -398,7 +398,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
 
     const fetchRefundChosen = async (rId) => {
         try {
-            const response = await axios.get(`http://localhost:4001/api/refund/${rId}`);
+            const response = await axios.get(`https://helistaging.drukair.com.bt/api/refund/${rId}`);
             const refundPlan = response.data.data.plan;
             setRefundChosenPlan(parseFloat(refundPlan) / 100);
         } catch (error) {

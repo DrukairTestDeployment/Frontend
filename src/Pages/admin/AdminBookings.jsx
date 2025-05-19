@@ -70,7 +70,7 @@ function AdminBooking() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:4001/api/agents");
+        const response = await axios.get("https://helistaging.drukair.com.bt/api/agents");
         setAgency(Array.isArray(response.data.data) ? response.data.data : []);
       } catch (error) {
         Swal.fire({
@@ -108,7 +108,7 @@ function AdminBooking() {
   useEffect(() => {
     const fetchBooking = async () => {
       try {
-        const response = await axios.get(`http://localhost:4001/api/bookings`, {
+        const response = await axios.get(`https://helistaging.drukair.com.bt/api/bookings`, {
           withCredentials: true
         });
         const fetchedBookings = response.data.data || [];
@@ -146,7 +146,7 @@ function AdminBooking() {
     const fetchPassenger = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:4001/api/passengers"
+          "https://helistaging.drukair.com.bt/api/passengers"
         );
         setPassenger(response.data.data);
       } catch (error) {
@@ -176,7 +176,7 @@ function AdminBooking() {
       if (result.isConfirmed) {
         try {
           const response = await axios.patch(
-            `http://localhost:4001/api/agents/${selectedAgency._id}`,
+            `https://helistaging.drukair.com.bt/api/agents/${selectedAgency._id}`,
             {
               name: selectedAgency.name,
               code: selectedAgency.code,
@@ -227,7 +227,7 @@ function AdminBooking() {
       if (result.isConfirmed) {
         try {
           const response = await axios.post(
-            `http://localhost:4001/api/agents`,
+            `https://helistaging.drukair.com.bt/api/agents`,
             {
               name: newAgency.name,
               code: newAgency.code,
@@ -306,7 +306,7 @@ function AdminBooking() {
         setLoading(true);
         try {
           const response = await axios.post(
-            `http://localhost:4001/api/bookings/decline/${bookingId}`
+            `https://helistaging.drukair.com.bt/api/bookings/decline/${bookingId}`
           );
           if (response.data.status === "success") {
             Swal.fire({
@@ -354,7 +354,7 @@ function AdminBooking() {
         setLoading(true);
         try {
           const response = await axios.post(
-            `http://localhost:4001/api/bookings/approve/${bookingId}/${newAssignAgency.name}`
+            `https://helistaging.drukair.com.bt/api/bookings/approve/${bookingId}/${newAssignAgency.name}`
           );
           if (response.data.status === "success") {
             Swal.fire({
@@ -398,7 +398,7 @@ function AdminBooking() {
     // for (const passenger of passengers) {
       try {
         if (passenger._id) {
-          await axios.patch(`http://localhost:4001/api/passengers/${passenger._id}`, {
+          await axios.patch(`https://helistaging.drukair.com.bt/api/passengers/${passenger._id}`, {
             name: passenger.name,
             weight: passenger.weight,
             cid: passenger.cid,
@@ -409,7 +409,7 @@ function AdminBooking() {
             remarks:passenger.remarks
           });
         } else {
-          await axios.post("http://localhost:4001/api/passengers", {
+          await axios.post("https://helistaging.drukair.com.bt/api/passengers", {
             name: passenger.name,
             weight: passenger.weight,
             cid: passenger.cid,
@@ -450,7 +450,7 @@ function AdminBooking() {
         setLoading(true);
         try {
           const responsePatch = await axios.patch(
-            `http://localhost:4001/api/bookings/${id}`,
+            `https://helistaging.drukair.com.bt/api/bookings/${id}`,
             {
               duration: updatedBookingData.duration,
               bookingPriceBTN: updatedBookingData.bookingPriceBTN,
@@ -547,7 +547,7 @@ function AdminBooking() {
           formData.append('cType', updatedBookingData.cType)
 
           const responsePatch = await axios.patch(
-            `http://localhost:4001/api/bookings/imageupdate/${id}`, formData,
+            `https://helistaging.drukair.com.bt/api/bookings/imageupdate/${id}`, formData,
             {
               headers: {
                 'Content-Type': 'multipart/form-data'
@@ -602,7 +602,7 @@ function AdminBooking() {
       if (result.isConfirmed) {
         try {
           const response = await axios.delete(
-            `http://localhost:4001/api/agents/${aid}`
+            `https://helistaging.drukair.com.bt/api/agents/${aid}`
           );
           if (response.data.status === "success") {
             Swal.fire({

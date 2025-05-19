@@ -32,7 +32,7 @@ function UserSignup() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:4001/api/roles');
+        const response = await axios.get('https://helistaging.drukair.com.bt/api/roles');
         const userRole = response.data.data.find(role => role.name === 'USER');
         if (userRole) {
           setRole(userRole._id);
@@ -84,7 +84,7 @@ function UserSignup() {
 
     if (validate()) {
       try {
-        const response = await axios.post('http://localhost:4001/api/users/register', {
+        const response = await axios.post('https://helistaging.drukair.com.bt/api/users/register', {
           name: formData.name,
           email: formData.email,
           contactNo: formData.contactNo,

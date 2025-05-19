@@ -33,8 +33,8 @@ function ServiceHoursComponent() {
     setIsLoading(true);
     try {
       const [servicesResponse, bookingsResponse] = await Promise.all([
-        axios.get("http://localhost:4001/api/services/"),
-        axios.get("http://localhost:4001/api/bookings/")
+        axios.get("https://helistaging.drukair.com.bt/api/services/"),
+        axios.get("https://helistaging.drukair.com.bt/api/bookings/")
       ]);
 
       const services = servicesResponse.data.data;

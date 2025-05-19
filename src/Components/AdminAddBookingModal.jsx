@@ -137,7 +137,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
             if (formData.flight_date) {
                 try {
                     const date = new Date(formData.flight_date).toLocaleDateString('en-GB');
-                    const response = await axios.get(`http://localhost:4001/api/bookings`);
+                    const response = await axios.get(`https://helistaging.drukair.com.bt/api/bookings`);
                     const bookings = response.data.data
                     const filteredBookings = bookings.filter(booking => new Date(booking.flight_date).toLocaleDateString('en-GB') === date)
                     setBookings(Array.isArray(filteredBookings) ? filteredBookings : []);
@@ -158,7 +158,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
     useEffect(() => {
         const fetchRefund = async () => {
             try {
-                const response = await axios.get("http://localhost:4001/api/refund");
+                const response = await axios.get("https://helistaging.drukair.com.bt/api/refund");
                 const enabledRefunds = response.data.data.filter(
                     (refund) => refund.status === "Enabled"
                 );
@@ -178,7 +178,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
 
     const fetchRefundChosen = async (rId) => {
         try {
-            const response = await axios.get(`http://localhost:4001/api/refund/${rId}`);
+            const response = await axios.get(`https://helistaging.drukair.com.bt/api/refund/${rId}`);
             const refundPlan = response.data.data.plan
             setRefundChosenPlan(parseFloat(refundPlan) / 100)
         } catch (error) {
@@ -195,7 +195,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
     useEffect(() => {
         const fetchPilot = async () => {
             try {
-                const response = await axios.get("http://localhost:4001/api/users", { withCredentials: true });
+                const response = await axios.get("https://helistaging.drukair.com.bt/api/users", { withCredentials: true });
                 const pilots = response.data.data;
                 const filteredPilots = pilots.filter(user => user.role.name === "PILOT");
 
@@ -217,7 +217,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get("http://localhost:4001/api/routes");
+                const response = await axios.get("https://helistaging.drukair.com.bt/api/routes");
                 setRoutes(Array.isArray(response.data.data) ? response.data.data : []);
             } catch (error) {
                 Swal.fire({
@@ -236,7 +236,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                const response = await axios.get('http://localhost:4001/api/services');
+                const response = await axios.get('https://helistaging.drukair.com.bt/api/services');
                 setServices(Array.isArray(response.data.data) ? response.data.data : []);
             } catch (error) {
                 Swal.fire({
@@ -259,7 +259,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
             setDuration(0)
         } else {
             try {
-                const response = await axios.get(`http://localhost:4001/api/routes/${id}`);
+                const response = await axios.get(`https://helistaging.drukair.com.bt/api/routes/${id}`);
                 const durations = parseInt(response.data.data.duration) / 60
                 formData.duration = response.data.data.duration;
                 setDuration(durations)
@@ -279,7 +279,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
 
     const getPrice = async (id) => {
         try {
-            const response = await axios.get(`http://localhost:4001/api/services/${id}`);
+            const response = await axios.get(`https://helistaging.drukair.com.bt/api/services/${id}`);
             const priceUSD = response.data.data.priceInUSD;
             const priceBTN = response.data.data.priceInBTN;
             setPriceInUSD(priceUSD)
@@ -416,7 +416,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
     const postPassenger = async (id) => {
         for (const passenger of passengerData.passengers) {
             try {
-                await axios.post('http://localhost:4001/api/passengers', {
+                await axios.post('https://helistaging.drukair.com.bt/api/passengers', {
                     name: passenger.name,
                     weight: passenger.weight,
                     cid: passenger.cidPassport,
@@ -456,7 +456,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                     setLoading(true);
                     try {
                         const priceCheck = formData.payment_type === "Cash" ? "BTN" : formData.cType
-                        const response = await axios.post(`http://localhost:4001/api/bookings`, {
+                        const response = await axios.post(`https://helistaging.drukair.com.bt/api/bookings`, {
                             bookingID: generateBookingId(),
                             agent_name: formData.agent_name,
                             agent_contact: formData.agent_contact,
@@ -548,7 +548,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                         fFormData.append('image', formData.paymentScreenShot)
                         fFormData.append('duration', formData.destination === null || formData.destination === "Others" ? formData.duration : durationf * 60);
                         fFormData.append('refund_id', formData.refund_id);
-                        const response = await axios.post(`http://localhost:4001/api/bookings/image/`, fFormData, {
+                        const response = await axios.post(`https://helistaging.drukair.com.bt/api/bookings/image/`, fFormData, {
                             headers: {
                                 'Content-Type': 'multipart/form-data'
                             }
