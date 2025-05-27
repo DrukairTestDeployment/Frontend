@@ -116,7 +116,6 @@ function AdminAddBookingModal({ isOpen, onClose }) {
         bookingPriceBTN: 0,
         payment_status: "Paid",
         journal_no: "",
-        paymentScreenShot: null,
         duration: "",
         refund_id: ""
     });
@@ -545,7 +544,9 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                         fFormData.append('bookingPriceBTN', formData.destination === null || formData.destination === "Others" ? finalpriceInBTNOthers : finalpriceInBTN);
                         fFormData.append('price', formData.destination === null || formData.destination === "Others" ? finalpriceInBTNOthers : finalpriceInBTN);
                         fFormData.append('journal_no', formData.journal_no || "");
-                        fFormData.append('image', formData.paymentScreenShot)
+                        paymentScreenshots.forEach((img) => {
+                            fFormData.append('image', img.file); // `images` must match multer.array('images', 10)
+                        });
                         fFormData.append('duration', formData.destination === null || formData.destination === "Others" ? formData.duration : durationf * 60);
                         fFormData.append('refund_id', formData.refund_id);
                         const response = await axios.post(`https://helistaging.drukair.com.bt/api/bookings/image/`, fFormData, {
