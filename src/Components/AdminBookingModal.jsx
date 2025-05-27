@@ -17,7 +17,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     const [services, setServices] = useState([]);
     const [finalpriceInBTNOthers, setFinalPriceInBtnOthers] = useState(0);
     const [finalpriceInUSDOthers, setFinalPriceInUSDOthers] = useState(0);
-    const [images, setImages] = useState([])
+    // const [images, setImages] = useState([])
     const [paymentScreenshots, setPaymentScreenshots] = useState([]);
 
     let winterWeight = 450
@@ -202,7 +202,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                     try {
                         const response = await axios.get(`https://helistaging.drukair.com.bt/api/bookings/image/get/${img}`);
                         const pic = response.data.data;
-                        setImages(prev => [...prev, pic]); // or setPaymentScreenshots
+                        setPaymentScreenshots(prev => [...prev, pic]); // or setPaymentScreenshots
                     } catch (error) {
                         console.error(`Failed to fetch image ${img}:`, error);
                     }
