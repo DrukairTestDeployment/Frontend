@@ -18,8 +18,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     const [finalpriceInBTNOthers, setFinalPriceInBtnOthers] = useState(0);
     const [finalpriceInUSDOthers, setFinalPriceInUSDOthers] = useState(0);
     // const [images, setImages] = useState([])
-    const [screenshots, setScreenshots] = useState([]);
-
+    const [paymentScreenshots, setPaymentScreenshots] = useState([]);
 
     let winterWeight = 450
     let summerWeight = 450
@@ -196,109 +195,61 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
 
 
     // Load existing image into state on mount
-    // useEffect(() => {
-    //     const fetchImages = async () => {
-    //         if (booking.payment_type === 'Bank Transfer' && booking.image) {
-    //             for (const img of booking.image) {
-    //                 try {
-    //                     const response = await axios.get(`https://helistaging.drukair.com.bt/api/bookings/image/get/${img}`);
-    //                     const pic = response.data.data;
-    //                     setPaymentScreenshots(prev => [...prev, pic]); // or setPaymentScreenshots
-    //                 } catch (error) {
-    //                     console.error(`Failed to fetch image ${img}:`, error);
-    //                 }
-    //             }
-    //         }
-    //     };
-
-    //     fetchImages();
-    // }, [booking]);
-
-
     useEffect(() => {
-        const loadServerImages = async () => {
-            if (!booking?.image || !Array.isArray(booking.image)) return;
-
-            const loadedImages = await Promise.all(
-                booking.image.map(async (imgName) => {
+        const fetchImages = async () => {
+            if (booking.payment_type === 'Bank Transfer' && booking.image) {
+                for (const img of booking.image) {
                     try {
-                        const response = await axios.get(`https://heli.drukair.com.bt/api/bookings/image/get/${imgName}`);
-                        return {
-                            id: `server-${imgName}`,
-                            url: response.data.data, // Full S3 image URL
-                            preview: null,
-                            file: null,
-                            fromServer: true,
-                        };
-                    } catch (err) {
-                        console.error("Failed to load image", err);
-                        return null;
+                        const response = await axios.get(`https://helistaging.drukair.com.bt/api/bookings/image/get/${img}`);
+                        const pic = response.data.data;
+                        setPaymentScreenshots(prev => [...prev, pic]); // or setPaymentScreenshots
+                    } catch (error) {
+                        console.error(`Failed to fetch image ${img}:`, error);
                     }
-                })
-            );
-
-            setScreenshots((prev) => [...prev, ...loadedImages.filter(Boolean)]);
+                }
+            }
         };
 
-        loadServerImages();
-    }, [booking?.image]);
-
+        fetchImages();
+    }, [booking]);
 
 
     // Handle multiple image uploads
-    // const handleMultipleFilesChange = (event) => {
-    //     const files = Array.from(event.target.files);
-    //     const validFiles = files.filter(file =>
-    //         file.type.startsWith('image/') && file.size <= maxFileSize
-    //     );
-
-    //     const newImages = validFiles.map(file => ({
-    //         id: `${file.name}-${Date.now()}-${Math.random()}`,
-    //         file,
-    //         preview: URL.createObjectURL(file),
-    //     }));
-
-    //     setPaymentScreenshots(prev => [...prev, ...newImages]);
-    //     event.target.value = null;
-    // };
-
     const handleMultipleFilesChange = (event) => {
         const files = Array.from(event.target.files);
         const validFiles = files.filter(file =>
-            file.type.startsWith("image/") && file.size <= maxFileSize
+            file.type.startsWith('image/') && file.size <= maxFileSize
         );
 
-        const newImages = validFiles.map((file, index) => ({
-            id: `local-${Date.now()}-${index}`,
+        const newImages = validFiles.map(file => ({
+            id: `${file.name}-${Date.now()}-${Math.random()}`,
             file,
             preview: URL.createObjectURL(file),
-            url: null,
-            fromServer: false,
         }));
 
-        setScreenshots((prev) => [...prev, ...newImages]);
+        setPaymentScreenshots(prev => [...prev, ...newImages]);
         event.target.value = null;
     };
 
-
     // Remove any image
-    const handleRemoveScreenshot = (id) => {
-        setScreenshots((prev) => {
-            const toRemove = prev.find((img) => img.id === id);
-            if (toRemove?.preview) {
-                URL.revokeObjectURL(toRemove.preview);
+    const handleRemoveImage = (id) => {
+        setPaymentScreenshots(prev => {
+            const filtered = prev.filter(img => img.id !== id);
+            const removed = prev.find(img => img.id === id);
+            if (removed && removed.preview && !removed.isExisting) {
+                URL.revokeObjectURL(removed.preview);
             }
-            return prev.filter((img) => img.id !== id);
+            return filtered;
         });
     };
 
     // Cleanup on unmount
     useEffect(() => {
         return () => {
-            screenshots.forEach(img => {
+            // ✅ Safe cleanup ONLY on component unmount
+            paymentScreenshots.forEach(img => {
                 if (img.preview) URL.revokeObjectURL(img.preview);
             });
-
         };
     }, []);
 
@@ -1237,34 +1188,18 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                         </div>
                     )}
 
-                    {bookingUpdate.payment_type === 'Bank Transfer' && screenshots.length > 0 && (
+                    {bookingUpdate.payment_type === 'Bank Transfer' && paymentScreenshots.length > 0 && (
                         <div className="screenshot-wrapper">
-                            {screenshots.map((img, index) => (
+                            {paymentScreenshots.map((img, index) => (
                                 <div key={img.id} className="screenshot-preview-box">
-                                    <img
-                                        src={img.preview || img.url || "/fallback.jpg"}
-                                        alt={`Screenshot ${index + 1}`}
-                                        className="screenshot-img"
-                                        onError={(e) => (e.target.style.display = "none")}
-                                    />
-                                    <button
-                                        type="button"
-                                        className="remove-btn"
-                                        onClick={() =>
-                                            setScreenshots((prev) => {
-                                                const removed = prev.find(i => i.id === img.id);
-                                                if (removed?.preview) URL.revokeObjectURL(removed.preview);
-                                                return prev.filter(i => i.id !== img.id);
-                                            })
-                                        }
-                                    >
+                                    <img src={img.preview} alt={`Screenshot ${index + 1}`} className="screenshot-img" />
+                                    <button type="button" className="remove-btn" onClick={() => handleRemoveImage(img.id)}>
                                         ✖
                                     </button>
                                 </div>
                             ))}
                         </div>
                     )}
-
 
                     {bookingUpdate.payment_type === 'Bank Transfer' && (
                         <button
