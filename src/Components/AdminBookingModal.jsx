@@ -17,26 +17,29 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     const [services, setServices] = useState([]);
     const [finalpriceInBTNOthers, setFinalPriceInBtnOthers] = useState(0);
     const [finalpriceInUSDOthers, setFinalPriceInUSDOthers] = useState(0);
+    const [images, setImages] = useState([])
     const [paymentScreenshots, setPaymentScreenshots] = useState([]);
 
     let winterWeight = 450
     let summerWeight = 450
 
-    const getImage = async (image) => {
-        for (const img of image) {
-            try {
-                const response = await axios.get(`https://helistaging.drukair.com.bt/api/bookings/image/get/${img}`);
-                const pic = response.data.data;
-                setPaymentScreenshots(prev => [...prev, pic]);
-            } catch (error) {
-                console.error(`Failed to fetch image ${img}:`, error);
-            }
-        }
-    }
+    // const getImage = async (image) => {
+    //     for (const img of image) {
+    //         try {
+    //             const response = await axios.get(`https://helistaging.drukair.com.bt/api/bookings/image/get/${img}`);
+    //             const pic = response.data.data;
+    //             // setPaymentScreenshots(prev => [...prev, pic]);
+    //             setImages(prev => [...prev, pic]);
 
-    if (booking.image) {
-        getImage(booking.image);
-    }
+    //         } catch (error) {
+    //             console.error(`Failed to fetch image ${img}:`, error);
+    //         }
+    //     }
+    // }
+
+    // if (booking.image) {
+    //     getImage(booking.image);
+    // }
 
     // responsive route changes
     const getDuration = async (id) => {
@@ -193,16 +196,23 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
 
     // Load existing image into state on mount
     useEffect(() => {
-        if (booking.payment_type === 'Bank Transfer' && booking.image) {
-            const initialImage = {
-                id: 'existing-' + Date.now(),
-                file: null,
-                preview: booking.image,
-                isExisting: true
-            };
-            setPaymentScreenshots([initialImage]);
-        }
+        const fetchImages = async () => {
+            if (booking.payment_type === 'Bank Transfer' && booking.image) {
+                for (const img of booking.image) {
+                    try {
+                        const response = await axios.get(`https://helistaging.drukair.com.bt/api/bookings/image/get/${img}`);
+                        const pic = response.data.data;
+                        setImages(prev => [...prev, pic]); // or setPaymentScreenshots
+                    } catch (error) {
+                        console.error(`Failed to fetch image ${img}:`, error);
+                    }
+                }
+            }
+        };
+
+        fetchImages();
     }, [booking]);
+
 
     // Handle multiple image uploads
     const handleMultipleFilesChange = (event) => {
@@ -236,11 +246,13 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     // Cleanup on unmount
     useEffect(() => {
         return () => {
+            // ✅ Safe cleanup ONLY on component unmount
             paymentScreenshots.forEach(img => {
-                if (!img.isExisting) URL.revokeObjectURL(img.preview);
+                if (img.preview) URL.revokeObjectURL(img.preview);
             });
         };
-    }, [paymentScreenshots]);
+    }, []);
+
 
     // Fields
     const genderTypes = ['Male', 'Female', 'Others'];
