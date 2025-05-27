@@ -195,41 +195,85 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
 
 
     // Load existing image into state on mount
+    // useEffect(() => {
+    //     const fetchImages = async () => {
+    //         if (booking.payment_type === 'Bank Transfer' && booking.image) {
+    //             for (const img of booking.image) {
+    //                 try {
+    //                     const response = await axios.get(`https://helistaging.drukair.com.bt/api/bookings/image/get/${img}`);
+    //                     const pic = response.data.data;
+    //                     setPaymentScreenshots(prev => [...prev, pic]); // or setPaymentScreenshots
+    //                 } catch (error) {
+    //                     console.error(`Failed to fetch image ${img}:`, error);
+    //                 }
+    //             }
+    //         }
+    //     };
+
+    //     fetchImages();
+    // }, [booking]);
+
+
     useEffect(() => {
-        const fetchImages = async () => {
-            if (booking.payment_type === 'Bank Transfer' && booking.image) {
-                for (const img of booking.image) {
+        const loadServerImages = async () => {
+            if (!booking?.image || !Array.isArray(booking.image)) return;
+
+            const loadedImages = await Promise.all(
+                booking.image.map(async (imgName) => {
                     try {
-                        const response = await axios.get(`https://helistaging.drukair.com.bt/api/bookings/image/get/${img}`);
-                        const pic = response.data.data;
-                        setPaymentScreenshots(prev => [...prev, pic]); // or setPaymentScreenshots
-                    } catch (error) {
-                        console.error(`Failed to fetch image ${img}:`, error);
+                        const response = await axios.get(`https://heli.drukair.com.bt/api/bookings/image/get/${imgName}`);
+                        return {
+                            id: `server-${imgName}`,
+                            url: response.data.data, // Full S3 image URL
+                            preview: null,
+                            file: null,
+                            fromServer: true,
+                        };
+                    } catch (err) {
+                        console.error("Failed to load image", err);
+                        return null;
                     }
-                }
-            }
+                })
+            );
+
+            setScreenshots((prev) => [...prev, ...loadedImages.filter(Boolean)]);
         };
 
-        fetchImages();
-    }, [booking]);
+        loadServerImages();
+    }, [booking?.image]);
+
 
 
     // Handle multiple image uploads
-    const handleMultipleFilesChange = (event) => {
-        const files = Array.from(event.target.files);
-        const validFiles = files.filter(file =>
-            file.type.startsWith('image/') && file.size <= maxFileSize
-        );
+    // const handleMultipleFilesChange = (event) => {
+    //     const files = Array.from(event.target.files);
+    //     const validFiles = files.filter(file =>
+    //         file.type.startsWith('image/') && file.size <= maxFileSize
+    //     );
 
-        const newImages = validFiles.map(file => ({
-            id: `${file.name}-${Date.now()}-${Math.random()}`,
+    //     const newImages = validFiles.map(file => ({
+    //         id: `${file.name}-${Date.now()}-${Math.random()}`,
+    //         file,
+    //         preview: URL.createObjectURL(file),
+    //     }));
+
+    //     setPaymentScreenshots(prev => [...prev, ...newImages]);
+    //     event.target.value = null;
+    // };
+
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        const newImages = files.map((file, index) => ({
+            id: `local-${Date.now()}-${index}`,
             file,
             preview: URL.createObjectURL(file),
+            url: null,
+            fromServer: false,
         }));
 
-        setPaymentScreenshots(prev => [...prev, ...newImages]);
-        event.target.value = null;
+        setScreenshots((prev) => [...prev, ...newImages]);
     };
+
 
     // Remove any image
     const handleRemoveImage = (id) => {
@@ -1190,10 +1234,21 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
 
                     {bookingUpdate.payment_type === 'Bank Transfer' && paymentScreenshots.length > 0 && (
                         <div className="screenshot-wrapper">
-                            {paymentScreenshots.map((img, index) => (
+                            {screenshots.map((img, index) => (
                                 <div key={img.id} className="screenshot-preview-box">
-                                    <img src={img.preview} alt={`Screenshot ${index + 1}`} className="screenshot-img" />
-                                    <button type="button" className="remove-btn" onClick={() => handleRemoveImage(img.id)}>
+                                    <img
+                                        src={img.preview || img.url}
+                                        alt={`Screenshot ${index + 1}`}
+                                        className="screenshot-img"
+                                        onError={(e) => (e.target.style.display = "none")}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="remove-btn"
+                                        onClick={() =>
+                                            setScreenshots(screenshots.filter((i) => i.id !== img.id))
+                                        }
+                                    >
                                         ✖
                                     </button>
                                 </div>
