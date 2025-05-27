@@ -19,6 +19,8 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     const [finalpriceInUSDOthers, setFinalPriceInUSDOthers] = useState(0);
     // const [images, setImages] = useState([])
     const [paymentScreenshots, setPaymentScreenshots] = useState([]);
+    const [screenshots, setScreenshots] = useState([]);
+
 
     let winterWeight = 450
     let summerWeight = 450
@@ -261,9 +263,13 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     //     event.target.value = null;
     // };
 
-    const handleFileChange = (e) => {
-        const files = Array.from(e.target.files);
-        const newImages = files.map((file, index) => ({
+    const handleMultipleFilesChange = (event) => {
+        const files = Array.from(event.target.files);
+        const validFiles = files.filter(file =>
+            file.type.startsWith("image/") && file.size <= maxFileSize
+        );
+
+        const newImages = validFiles.map((file, index) => ({
             id: `local-${Date.now()}-${index}`,
             file,
             preview: URL.createObjectURL(file),
@@ -272,6 +278,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
         }));
 
         setScreenshots((prev) => [...prev, ...newImages]);
+        event.target.value = null;
     };
 
 
