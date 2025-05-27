@@ -1196,7 +1196,20 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                         <div className="screenshot-wrapper">
                             {paymentScreenshots.map((img, index) => (
                                 <div key={img.id} className="screenshot-preview-box">
-                                    <img src={img} alt={`Screenshot ${index + 1}`} className="screenshot-img" />
+                                    <img src={img||img.preview} alt={`Screenshot ${index + 1}`} className="screenshot-img" />
+                                    <button type="button" className="remove-btn" onClick={() => handleRemoveImage(img.id)}>
+                                        ✖
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {bookingUpdate.payment_type === 'Bank Transfer' && paymentScreenshots.length > 0 && (
+                        <div className="screenshot-wrapper">
+                            {paymentScreenshots.map((img, index) => (
+                                <div key={img.id} className="screenshot-preview-box">
+                                    <img src={img.preview?img.preview:img} alt={`Screenshot ${index + 1}`} className="screenshot-img" />
                                     <button type="button" className="remove-btn" onClick={() => handleRemoveImage(img.id)}>
                                         ✖
                                     </button>
