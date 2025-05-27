@@ -8,7 +8,6 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     const [priceInUSDOthers, setPriceInUSDOthers] = useState(booking.bookingPriceUSD)
     const [priceInBtnOthers, setPriceInBtnOthers] = useState(booking.bookingPriceBTN)
     const paymentTypes = ['Online', 'Bank Transfer', 'Cash'];
-    const [url, setUrl] = useState("");
 
 
     // Responsive route changes
@@ -18,16 +17,21 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     const [services, setServices] = useState([]);
     const [finalpriceInBTNOthers, setFinalPriceInBtnOthers] = useState(0);
     const [finalpriceInUSDOthers, setFinalPriceInUSDOthers] = useState(0);
+    const [paymentScreenshots, setPaymentScreenshots] = useState([]);
 
     let winterWeight = 450
     let summerWeight = 450
 
     const getImage = async (image) => {
-        const response = await axios.get(`https://helistaging.drukair.com.bt/api/bookings/image/get/${image}`);
-
-        const pic = response.data.data
-        setUrl(pic);
-        console.log(pic);
+        for (const img of image) {
+            try {
+                const response = await axios.get(`https://helistaging.drukair.com.bt/api/bookings/image/get/${img}`);
+                const pic = response.data.data;
+                setPaymentScreenshots(prev => [...prev, pic]);
+            } catch (error) {
+                console.error(`Failed to fetch image ${img}:`, error);
+            }
+        }
     }
 
     if (booking.image) {
@@ -184,7 +188,6 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     const [activeTab, setActiveTab] = useState(0);
 
     // const [imagePreview, setImagePreview] = useState(''); 
-    const [paymentScreenshots, setPaymentScreenshots] = useState([]);
     const maxFileSize = 5 * 1024 * 1024; // Max size 5MB
 
 
