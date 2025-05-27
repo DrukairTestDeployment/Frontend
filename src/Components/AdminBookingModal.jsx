@@ -23,26 +23,6 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     let winterWeight = 450
     let summerWeight = 450
 
-
-    // const getImage = async (image) => {
-    //     for (const img of image) {
-    //         try {
-    //             const response = await axios.get(`https://helistaging.drukair.com.bt/api/bookings/image/get/${img}`);
-    //             const pic = response.data.data;
-    //             // setPaymentScreenshots(prev => [...prev, pic]);
-    //             setImages(prev => [...prev, pic]);
-
-    //         } catch (error) {
-    //             console.error(`Failed to fetch image ${img}:`, error);
-    //         }
-    //     }
-    // }
-
-    // if (booking.image) {
-    //     getImage(booking.image);
-    // }
-
-    // responsive route changes
     const getDuration = async (id) => {
         if (id === "Others") {
             setDuration(0)
@@ -214,10 +194,6 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
         fetchImages();
     }, [booking]);
 
-    console.log(paymentScreenshots)
-
-
-
     // Handle multiple image uploads
     const handleMultipleFilesChange = (event) => {
         const files = Array.from(event.target.files);
@@ -271,37 +247,6 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     }, [booking]);
 
 
-    // const handleFileChange = (event) => {
-    //     const file = event.target.files[0];
-
-    //     if (file) {
-    //         if (!file.type.startsWith('image/')) {
-    //             alert("Please upload a valid image file.");
-    //             return;
-    //         }
-
-    //         if (file.size > maxFileSize) {
-    //             alert("File size should not exceed 5MB.");
-    //             return;
-    //         }
-
-    //         setBookingUpdate((prevData) => ({
-    //             ...prevData,
-    //             paymentScreenShot: file,
-    //         }));
-
-    //         const previewUrl = URL.createObjectURL(file);
-    //         setImagePreview(previewUrl);
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     return () => {
-    //         if (imagePreview) {
-    //             URL.revokeObjectURL(imagePreview);
-    //         }
-    //     };
-    // }, [imagePreview]);
 
     useEffect(() => {
         setBookingUpdate((prevBooking) => ({
@@ -1192,18 +1137,6 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                         </div>
                     )}
 
-                    {bookingUpdate.payment_type === 'Bank Transfer' && paymentScreenshots.length > 0 && (
-                        <div className="screenshot-wrapper">
-                            {paymentScreenshots.map((img, index) => (
-                                <div key={img.id} className="screenshot-preview-box">
-                                    <img src={img||img.preview} alt={`Screenshot ${index + 1}`} className="screenshot-img" />
-                                    <button type="button" className="remove-btn" onClick={() => handleRemoveImage(img.id)}>
-                                        ✖
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    )}
 
                     {bookingUpdate.payment_type === 'Bank Transfer' && paymentScreenshots.length > 0 && (
                         <div className="screenshot-wrapper">
