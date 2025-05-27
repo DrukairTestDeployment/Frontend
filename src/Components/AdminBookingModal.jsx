@@ -18,7 +18,6 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     const [finalpriceInBTNOthers, setFinalPriceInBtnOthers] = useState(0);
     const [finalpriceInUSDOthers, setFinalPriceInUSDOthers] = useState(0);
     // const [images, setImages] = useState([])
-    const [paymentScreenshots, setPaymentScreenshots] = useState([]);
     const [screenshots, setScreenshots] = useState([]);
 
 
@@ -283,24 +282,23 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
 
 
     // Remove any image
-    const handleRemoveImage = (id) => {
-        setPaymentScreenshots(prev => {
-            const filtered = prev.filter(img => img.id !== id);
-            const removed = prev.find(img => img.id === id);
-            if (removed && removed.preview && !removed.isExisting) {
-                URL.revokeObjectURL(removed.preview);
+    const handleRemoveScreenshot = (id) => {
+        setScreenshots((prev) => {
+            const toRemove = prev.find((img) => img.id === id);
+            if (toRemove?.preview) {
+                URL.revokeObjectURL(toRemove.preview);
             }
-            return filtered;
+            return prev.filter((img) => img.id !== id);
         });
     };
 
     // Cleanup on unmount
     useEffect(() => {
         return () => {
-            // ✅ Safe cleanup ONLY on component unmount
-            paymentScreenshots.forEach(img => {
+            screenshots.forEach(img => {
                 if (img.preview) URL.revokeObjectURL(img.preview);
             });
+
         };
     }, []);
 
@@ -1239,12 +1237,12 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                         </div>
                     )}
 
-                    {bookingUpdate.payment_type === 'Bank Transfer' && paymentScreenshots.length > 0 && (
+                    {bookingUpdate.payment_type === 'Bank Transfer' && screenshots.length > 0 && (
                         <div className="screenshot-wrapper">
                             {screenshots.map((img, index) => (
                                 <div key={img.id} className="screenshot-preview-box">
                                     <img
-                                        src={img.preview || img.url}
+                                        src={img.preview || img.url || "/fallback.jpg"}
                                         alt={`Screenshot ${index + 1}`}
                                         className="screenshot-img"
                                         onError={(e) => (e.target.style.display = "none")}
@@ -1253,7 +1251,11 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                                         type="button"
                                         className="remove-btn"
                                         onClick={() =>
-                                            setScreenshots(screenshots.filter((i) => i.id !== img.id))
+                                            setScreenshots((prev) => {
+                                                const removed = prev.find(i => i.id === img.id);
+                                                if (removed?.preview) URL.revokeObjectURL(removed.preview);
+                                                return prev.filter(i => i.id !== img.id);
+                                            })
                                         }
                                     >
                                         ✖
@@ -1262,6 +1264,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                             ))}
                         </div>
                     )}
+
 
                     {bookingUpdate.payment_type === 'Bank Transfer' && (
                         <button
