@@ -23,6 +23,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     let winterWeight = 450
     let summerWeight = 450
 
+
     // const getImage = async (image) => {
     //     for (const img of image) {
     //         try {
@@ -212,6 +213,9 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
 
         fetchImages();
     }, [booking]);
+
+    console.log(paymentScreenshots)
+
 
 
     // Handle multiple image uploads
@@ -1192,7 +1196,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                         <div className="screenshot-wrapper">
                             {paymentScreenshots.map((img, index) => (
                                 <div key={img.id} className="screenshot-preview-box">
-                                    <img src={img.preview} alt={`Screenshot ${index + 1}`} className="screenshot-img" />
+                                    <img src={img} alt={`Screenshot ${index + 1}`} className="screenshot-img" />
                                     <button type="button" className="remove-btn" onClick={() => handleRemoveImage(img.id)}>
                                         ✖
                                     </button>
