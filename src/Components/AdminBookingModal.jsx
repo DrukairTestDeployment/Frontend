@@ -178,23 +178,39 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     // Load existing image into state on mount
     useEffect(() => {
         const fetchImages = async () => {
-            if (booking.payment_type === 'Bank Transfer' && booking.image) {
+            if (booking.payment_type === 'Bank Transfer' && Array.isArray(booking.image)) {
+                const fetchedImages = [];
+
                 for (const img of booking.image) {
                     try {
                         const response = await axios.get(`https://helistaging.drukair.com.bt/api/bookings/image/get/${img}`);
                         const pic = response.data.data;
-                        setPaymentScreenshots(prev => [...prev, pic]); // or setPaymentScreenshots
+
+                        if (!fetchedImages.includes(pic)) {
+                            fetchedImages.push({
+                                id: `${img}-${Date.now()}-${Math.random()}`, 
+                                preview: pic,
+                                isExisting: true
+                            });
+                        }
                     } catch (error) {
-                        console.error(`Failed to fetch image ${img}:`, error);
+                        Swal.fire({
+                            title: "Error!",
+                            text: error.response ? error.response.data.error : "Error fetching image",
+                            icon: "error",
+                            confirmButtonColor: "#1E306D",
+                            confirmButtonText: "OK",
+                        });
                     }
                 }
+                setPaymentScreenshots(fetchedImages);
             }
         };
 
         fetchImages();
-    }, [booking]);
+    }, [booking.payment_type, booking.image]);
 
-    // Handle multiple image uploads
+
     const handleMultipleFilesChange = (event) => {
         const files = Array.from(event.target.files);
         const validFiles = files.filter(file =>
@@ -212,21 +228,63 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     };
 
     // Remove any image
-    const handleRemoveImage = (id) => {
-        setPaymentScreenshots(prev => {
-            const filtered = prev.filter(img => img.id !== id);
-            const removed = prev.find(img => img.id === id);
-            if (removed && removed.preview && !removed.isExisting) {
-                URL.revokeObjectURL(removed.preview);
+    const handleRemoveImage = async (id) => {
+        const image = paymentScreenshots.find(img => img.id === id);
+
+        if (!image || !image.preview) {
+            console.error("Image not found or missing preview URL.");
+            return;
+        }
+
+        try {
+            // Extract S3 key from image.preview
+            const url = new URL(image.preview);
+            const imageKey = decodeURIComponent(url.pathname.split('/').pop());
+
+            const response = await axios.delete(
+                `https://helistaging.drukair.com.bt/api/bookings/imagedelete/${booking._id}/${imageKey}`
+            );
+
+            if (response.data.status === "success") {
+                Swal.fire({
+                    title: "Success!",
+                    text: "Image deleted successfully",
+                    icon: "success",
+                    confirmButtonColor: "#1E306D",
+                    confirmButtonText: "OK",
+                });
+
+                setPaymentScreenshots(prev => {
+                    const filtered = prev.filter(img => img.id !== id);
+                    if (!image.isExisting && image.preview) {
+                        URL.revokeObjectURL(image.preview); // revoke only for newly added ones
+                    }
+                    return filtered;
+                });
+
+            } else {
+                Swal.fire({
+                    title: "Warning!",
+                    text: "Image Deletion Unsuccessful",
+                    icon: "warning",
+                    confirmButtonColor: "#1E306D",
+                    confirmButtonText: "OK",
+                });
             }
-            return filtered;
-        });
+        } catch (error) {
+            Swal.fire({
+                title: "Error!",
+                text: error.response?.data?.message || "Error deleting image",
+                icon: "error",
+                confirmButtonColor: "#1E306D",
+                confirmButtonText: "OK",
+            });
+        }
     };
 
-    // Cleanup on unmount
+
     useEffect(() => {
         return () => {
-            // ✅ Safe cleanup ONLY on component unmount
             paymentScreenshots.forEach(img => {
                 if (img.preview) URL.revokeObjectURL(img.preview);
             });
@@ -1142,8 +1200,26 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                         <div className="screenshot-wrapper">
                             {paymentScreenshots.map((img, index) => (
                                 <div key={img.id} className="screenshot-preview-box">
-                                    <img src={img.preview?img.preview:img} alt={`Screenshot ${index + 1}`} className="screenshot-img" />
-                                    <button type="button" className="remove-btn" onClick={() => handleRemoveImage(img.id)}>
+                                    <img src={img.preview ? img.preview : img} alt={`Screenshot ${index + 1}`} className="screenshot-img" />
+                                    <button
+                                        type="button"
+                                        className="remove-btn"
+                                        onClick={() => {
+                                            Swal.fire({
+                                                title: 'Are you sure?',
+                                                text: 'Do you really want to delete this image?',
+                                                icon: 'warning',
+                                                showCancelButton: true,
+                                                confirmButtonColor: '#d33',
+                                                cancelButtonColor: '#3085d6',
+                                                confirmButtonText: 'Yes, delete it!'
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    handleRemoveImage(img.id);
+                                                }
+                                            });
+                                        }}
+                                    >
                                         ✖
                                     </button>
                                 </div>
@@ -1168,7 +1244,8 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                         className="admin-booking-modal-btn admin-schedule-modal-btn"
                         onClick={(e) => {
                             e.preventDefault();
-                            onUpdate(bookingUpdate, passengerList);
+                            const images = paymentScreenshots.filter(img => img.file);
+                            onUpdate(bookingUpdate, passengerList, images);
                         }}
                     >
                         Update

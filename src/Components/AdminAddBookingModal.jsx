@@ -547,6 +547,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                         paymentScreenshots.forEach((img) => {
                             fFormData.append('image', img.file); // `images` must match multer.array('images', 10)
                         });
+
                         fFormData.append('duration', formData.destination === null || formData.destination === "Others" ? formData.duration : durationf * 60);
                         fFormData.append('refund_id', formData.refund_id);
                         const response = await axios.post(`https://helistaging.drukair.com.bt/api/bookings/image/`, fFormData, {
@@ -963,9 +964,9 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                                         <label>
                                             Please provide details about the medical condition
                                             <textarea
-                                                name="medicalRemarks"
+                                                name="remarks"
                                                 placeholder="Enter any medical remarks here"
-                                                value={passengerData.passengers[index]?.medicalRemarks || ''}
+                                                value={passengerData.passengers[index]?.remarks || ''}
                                                 onChange={(e) => handleChange(e, index)}
                                                 className='medicalRemarksInput'
                                             ></textarea>
