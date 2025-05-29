@@ -661,7 +661,7 @@ function AdminScheduleModal({
         </span>
         <div className="form-title">Booking Details</div>
 
-        <form onSubmit={handleSubmit}>
+        <form>
           <p className="booking-break-header">Client/Agent Details</p>
 
           <div className="booking-form-group">
