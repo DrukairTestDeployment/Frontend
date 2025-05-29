@@ -367,7 +367,9 @@ function AdminSchedule() {
           formData.append('destination', updatedBookingData.destination);
           formData.append('destination_other', updatedBookingData.destination_other);
           formData.append('service_id', updatedBookingData.service_id);
-          formData.append('cType', updatedBookingData.cType);
+          formData.append('cType', typeof updatedBookingData.service_id === 'object'
+                ? updatedBookingData.service_id._id
+                : updatedBookingData.service_id);
           images.forEach((img) => {
             formData.append('image', img.file); // `images` must match multer.array('images', 10)
           });
