@@ -4,6 +4,11 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { IoMdRemove, IoMdAdd } from "react-icons/io";
 
+// pdf
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
+
 function AdminScheduleModal({
   isOpen,
   onClose,
@@ -28,58 +33,12 @@ function AdminScheduleModal({
   const [imageError, setImageError] = useState(false);
   const [passengerList, setPassengerList] = useState();
 
+  // Passenger list downloads
+  const [downloadFormat, setDownloadFormat] = useState("");
 
   // multiple images 
   const [paymentScreenshots, setPaymentScreenshots] = useState([]);
   const maxFileSize = 5 * 1024 * 1024;
-
-  useEffect(() => {
-    if (booking?.payment_type === 'Bank Transfer' && booking.image) {
-      const initialImage = {
-        id: 'existing-' + Date.now(),
-        file: null,
-        preview: booking.image,
-        isExisting: true
-      };
-      setPaymentScreenshots([initialImage]);
-    }
-  }, [booking]);
-
-  const handleMultipleFilesChange = (event) => {
-    const files = Array.from(event.target.files);
-
-    const validFiles = files.filter(file =>
-      file.type.startsWith('image/') && file.size <= maxFileSize
-    );
-
-    const newImages = validFiles.map(file => ({
-      id: `${file.name}-${Date.now()}-${Math.random()}`,
-      file,
-      preview: URL.createObjectURL(file),
-    }));
-
-    setPaymentScreenshots(prev => [...prev, ...newImages]);
-    event.target.value = null;
-  };
-
-  const handleRemoveImage = (id) => {
-    setPaymentScreenshots(prev => {
-      const filtered = prev.filter(img => img.id !== id);
-      const removed = prev.find(img => img.id === id);
-      if (removed && removed.preview && !removed.isExisting) {
-        URL.revokeObjectURL(removed.preview);
-      }
-      return filtered;
-    });
-  };
-
-  useEffect(() => {
-    return () => {
-      paymentScreenshots.forEach(img => {
-        if (!img.isExisting) URL.revokeObjectURL(img.preview);
-      });
-    };
-  }, [paymentScreenshots]);
 
   // Fields
   const genderTypes = ['Male', 'Female', 'Others'];
@@ -365,7 +324,121 @@ function AdminScheduleModal({
     }
   }, [booking]);
 
-  // console.log(booking)
+  useEffect(() => {
+    const fetchImages = async () => {
+      if (booking && booking.payment_type === 'Bank Transfer' && Array.isArray(booking.image)) {
+        const fetchedImages = [];
+
+        for (const img of booking.image) {
+          try {
+            const response = await axios.get(`https://helistaging.drukair.com.bt/api/bookings/image/get/${img}`);
+            const pic = response.data.data;
+
+            if (!fetchedImages.includes(pic)) {
+              fetchedImages.push({
+                id: `${img}-${Date.now()}-${Math.random()}`,
+                preview: pic,
+                isExisting: true
+              });
+            }
+          } catch (error) {
+            Swal.fire({
+              title: "Error!",
+              text: error.response ? error.response.data.error : "Error fetching image",
+              icon: "error",
+              confirmButtonColor: "#1E306D",
+              confirmButtonText: "OK",
+            });
+          }
+        }
+        setPaymentScreenshots(fetchedImages);
+      }
+    };
+
+    fetchImages();
+  }, [booking]);
+
+
+  const handleMultipleFilesChange = (event) => {
+    const files = Array.from(event.target.files);
+    const validFiles = files.filter(file =>
+      file.type.startsWith('image/') && file.size <= maxFileSize
+    );
+
+    const newImages = validFiles.map(file => ({
+      id: `${file.name}-${Date.now()}-${Math.random()}`,
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+
+    setPaymentScreenshots(prev => [...prev, ...newImages]);
+    event.target.value = null;
+  };
+
+  // Remove any image
+  const handleRemoveImage = async (id) => {
+    const image = paymentScreenshots.find(img => img.id === id);
+
+    if (!image || !image.preview) {
+      console.error("Image not found or missing preview URL.");
+      return;
+    }
+
+    try {
+      // Extract S3 key from image.preview
+      const url = new URL(image.preview);
+      const imageKey = decodeURIComponent(url.pathname.split('/').pop());
+
+      const response = await axios.delete(
+        `https://helistaging.drukair.com.bt/api/bookings/imagedelete/${booking._id}/${imageKey}`
+      );
+
+      if (response.data.status === "success") {
+        Swal.fire({
+          title: "Success!",
+          text: "Image deleted successfully",
+          icon: "success",
+          confirmButtonColor: "#1E306D",
+          confirmButtonText: "OK",
+        });
+
+        setPaymentScreenshots(prev => {
+          const filtered = prev.filter(img => img.id !== id);
+          if (!image.isExisting && image.preview) {
+            URL.revokeObjectURL(image.preview); // revoke only for newly added ones
+          }
+          return filtered;
+        });
+
+      } else {
+        Swal.fire({
+          title: "Warning!",
+          text: "Image Deletion Unsuccessful",
+          icon: "warning",
+          confirmButtonColor: "#1E306D",
+          confirmButtonText: "OK",
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        title: "Error!",
+        text: error.response?.data?.message || "Error deleting image",
+        icon: "error",
+        confirmButtonColor: "#1E306D",
+        confirmButtonText: "OK",
+      });
+    }
+  };
+
+
+  useEffect(() => {
+    return () => {
+      paymentScreenshots.forEach(img => {
+        if (img.preview) URL.revokeObjectURL(img.preview);
+      });
+    };
+  }, []);
+
 
   useEffect(() => {
     const fetchBooking = async () => {
@@ -449,26 +522,136 @@ function AdminScheduleModal({
     }));
   };
 
-  const [url, setUrl] = useState("");
+  if (!isOpen || !booking) return null;
 
-  const getImage = async (image) => {
-    // const response = await axios.get(`https://heli.drukair.com.bt/api/bookings/image/get/${image}`);
+  // Download functions
+  const downloadPassengerCSV = (passengers, booking) => {
+    const csvHeader = [
+      "Name", "Gender", "Weight", "Baggage Weight", "CID/Passport", "Contact No", "Medical Issues", "Remarks"
+    ];
 
-    // const pic = response.data.data
-    // setUrl(pic);
-  }
+    const csvRows = passengers.map(p => [
+      p.name || '', p.gender || '', p.weight || '', p.bagWeight || '',
+      p.cid || '', p.contact || '', p.medIssue || '', p.remarks || ''
+    ]);
 
-  if (booking?.image) {
-    getImage(booking.image);
-  }
+    const headerLines = [
+      `Flight Date: ${booking?.flight_date || ""}`,
+      `Booking ID: ${booking?.bookingID || ""}`,
+      ""
+    ];
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onUpdate(formData, passengerList);
-    onClose();
+    const csvContent = [
+      ...headerLines,
+      csvHeader.join(","),
+      ...csvRows.map(row => row.map(field => `"${field}"`).join(","))
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `passenger_list_${booking?.bookingID || 'booking'}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
-  if (!isOpen || !booking) return null;
+  const downloadPassengerXLSX = (passengers, booking) => {
+    if (!passengers || passengers.length === 0) {
+      Swal.fire("No Data", "There are no passengers to download.", "info");
+      return;
+    }
+
+    const header = [
+      ["Flight Date:", booking.flight_date || ""],
+      ["Booking ID:", booking.bookingID || ""],
+      [], // empty row before table
+      [
+        "Name", "Gender", "Weight", "Baggage Weight",
+        "CID/Passport", "Contact No", "Medical Issues", "Remarks"
+      ]
+    ];
+
+    const rows = passengers.map(p => [
+      p.name || '',
+      p.gender || '',
+      p.weight || '',
+      p.bagWeight || '',
+      p.cid ? `'${p.cid}` : '', // fix large number formatting
+      p.contact || '',
+      p.medIssue || '',
+      p.remarks || 'None'
+    ]);
+
+    const data = [...header, ...rows];
+
+    const worksheet = XLSX.utils.aoa_to_sheet(data);
+
+    // Optional: set column width
+    worksheet["!cols"] = [
+      { wch: 20 }, { wch: 10 }, { wch: 10 }, { wch: 15 },
+      { wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 30 }
+    ];
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Passengers");
+
+    XLSX.writeFile(workbook, `passenger_list_${booking.bookingID || "booking"}.xlsx`);
+  };
+
+
+  const downloadPassengerPDF = (passengers, booking) => {
+    const doc = new jsPDF();
+
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text(`Passenger List`, 14, 15);
+
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Flight Date: ${booking?.flight_date || ""}`, 14, 25);
+    doc.text(`Booking ID: ${booking?.bookingID || ""}`, 14, 32);
+
+    const tableColumn = [
+      "Name", "Gender", "Weight", "Baggage Weight",
+      "CID/Passport", "Contact No", "Medical Issues", "Remarks"
+    ];
+
+    const tableRows = passengers.map(p => [
+      p.name || '', p.gender || '', p.weight || '', p.bagWeight || '',
+      p.cid || '', p.contact || '', p.medIssue || '', p.remarks || 'None'
+    ]);
+
+    autoTable(doc, {
+      startY: 40,
+      head: [tableColumn],
+      body: tableRows,
+      styles: { fontSize: 9 },
+      columnStyles: {
+        0: { cellWidth: 30 },
+        4: { cellWidth: 35 },
+        7: { cellWidth: 40 }
+      }
+    });
+
+    doc.save(`passenger_list_${booking?.bookingID || 'booking'}.pdf`);
+  };
+
+
+
+  const handleDownload = (type) => {
+    if (!type) return;
+
+    if (type === "csv") {
+      downloadPassengerCSV(passengerList, booking);
+    } else if (type === "pdf") {
+      downloadPassengerPDF(passengerList, booking);
+    } else if (type === "xlsx") {
+      downloadPassengerXLSX(passengerList, booking);
+    }
+  };
 
   return (
     <div className="booking-modal-overlay">
@@ -964,6 +1147,37 @@ function AdminScheduleModal({
               </button>
             )}
           </div>
+
+          {/* Passengelist download button */}
+          <div>
+            <label style={{ fontWeight: 'bold', marginTop: '20px', marginBottom: '10px' }}>Download Passenger List:</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem' }}>
+              <select
+                value={downloadFormat}
+                onChange={(e) => setDownloadFormat(e.target.value)}
+                style={{ padding: '5px', fontWeight: 'bold' }}
+              >
+                <option value="" disabled>Select format</option>
+                <option value="csv">CSV</option>
+                <option value="pdf">PDF</option>
+                <option value="xlsx">XLSX</option>
+              </select>
+
+              <button
+                type="button"
+                onClick={() => handleDownload(downloadFormat)}
+                className="passenger-btn"
+                disabled={!downloadFormat}
+                style={
+                  {
+                    padding: '0 12px'
+                  }
+                }
+              >
+                Download
+              </button>
+            </div>
+          </div>
           <div className="whiteSpace"></div>
           <p className="booking-break-header">Extra Details</p>
           <div className="booking-form-group">
@@ -1240,8 +1454,26 @@ function AdminScheduleModal({
             <div className="screenshot-wrapper">
               {paymentScreenshots.map((img, index) => (
                 <div key={img.id} className="screenshot-preview-box">
-                  <img src={img.preview} alt={`Screenshot ${index + 1}`} className="screenshot-img" />
-                  <button type="button" className="remove-btn" onClick={() => handleRemoveImage(img.id)}>
+                  <img src={img.preview ? img.preview : img} alt={`Screenshot ${index + 1}`} className="screenshot-img" />
+                  <button
+                    type="button"
+                    className="remove-btn"
+                    onClick={() => {
+                      Swal.fire({
+                        title: 'Are you sure?',
+                        text: 'Do you really want to delete this image?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Yes, delete it!'
+                      }).then((result) => {
+                        if (result.isConfirmed) {
+                          handleRemoveImage(img.id);
+                        }
+                      });
+                    }}
+                  >
                     ✖
                   </button>
                 </div>
@@ -1281,6 +1513,11 @@ function AdminScheduleModal({
           <button
             type="submit"
             className="admin-booking-modal-btn admin-schedule-modal-btn"
+            onClick={(e) => {
+              e.preventDefault();
+              const images = paymentScreenshots.filter(img => img.file);
+              onUpdate(formData, passengerList, images);
+            }}
           >
             Update
           </button>

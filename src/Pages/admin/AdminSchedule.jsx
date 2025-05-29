@@ -230,7 +230,7 @@ function AdminSchedule() {
     }
   };
 
-  const onUpdate = async (updatedBookingData, passengers) => {
+  const onUpdate = async (updatedBookingData, passengers, images) => {
     Swal.fire({
       title: "",
       text: "Are you sure you want to make changes to this booking?",
@@ -278,7 +278,6 @@ function AdminSchedule() {
               cType: updatedBookingData.cType
             }
           );
-          console.log(updatedBookingData)
           if (response.data.status === "success") {
             await postPassenger(passengers);
             Swal.fire({
@@ -369,6 +368,9 @@ function AdminSchedule() {
           formData.append('destination_other', updatedBookingData.destination_other);
           formData.append('service_id', updatedBookingData.service_id);
           formData.append('cType', updatedBookingData.cType);
+          images.forEach((img) => {
+            formData.append('image', img.file); // `images` must match multer.array('images', 10)
+          });
               
           const response = await axios.patch(
             `https://helistaging.drukair.com.bt/api/bookings/imageupdate/${updatedBookingData._id}`, formData,

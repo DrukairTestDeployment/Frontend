@@ -4,10 +4,18 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { IoMdRemove, IoMdAdd } from "react-icons/io";
 
+// pdf
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
+
 function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate }) {
     const [priceInUSDOthers, setPriceInUSDOthers] = useState(booking.bookingPriceUSD)
     const [priceInBtnOthers, setPriceInBtnOthers] = useState(booking.bookingPriceBTN)
     const paymentTypes = ['Online', 'Bank Transfer', 'Cash'];
+
+    // Passenger list downloads
+    const [downloadFormat, setDownloadFormat] = useState("");
 
 
     // Responsive route changes
@@ -188,7 +196,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
 
                         if (!fetchedImages.includes(pic)) {
                             fetchedImages.push({
-                                id: `${img}-${Date.now()}-${Math.random()}`, 
+                                id: `${img}-${Date.now()}-${Math.random()}`,
                                 preview: pic,
                                 isExisting: true
                             });
@@ -448,6 +456,136 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     };
 
     if (!isModalOpen || !booking) return null;
+
+
+    // Download functions
+    const downloadPassengerCSV = (passengers, booking) => {
+        const csvHeader = [
+            "Name", "Gender", "Weight", "Baggage Weight", "CID/Passport", "Contact No", "Medical Issues", "Remarks"
+        ];
+
+        const csvRows = passengers.map(p => [
+            p.name || '', p.gender || '', p.weight || '', p.bagWeight || '',
+            p.cid || '', p.contact || '', p.medIssue || '', p.remarks || ''
+        ]);
+
+        const headerLines = [
+            `Flight Date: ${booking?.flight_date || ""}`,
+            `Booking ID: ${booking?.bookingID || ""}`,
+            ""
+        ];
+
+        const csvContent = [
+            ...headerLines,
+            csvHeader.join(","),
+            ...csvRows.map(row => row.map(field => `"${field}"`).join(","))
+        ].join("\n");
+
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `passenger_list_${booking?.bookingID || 'booking'}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    const downloadPassengerXLSX = (passengers, booking) => {
+        if (!passengers || passengers.length === 0) {
+            Swal.fire("No Data", "There are no passengers to download.", "info");
+            return;
+        }
+
+        const header = [
+            ["Flight Date:", booking.flight_date || ""],
+            ["Booking ID:", booking.bookingID || ""],
+            [], // empty row before table
+            [
+                "Name", "Gender", "Weight", "Baggage Weight",
+                "CID/Passport", "Contact No", "Medical Issues", "Remarks"
+            ]
+        ];
+
+        const rows = passengers.map(p => [
+            p.name || '',
+            p.gender || '',
+            p.weight || '',
+            p.bagWeight || '',
+            p.cid ? `'${p.cid}` : '', // fix large number formatting
+            p.contact || '',
+            p.medIssue || '',
+            p.remarks || 'None'
+        ]);
+
+        const data = [...header, ...rows];
+
+        const worksheet = XLSX.utils.aoa_to_sheet(data);
+
+        // Optional: set column width
+        worksheet["!cols"] = [
+            { wch: 20 }, { wch: 10 }, { wch: 10 }, { wch: 15 },
+            { wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 30 }
+        ];
+
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Passengers");
+
+        XLSX.writeFile(workbook, `passenger_list_${booking.bookingID || "booking"}.xlsx`);
+    };
+
+
+    const downloadPassengerPDF = (passengers, booking) => {
+        const doc = new jsPDF();
+
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.text(`Passenger List`, 14, 15);
+
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Flight Date: ${booking?.flight_date || ""}`, 14, 25);
+        doc.text(`Booking ID: ${booking?.bookingID || ""}`, 14, 32);
+
+        const tableColumn = [
+            "Name", "Gender", "Weight", "Baggage Weight",
+            "CID/Passport", "Contact No", "Medical Issues", "Remarks"
+        ];
+
+        const tableRows = passengers.map(p => [
+            p.name || '', p.gender || '', p.weight || '', p.bagWeight || '',
+            p.cid || '', p.contact || '', p.medIssue || '', p.remarks || 'None'
+        ]);
+
+        autoTable(doc, {
+            startY: 40,
+            head: [tableColumn],
+            body: tableRows,
+            styles: { fontSize: 9 },
+            columnStyles: {
+                0: { cellWidth: 30 },
+                4: { cellWidth: 35 },
+                7: { cellWidth: 40 }
+            }
+        });
+
+        doc.save(`passenger_list_${booking?.bookingID || 'booking'}.pdf`);
+    };
+
+
+
+    const handleDownload = (type) => {
+        if (!type) return;
+
+        if (type === "csv") {
+            downloadPassengerCSV(passengerList, booking);
+        } else if (type === "pdf") {
+            downloadPassengerPDF(passengerList, booking);
+        } else if (type === "xlsx") {
+            downloadPassengerXLSX(passengerList, booking);
+        }
+    };
 
     return (
         <div className="booking-modal-overlay">
@@ -889,6 +1027,37 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                             </button>
                         )}
                     </div>
+
+                    {/* Passengelist download button */}
+                    <div>
+                        <label style={{ fontWeight: 'bold',marginTop:'20px',marginBottom:'10px' }}>Download Passenger List:</label>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem' }}>
+                            <select
+                                value={downloadFormat}
+                                onChange={(e) => setDownloadFormat(e.target.value)}
+                                style={{ padding: '5px', fontWeight: 'bold' }}
+                            >
+                                <option value="" disabled>Select format</option>
+                                <option value="csv">CSV</option>
+                                <option value="pdf">PDF</option>
+                                <option value="xlsx">XLSX</option> 
+                            </select>
+
+                            <button
+                                onClick={() => handleDownload(downloadFormat)}
+                                className="passenger-btn"
+                                disabled={!downloadFormat}
+                                style={
+                                    {
+                                        padding: '0 12px'
+                                    }
+                                }
+                            >
+                                Download
+                            </button>
+                        </div>
+                    </div>
+                    
                     <div className="whiteSpace"></div>
 
                     <p className='booking-break-header'>Extra Details</p>
