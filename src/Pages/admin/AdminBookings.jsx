@@ -406,7 +406,9 @@ function AdminBooking() {
             gender: passenger.gender,
             medIssue: passenger.medIssue,
             contact: passenger.contact,
-            remarks:passenger.remarks
+            remarks:passenger.remarks,
+            boarding: passenger.boarding,
+            disembark: passenger.disembark
           });
         } else {
           await axios.post("https://helistaging.drukair.com.bt/api/passengers", {
@@ -418,7 +420,9 @@ function AdminBooking() {
             medIssue: passenger.medIssue,
             contact: passenger.contact,
             booking_id: id,
-            remarks:passenger.remarks
+            remarks:passenger.remarks,
+            boarding: passenger.boarding,
+            disembark: passenger.disembark
           });
         }
 
@@ -472,6 +476,8 @@ function AdminBooking() {
               departure_time: updatedBookingData.departure_time,
               permission: updatedBookingData.permission,
 
+              status :updatedBookingData.status,
+              booking_type:updatedBookingData.booking_type,
               // booking_type: booking.booking_type, 
               journal_no: updatedBookingData.journal_no,
               destination: updatedBookingData.destination,
@@ -536,6 +542,9 @@ function AdminBooking() {
           formData.append('flight_date', updatedBookingData.flight_date);
           formData.append('departure_time', updatedBookingData.departure_time);
           formData.append('permission', updatedBookingData.permission);
+
+          formData.append('status', updatedBookingData.status);
+          formData.append('booking_type', updatedBookingData.booking_type);
           // formData.append('journal_no', updatedBookingData.journal_no); 
           formData.append('latitude', updatedBookingData.latitude);
           formData.append('Longitude', updatedBookingData.Longitude);
@@ -827,7 +836,7 @@ function AdminBooking() {
                         className="booking-edit-button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (booking.payment_status === "Paid") {
+                          if (booking.payment_status === "Paid" || booking.payment_status === 'Credit') {
                             openAgencyModal(booking._id);
                           } else {
                             Swal.fire({

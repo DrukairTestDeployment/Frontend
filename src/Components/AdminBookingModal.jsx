@@ -12,7 +12,10 @@ import * as XLSX from "xlsx";
 function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate }) {
     const [priceInUSDOthers, setPriceInUSDOthers] = useState(booking.bookingPriceUSD)
     const [priceInBtnOthers, setPriceInBtnOthers] = useState(booking.bookingPriceBTN)
-    const paymentTypes = ['Online', 'Bank Transfer', 'Cash'];
+    const paymentTypes = ['Online', 'Bank Transfer', 'Cash', 'MBoB'];
+    const bookingStatuses = ['Booked', 'Pending', 'Confirmed'];
+    const bookingTypes = ['Walk-In', 'Online', 'Phone Call', 'Agency'];
+
 
     // Passenger list downloads
     const [downloadFormat, setDownloadFormat] = useState("");
@@ -145,6 +148,8 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
         permission: booking.permission,
         // booking_type: booking.booking_type, 
         journal_no: booking.journal_no,
+        status: booking.status,
+        booking_type: booking.booking_type,
 
         // Routes
         destination: booking.destination ? booking.destination._id : null,
@@ -331,7 +336,9 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
             cid: '',
             contact: '',
             medIssue: '',
-            remarks: ''
+            remarks: '',
+            boarding: '',
+            disembark: ''
         };
         setPassengerList([...passengerList, newPassenger]);
     };
@@ -461,12 +468,12 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     // Download functions
     const downloadPassengerCSV = (passengers, booking) => {
         const csvHeader = [
-            "Name", "Gender", "Weight", "Baggage Weight", "CID/Passport", "Contact No", "Medical Issues", "Remarks"
+            "Name", "Gender", "Weight", "Baggage Weight", "CID/Passport", "Contact No", "Medical Issues", "Boarding", "Disembarking", "Remarks"
         ];
 
         const csvRows = passengers.map(p => [
             p.name || '', p.gender || '', p.weight || '', p.bagWeight || '',
-            p.cid || '', p.contact || '', p.medIssue || '', p.remarks || ''
+            p.cid || '', p.contact || '', p.medIssue || '', p.boarding || '', p.disembark || '', p.remarks || ''
         ]);
 
         const headerLines = [
@@ -504,7 +511,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
             [], // empty row before table
             [
                 "Name", "Gender", "Weight", "Baggage Weight",
-                "CID/Passport", "Contact No", "Medical Issues", "Remarks"
+                "CID/Passport", "Contact No", "Medical Issues", "Boarding", "Disembarking", "Remarks"
             ]
         ];
 
@@ -516,6 +523,8 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
             p.cid ? `'${p.cid}` : '', // fix large number formatting
             p.contact || '',
             p.medIssue || '',
+            p.boarding || '',
+            p.disembark || '',
             p.remarks || 'None'
         ]);
 
@@ -550,12 +559,12 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
 
         const tableColumn = [
             "Name", "Gender", "Weight", "Baggage Weight",
-            "CID/Passport", "Contact No", "Medical Issues", "Remarks"
+            "CID/Passport", "Contact No", "Medical Issues", "Boarding", "Disembarking", "Remarks"
         ];
 
         const tableRows = passengers.map(p => [
             p.name || '', p.gender || '', p.weight || '', p.bagWeight || '',
-            p.cid || '', p.contact || '', p.medIssue || '', p.remarks || 'None'
+            p.cid || '', p.contact || '', p.medIssue || '', p.boarding || '', p.disembark || '', p.remarks || 'None'
         ]);
 
         autoTable(doc, {
@@ -629,6 +638,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                                 onChange={(e) =>
                                     setBookingUpdate({ ...bookingUpdate, agent_contact: e.target.value })
                                 }
+                                required
                             />
                         </label>
                     </div>
@@ -946,7 +956,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                                     </label>
 
                                     <label>
-                                        Contact No
+                                        Phone Number
                                         <input
                                             type="number"
                                             name="phoneNumber"
@@ -955,6 +965,34 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                                             onChange={(e) => {
                                                 const updatedPassengers = [...passengerList];
                                                 updatedPassengers[activeTab].contact = e.target.value;
+                                                setPassengerList(updatedPassengers);
+                                            }}
+                                        />
+                                    </label>
+                                </div>
+                                <div className="booking-form-group">
+                                    <label>
+                                        Boarding Location
+                                        <input
+                                            type="text"
+                                            name="boarding"
+                                            value={passengerList[activeTab]?.boarding || ''}
+                                            onChange={(e) => {
+                                                const updatedPassengers = [...passengerList];
+                                                updatedPassengers[activeTab].boarding = e.target.value;
+                                                setPassengerList(updatedPassengers);
+                                            }}
+                                        />
+                                    </label>
+                                    <label>
+                                        Disembarking Location
+                                        <input
+                                            type="text"
+                                            name="disembark"
+                                            value={passengerList[activeTab]?.disembark || ''}
+                                            onChange={(e) => {
+                                                const updatedPassengers = [...passengerList];
+                                                updatedPassengers[activeTab].disembark = e.target.value;
                                                 setPassengerList(updatedPassengers);
                                             }}
                                         />
@@ -1030,7 +1068,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
 
                     {/* Passengelist download button */}
                     <div>
-                        <label style={{ fontWeight: 'bold',marginTop:'20px',marginBottom:'10px' }}>Download Passenger List:</label>
+                        <label style={{ fontWeight: 'bold', marginTop: '20px', marginBottom: '10px' }}>Download Passenger List:</label>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem' }}>
                             <select
                                 value={downloadFormat}
@@ -1040,7 +1078,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                                 <option value="" disabled>Select format</option>
                                 <option value="csv">CSV</option>
                                 <option value="pdf">PDF</option>
-                                <option value="xlsx">XLSX</option> 
+                                <option value="xlsx">XLSX</option>
                             </select>
 
                             <button
@@ -1057,7 +1095,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                             </button>
                         </div>
                     </div>
-                    
+
                     <div className="whiteSpace"></div>
 
                     <p className='booking-break-header'>Extra Details</p>
@@ -1071,7 +1109,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                                 readOnly
                             />
                         </label>
-                        <label>
+                        {/* <label>
                             Booking Status
                             <input
                                 type="text"
@@ -1079,7 +1117,26 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                                 value={booking.status}
                                 readOnly
                             />
+                        </label> */}
+
+                        <label>
+                            Booking Status
+                            <select
+                                name="bookingStatus"
+                                value={bookingUpdate.status}
+                                onChange={(e) =>
+                                    setBookingUpdate({ ...bookingUpdate, status: e.target.value })
+                                }
+                            >
+                                <option value="" disabled>Select Booking Status</option>
+                                {bookingStatuses.map((status, index) => (
+                                    <option key={index} value={status}>
+                                        {status}
+                                    </option>
+                                ))}
+                            </select>
                         </label>
+
                     </div>
 
                     <div className="booking-form-group">
@@ -1113,12 +1170,21 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
 
                         <label>
                             Booking Type
-                            <input
-                                type="text"
-                                name="bookingType"
-                                value={booking.booking_type}
-                                readOnly
-                            />
+                            <select
+                                name="booking_type"
+                                value={bookingUpdate.booking_type}
+                                onChange={(e) =>
+                                    setBookingUpdate({ ...bookingUpdate, booking_type: e.target.value })
+                                }
+                            >
+                                <option value="" disabled>Select Booking Type</option>
+                                {bookingTypes.map((booking_type, index) => (
+                                    <option key={index} value={booking_type}>
+                                        {booking_type}
+                                    </option>
+                                ))}
+                            </select>
+
                         </label>
                     </div>
 
@@ -1177,31 +1243,22 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                                 ))}
                             </select>
                         </label>
-                        {booking.booking_type === "Online" ? (
-                            <label>
-                                Payment Status
-                                <input
-                                    type="text"
-                                    name="payment_status"
-                                    value={booking.payment_status}
-                                    readOnly
-                                />
-                            </label>
-                        ) : (
-                            <label>
-                                Payment Status
-                                <select
-                                    value={bookingUpdate.payment_status}
-                                    name='payment_status'
-                                    onChange={(e) =>
-                                        setBookingUpdate({ ...bookingUpdate, payment_status: e.target.value })
-                                    }
-                                >
-                                    <option value="Paid">Paid</option>
-                                    <option value="Not paid">Not Paid</option>
-                                </select>
-                            </label>
-                        )}
+
+                        <label>
+                            Payment Status
+                            <select
+                                value={bookingUpdate.payment_status}
+                                name='payment_status'
+                                onChange={(e) =>
+                                    setBookingUpdate({ ...bookingUpdate, payment_status: e.target.value })
+                                }
+                            >
+                                <option value="Paid">Paid</option>
+                                <option value="Not paid">Not Paid</option>
+                                <option value="Credit">Credit</option>
+                            </select>
+                        </label>
+
                     </div>
                     <div className="booking-form-group">
                         <label>
@@ -1262,84 +1319,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                         </label>
                     </div>
 
-                    {/* <div className="booking-form-group">
-                        {booking.journal_no !== "None" && (
-                            <label>
-                                Journal Number
-                                <input
-                                    type="text"
-                                    name="journalNumber"
-                                    value={bookingUpdate.journal_no}
-                                    onChange={(e) =>
-                                        setBookingUpdate({ ...bookingUpdate, journal_no: e.target.value })
-                                    }
-
-                                />
-                            </label>
-                        )}
-                    </div> */}
-
-                    {/* {booking.image && (
-                        <div className="booking-form-group">
-                            <label>
-                                Payment Screenshot
-                                {!imageError ? (
-                                    <img
-                                        src={booking.image}
-                                        alt="Payment screenshot"
-                                        style={{
-                                            maxWidth: "200px",
-                                            height: "250px",
-                                            objectFit: "cover",
-                                        }}
-                                        onError={handleImageError}
-                                    />
-                                ) : (
-                                    <div
-                                        style={{
-                                            width: "200px",
-                                            height: "250px",
-                                            backgroundColor: "#f0f0f0",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            color: "#666",
-                                        }}
-                                    >
-                                        Image failed to load
-                                    </div>
-                                )}
-                            </label>
-                        </div>
-                    )} */}
-
-                    {/* {bookingUpdate.payment_type === 'Bank Transfer' && booking.journal_no === 'None' && (
-                        <div className="booking-form-group">
-                            <label>
-                                Jounal Number
-                                <input
-                                    type="number"
-                                    name="journal_no"
-                                    placeholder='Eg. 134567'
-                                    value={bookingUpdate.journal_no}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </label>
-
-                            <label>
-                                Payment Screenshot
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleFileChange}
-                                />
-                            </label>
-                        </div>
-
-                    )} */}
-
-                    {bookingUpdate.payment_type === 'Bank Transfer' && (
+                    {(bookingUpdate.payment_type === 'Bank Transfer' || bookingUpdate.payment_type === 'MBoB') && (
                         <div className="booking-form-group">
                             <label>
                                 Journal Number
@@ -1365,7 +1345,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                     )}
 
 
-                    {bookingUpdate.payment_type === 'Bank Transfer' && paymentScreenshots.length > 0 && (
+                    {(bookingUpdate.payment_type === 'Bank Transfer' || bookingUpdate.payment_type === 'MBoB') && paymentScreenshots.length > 0 && (
                         <div className="screenshot-wrapper">
                             {paymentScreenshots.map((img, index) => (
                                 <div key={img.id} className="screenshot-preview-box">
@@ -1396,7 +1376,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                         </div>
                     )}
 
-                    {bookingUpdate.payment_type === 'Bank Transfer' && (
+                    {(bookingUpdate.payment_type === 'Bank Transfer' || bookingUpdate.payment_type === 'MBoB') && (
                         <button
                             type="button"
                             onClick={() => window.__editScreenshotInput && window.__editScreenshotInput.click()}
@@ -1413,8 +1393,18 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                         className="admin-booking-modal-btn admin-schedule-modal-btn"
                         onClick={(e) => {
                             e.preventDefault();
-                            const images = paymentScreenshots.filter(img => img.file);
-                            onUpdate(bookingUpdate, passengerList, images);
+                            if (bookingUpdate.status === 'Confirmed' && bookingUpdate.payment_status === 'Not paid') {
+                                Swal.fire({
+                                    title: "Information",
+                                    text: "The payment for this booking is incomplete. Please make sure it is either Paid or Credit!",
+                                    icon: "info",
+                                    confirmButtonColor: "#1E306D",
+                                    showConfirmButton: true
+                                });
+                            } else {
+                                const images = paymentScreenshots.filter(img => img.file);
+                                onUpdate(bookingUpdate, passengerList, images);
+                            }
                         }}
                     >
                         Update

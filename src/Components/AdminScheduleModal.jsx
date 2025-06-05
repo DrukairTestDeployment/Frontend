@@ -27,7 +27,7 @@ function AdminScheduleModal({
     "Completed",
   ];
 
-  const paymentTypes = ['Online', 'Bank Transfer', 'Cash'];
+  const paymentTypes = ['Online', 'Bank Transfer', 'Cash', 'Credit Card'];
   const [refunds, setRefunds] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [imageError, setImageError] = useState(false);
@@ -60,7 +60,9 @@ function AdminScheduleModal({
       cid: '',
       contact: '',
       medIssue: '',
-      remarks: ''
+      remarks: '',
+      boarding: '',
+      disembark: ''
     };
     setPassengerList([...passengerList, newPassenger]);
   };
@@ -306,6 +308,7 @@ function AdminScheduleModal({
         permission: booking.permission,
         // booking_type: booking.booking_type, 
         journal_no: booking.journal_no,
+        payment_status: booking.payment_status,
 
         // Routes
         destination: booking.destination ? booking.destination._id : null,
@@ -527,12 +530,12 @@ function AdminScheduleModal({
   // Download functions
   const downloadPassengerCSV = (passengers, booking) => {
     const csvHeader = [
-      "Name", "Gender", "Weight", "Baggage Weight", "CID/Passport", "Contact No", "Medical Issues", "Remarks"
+      "Name", "Gender", "Weight", "Baggage Weight", "CID/Passport", "Contact No", "Medical Issues", "Boarding", "Disembarking", "Remarks"
     ];
 
     const csvRows = passengers.map(p => [
       p.name || '', p.gender || '', p.weight || '', p.bagWeight || '',
-      p.cid || '', p.contact || '', p.medIssue || '', p.remarks || ''
+      p.cid || '', p.contact || '', p.medIssue || '', p.boarding || '', p.disembark || '', p.remarks || ''
     ]);
 
     const headerLines = [
@@ -570,7 +573,7 @@ function AdminScheduleModal({
       [], // empty row before table
       [
         "Name", "Gender", "Weight", "Baggage Weight",
-        "CID/Passport", "Contact No", "Medical Issues", "Remarks"
+        "CID/Passport", "Contact No", "Medical Issues", "Boarding", "Disembarking", "Remarks"
       ]
     ];
 
@@ -582,6 +585,8 @@ function AdminScheduleModal({
       p.cid ? `'${p.cid}` : '', // fix large number formatting
       p.contact || '',
       p.medIssue || '',
+      p.boarding || '',
+      p.disembark || '',
       p.remarks || 'None'
     ]);
 
@@ -616,12 +621,12 @@ function AdminScheduleModal({
 
     const tableColumn = [
       "Name", "Gender", "Weight", "Baggage Weight",
-      "CID/Passport", "Contact No", "Medical Issues", "Remarks"
+      "CID/Passport", "Contact No", "Medical Issues", "Boarding", "Disembarking", "Remarks"
     ];
 
     const tableRows = passengers.map(p => [
       p.name || '', p.gender || '', p.weight || '', p.bagWeight || '',
-      p.cid || '', p.contact || '', p.medIssue || '', p.remarks || 'None'
+      p.cid || '', p.contact || '', p.medIssue || '', p.boarding || '', p.disembark || '', p.remarks || 'None'
     ]);
 
     autoTable(doc, {
@@ -696,6 +701,7 @@ function AdminScheduleModal({
                 onChange={(e) =>
                   setFormData({ ...formData, agent_contact: e.target.value })
                 }
+                required
               />
             </label>
           </div>
@@ -1068,7 +1074,7 @@ function AdminScheduleModal({
                   </label>
 
                   <label>
-                    Contact No
+                    Phone Number
                     <input
                       type="number"
                       name="phoneNumber"
@@ -1076,6 +1082,35 @@ function AdminScheduleModal({
                       onChange={(e) => {
                         const updatedPassengers = [...passengerList];
                         updatedPassengers[activeTab].contact = e.target.value;
+                        setPassengerList(updatedPassengers);
+                      }}
+                    />
+                  </label>
+                </div>
+
+                <div className="booking-form-group">
+                  <label>
+                    Boarding Location
+                    <input
+                      type="text"
+                      name="boarding"
+                      value={passengerList[activeTab]?.boarding || ''}
+                      onChange={(e) => {
+                        const updatedPassengers = [...passengerList];
+                        updatedPassengers[activeTab].boarding = e.target.value;
+                        setPassengerList(updatedPassengers);
+                      }}
+                    />
+                  </label>
+                  <label>
+                    Disembarking Location
+                    <input
+                      type="text"
+                      name="disembarking"
+                      value={passengerList[activeTab]?.disembark || ''}
+                      onChange={(e) => {
+                        const updatedPassengers = [...passengerList];
+                        updatedPassengers[activeTab].disembark = e.target.value;
                         setPassengerList(updatedPassengers);
                       }}
                     />
@@ -1302,12 +1337,20 @@ function AdminScheduleModal({
           <div className="booking-form-group">
             <label>
               Payment Status
-              <input
-                type="text"
-                name="payment_status"
-                value={booking.payment_status}
-                readOnly
-              />
+              <select
+                value={formData.payment_status}
+                name='payment_status'
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    payment_status: e.target.value
+                  })
+                }
+              >
+                <option value="Paid">Paid</option>
+                <option value="Not paid">Not Paid</option>
+              </select>
+
             </label>
             <label>  Currency Type
               <select
@@ -1450,7 +1493,7 @@ function AdminScheduleModal({
             </div>
           )}
 
-          {formData.payment_type === 'Bank Transfer' && paymentScreenshots.length > 0 && (
+          {(formData.payment_type === 'Bank Transfer' || formData.payment_type === 'Credit Card') && paymentScreenshots.length > 0 && (
             <div className="screenshot-wrapper">
               {paymentScreenshots.map((img, index) => (
                 <div key={img.id} className="screenshot-preview-box">
@@ -1481,7 +1524,7 @@ function AdminScheduleModal({
             </div>
           )}
 
-          {formData.payment_type === 'Bank Transfer' && (
+          {(formData.payment_type === 'Bank Transfer' || formData.payment_type === 'Credit Card') && (
             <button
               type="button"
               onClick={() => window.__editScreenshotInput && window.__editScreenshotInput.click()}

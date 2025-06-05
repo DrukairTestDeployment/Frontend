@@ -588,7 +588,6 @@ export function PassengerDetails({ thirdFormData, setThirdFormData, passengerErr
                                     value={thirdFormData.passengers[index]?.phoneNumber || ''}
                                     onChange={(e) => handleChange(e, index)}
                                 />
-                                {passengerErrors[index]?.phoneNumber && <span className="error">{passengerErrors[index].phoneNumber}</span>}
                             </label>
                             <label>
                                 CID/Passport
@@ -641,6 +640,30 @@ export function PassengerDetails({ thirdFormData, setThirdFormData, passengerErr
                                 {passengerErrors[index]?.medicalCondition && <span className="error">{passengerErrors[index].medicalCondition}</span>}
                             </label>
                         </div>
+
+                        <div className="booking-form-group">
+                            <label>
+                                Boarding Location
+                                <input
+                                    type="text"
+                                    name="boarding"
+                                    placeholder='Enter your boarding location'
+                                    value={thirdFormData.passengers[index]?.boarding || ''}
+                                    onChange={(e) => handleChange(e, index)}
+                                />
+                            </label>
+                            <label>
+                                Disembarking Location
+                                <input
+                                    type="text"
+                                    name="disembarking"
+                                    placeholder='Enter your drop off location'
+                                    value={thirdFormData.passengers[index]?.disembark || ''}
+                                    onChange={(e) => handleChange(e, index)}
+                                />
+                            </label>
+                        </div>
+
 
                         {thirdFormData.passengers[index]?.medicalCondition === 'Yes' && (
                             <div className="booking-form-group">
@@ -921,7 +944,6 @@ function BookingForm() {
             if (!passenger.gender) passengerErrors.gender = "Gender is required";
             if (!passenger.weight) passengerErrors.weight = "Weight is required";
             if (!passenger.luggageWeight) passengerErrors.luggageWeight = "Luggage weight is required";
-            if (!passenger.phoneNumber) passengerErrors.phoneNumber = "Phone number is required";
             if (!passenger.cidPassport) passengerErrors.cidPassport = "CID/Passport is required";
             if (!passenger.medicalCondition) passengerErrors.medicalCondition = "Medical condition information is required";
             if (passenger.medicalCondition === "Yes" && !passenger.medicalRemarks) {
@@ -1036,6 +1058,8 @@ function BookingForm() {
                     medIssue: passenger.medicalCondition,
                     contact: passenger.phoneNumber,
                     remarks: passenger.medicalRemarks,
+                    boarding: passenger.boarding,
+                    disembark: passenger.disembark,
                     booking_id: id,
                 });
             } catch (error) {

@@ -86,7 +86,7 @@ function AdminDashboard() {
       try {
         const response = await axios.get("https://helistaging.drukair.com.bt/api/bookings/");
         const paidBookings = response.data.data.filter(
-          booking => booking.payment_status === "Paid"
+          booking => booking.payment_status === "Paid" || booking.payment_status === "Credit"
         );
         const bookings = paidBookings.length;
         const mainBookings = paidBookings

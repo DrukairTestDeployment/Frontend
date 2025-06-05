@@ -200,7 +200,9 @@ function AdminSchedule() {
             gender: passenger.gender,
             medIssue: passenger.medIssue,
             contact: passenger.contact,
-            remarks : passenger.remarks
+            remarks : passenger.remarks,
+            boarding: passenger.boarding,
+            disembark: passenger.disembark
           });
         } else {
           await axios.post("https://helistaging.drukair.com.bt/api/passengers", {
@@ -212,7 +214,9 @@ function AdminSchedule() {
             medIssue: passenger.medIssue,
             contact: passenger.contact,
             booking_id: id,
-            remarks : passenger.remarks
+            remarks : passenger.remarks,
+            boarding: passenger.boarding,
+            disembark: passenger.disembark
           });
         }
 
@@ -306,6 +310,7 @@ function AdminSchedule() {
                     departure_time: booking.departure_time,
                     permission: booking.permission,
                     // booking_type: booking.booking_type, 
+                    payment_status :booking.payment_status,
                     journal_no: booking.journal_no,
                     latitude: booking.latitude,
                     Longitude: booking.Longitude

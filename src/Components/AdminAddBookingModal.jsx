@@ -9,8 +9,9 @@ function AdminAddBookingModal({ isOpen, onClose }) {
     const [loading, setLoading] = useState(false);
     const genderTypes = ['Male', 'Female', 'Others'];
     const bookingStatuses = ['Booked', 'Pending', 'Confirmed'];
-    const paymentTypes = ['Bank Transfer', 'Cash'];
-    const bookingTypes = ['Walk-In', 'Online', 'Phone Call'];
+    const paymentTypes = ['Online', 'Bank Transfer', 'Cash', 'MBoB'];
+    const bookingTypes = ['Walk-In', 'Online', 'Phone Call', 'Agency'];
+
     const [pilots, setPilots] = useState([]);
     const [bookings, setBookings] = useState([]);
     const [routes, setRoutes] = useState([]);
@@ -424,7 +425,9 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                     medIssue: passenger.medicalCondition,
                     contact: passenger.phoneNumber,
                     booking_id: id,
-                    remarks: passenger.remarks
+                    remarks: passenger.remarks,
+                    boarding: passenger.boarding,
+                    disembark: passenger.disembark
                 });
             } catch (error) {
                 Swal.fire({
@@ -918,7 +921,28 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                                         />
                                     </label>
                                 </div>
-
+                                <div className="booking-form-group">
+                                    <label>
+                                        Boarding Location
+                                        <input
+                                            type="text"
+                                            name="boarding"
+                                            placeholder='Enter your boarding location'
+                                            value={passengerData.passengers[index]?.boarding || ''}
+                                            onChange={(e) => handleChange(e, index)}
+                                        />
+                                    </label>
+                                    <label>
+                                        Disembarking Location
+                                        <input
+                                            type="text"
+                                            name="disembark"
+                                            placeholder='Enter your drop off location'
+                                            value={passengerData.passengers[index]?.disembark || ''}
+                                            onChange={(e) => handleChange(e, index)}
+                                        />
+                                    </label>
+                                </div>
                                 <div className="booking-form-group">
                                     <label>
                                         Any medical conditions that would prevent the passenger from flying briefly above 14,000 Ft without oxygen?
@@ -1136,6 +1160,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                                         >
                                             <option value="Paid">Paid</option>
                                             <option value="Not paid">Not Paid</option>
+                                            <option value="Credit">Credit</option>
                                         </select>
                                     </label>
                                 </div>
@@ -1202,43 +1227,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
 
                         </div>
 
-                        {/* {formData.payment_type === 'Bank Transfer' && (
-                            <div className="booking-form-group">
-                                <label>
-                                    Jounal Number
-                                    <input
-                                        type="number"
-                                        name="journal_no"
-                                        placeholder='Eg. 134567'
-                                        value={formData.journal_no}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </label>
-
-                                <label>
-                                    Payment Screenshot
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleFileChange}
-                                    />
-                                </label>
-                            </div>
-
-                        )}
-                        {imagePreview && (
-                            <div className='screenshot-wrapper'>
-                                <p>Image Preview:</p>
-                                <img
-                                    src={imagePreview}
-                                    alt="Selected"
-                                    className='screenshot-img'
-                                />
-                            </div>
-                        )} */}
-
-                        {formData.payment_type === 'Bank Transfer' && (
+                        {(formData.payment_type === 'Bank Transfer' || formData.payment_type==='MBoB')&& (
                             <div className="booking-form-group">
                                 <label>
                                     Journal Number
@@ -1265,7 +1254,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
 
                         )}
 
-                        {formData.payment_type === 'Bank Transfer' && paymentScreenshots.length > 0 && (
+                        {(formData.payment_type === 'Bank Transfer' || formData.payment_type === 'MBoB') && paymentScreenshots.length > 0 && (
                             <div className="screenshot-wrapper">
                                 {paymentScreenshots.map((img, index) => (
                                     <div key={img.id} className="screenshot-preview-box">
@@ -1278,12 +1267,13 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                             </div>
                         )}
 
-                        {formData.payment_type === 'Bank Transfer' && (
+                        {(formData.payment_type === 'Bank Transfer' || formData.payment_type === 'MBoB') && (
                             <button
                                 type="button"
                                 onClick={() => window.__screenshotInput && window.__screenshotInput.click()}
                                 className="passenger-btn"
                                 style={{ margin: "1rem 0" }}
+                                required
                             >
                                 Add Screenshot +
                             </button>

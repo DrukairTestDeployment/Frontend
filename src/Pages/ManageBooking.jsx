@@ -448,6 +448,27 @@ function ManageBooking() {
 
                 <div className="booking-form-group">
                   <label>
+                    Boarding Location
+                    <input
+                      type="text"
+                      name="boarding"
+                      placeholder='Enter your boarding location'
+                      value={passengers[activeTab].boarding || ""}
+                    />
+                  </label>
+                  <label>
+                    Disembarking Location
+                    <input
+                      type="text"
+                      name="disembarking"
+                      placeholder='Enter your drop off location'
+                      value={passengers[activeTab].disembark || ""}
+                    />
+                  </label>
+                </div>
+
+                <div className="booking-form-group">
+                  <label>
                     Medical Issue
                     <input
                       type="text"
@@ -459,6 +480,21 @@ function ManageBooking() {
                     />
                   </label>
                 </div>
+
+                {passengers[activeTab]?.medIssue === 'Yes' && (
+                  <div className="booking-form-group">
+                    <label>
+                      Medical condition description
+                      <textarea
+                        name="remarks"
+                        placeholder="Enter any medical remarks here"
+                        value={passengers[activeTab]?.remarks || ''}
+                        className="medicalRemarksInput"
+                        readOnly
+                      ></textarea>
+                    </label>
+                  </div>
+                )}
               </>
             )}
           </div>
@@ -579,7 +615,7 @@ function ManageBooking() {
             />
           </label>
           <label>
-            Agent CID
+            Agent CID/Passport
             <input
               type="text"
               value={agentCID}
