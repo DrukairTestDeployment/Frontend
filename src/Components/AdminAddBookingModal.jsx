@@ -1110,6 +1110,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                                         >
                                             <option value="Paid">Paid</option>
                                             <option value="Not paid">Not Paid</option>
+                                            <option value="Credit">Credit</option>
                                         </select>
                                     </label>
                                 </div>
