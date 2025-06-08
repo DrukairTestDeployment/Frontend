@@ -13,7 +13,7 @@ function CategorizedReports() {
   const [performanceData, setPerformanceData] = useState([]);
   const [revenueSums, setRevenueSums] = useState({});
   const [years, setYears] = useState([]);
-  const [selectedYear, setSelectedYear] = useState("2024");
+  const [selectedYear, setSelectedYear] = useState("");
   const [selectedType, setSelectedType] = useState("Revenue");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -154,7 +154,7 @@ function CategorizedReports() {
       setPerformanceData(performance);
 
       const paidBookings = response1.data.data.filter(
-        booking => booking.payment_status === "Paid"
+        booking => booking.payment_status === "Paid" || booking.payment_status === "Credit"
       );
       const bookings = paidBookings;
 
@@ -450,6 +450,7 @@ function CategorizedReports() {
           <div className="containerR">
             <div className="control">
               <select className="dropdown" value={selectedYear} onChange={handleYearChange}>
+                <option>Select Year</option>
                 {years.map(year => (
                   <option key={year} value={year}>{year}</option>
                 ))}
