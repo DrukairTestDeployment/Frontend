@@ -63,7 +63,7 @@ function AdminSchedule() {
       'Service Type': booking.service_id?.name || 'N/A',
       'Booking Type': booking.booking_type,
       'Payment Type': booking.payment_type,
-      'Price (Nu.)': '150,000'
+      'Price (Nu.)': booking.bookingPriceBTN
     }));
     sheets['Schedule'] = scheduleData;
 
