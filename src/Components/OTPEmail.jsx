@@ -16,6 +16,7 @@ function OTPEmail() {
 
   useEffect(() => {
     const { email } = location.state || {};
+    console.log(email)
     setEmail(email);
   }, [location]);
 
@@ -23,7 +24,6 @@ function OTPEmail() {
     const fetchData = async () => {
       try {
         const response = await axios.get(`https://helistaging.drukair.com.bt/api/users/email/${email}`);
-        console.log(response)
         setUsers(response.data.data);
       } catch (error) {
         Swal.fire({
@@ -35,9 +35,10 @@ function OTPEmail() {
         });
       }
     };
-
-    fetchData();
-  }, []);
+    if(email){
+      fetchData();
+    }
+  }, [email]);
 
   const handleChange = (e, index) => {
     const value = e.target.value;
