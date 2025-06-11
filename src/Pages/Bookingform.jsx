@@ -656,7 +656,7 @@ export function PassengerDetails({ thirdFormData, setThirdFormData, passengerErr
                                 Disembarking Location
                                 <input
                                     type="text"
-                                    name="disembarking"
+                                    name="disembark"
                                     placeholder='Enter your drop off location'
                                     value={thirdFormData.passengers[index]?.disembark || ''}
                                     onChange={(e) => handleChange(e, index)}
