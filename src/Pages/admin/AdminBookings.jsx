@@ -810,7 +810,7 @@ function AdminBooking() {
                   <th>Destination</th>
                   <th>Payment Status</th>
                   <th>Route Type</th>
-                  <th>Action</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>

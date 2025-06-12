@@ -570,7 +570,6 @@ export function PassengerDetails({ thirdFormData, setThirdFormData, passengerErr
                                     value={thirdFormData.passengers[index]?.luggageWeight || ''}
                                     onChange={(e) => handleChange(e, index)}
                                 />
-                                {passengerErrors[index]?.luggageWeight && <span className="error">{passengerErrors[index].luggageWeight}</span>}
                             </label>
                         </div>
 
@@ -641,6 +640,22 @@ export function PassengerDetails({ thirdFormData, setThirdFormData, passengerErr
                             </label>
                         </div>
 
+                          {thirdFormData.passengers[index]?.medicalCondition === 'Yes' && (
+                            <div className="booking-form-group">
+                                <label>
+                                    Please provide details about the medical condition
+                                    <textarea
+                                        name="medicalRemarks"
+                                        placeholder="Enter any medical remarks here"
+                                        value={thirdFormData.passengers[index]?.medicalRemarks || ''}
+                                        onChange={(e) => handleChange(e, index)}
+                                        className='medicalRemarksInput'
+                                    ></textarea>
+                                    {passengerErrors[index]?.medicalRemarks && <span className="error">{passengerErrors[index].medicalRemarks}</span>}
+                                </label>
+                            </div>
+                        )}
+
                         <div className="booking-form-group">
                             <label>
                                 Boarding Location
@@ -663,24 +678,6 @@ export function PassengerDetails({ thirdFormData, setThirdFormData, passengerErr
                                 />
                             </label>
                         </div>
-
-
-                        {thirdFormData.passengers[index]?.medicalCondition === 'Yes' && (
-                            <div className="booking-form-group">
-                                <label>
-                                    Please provide details about the medical condition
-                                    <textarea
-                                        name="medicalRemarks"
-                                        placeholder="Enter any medical remarks here"
-                                        value={thirdFormData.passengers[index]?.medicalRemarks || ''}
-                                        onChange={(e) => handleChange(e, index)}
-                                        className='medicalRemarksInput'
-                                    ></textarea>
-                                    {passengerErrors[index]?.medicalRemarks && <span className="error">{passengerErrors[index].medicalRemarks}</span>}
-                                </label>
-                            </div>
-                        )}
-
 
                         {index !== 0 && (
                             <button
@@ -943,7 +940,6 @@ function BookingForm() {
             if (!passenger.name) passengerErrors.name = "Name is required";
             if (!passenger.gender) passengerErrors.gender = "Gender is required";
             if (!passenger.weight) passengerErrors.weight = "Weight is required";
-            if (!passenger.luggageWeight) passengerErrors.luggageWeight = "Luggage weight is required";
             if (!passenger.cidPassport) passengerErrors.cidPassport = "CID/Passport is required";
             if (!passenger.medicalCondition) passengerErrors.medicalCondition = "Medical condition information is required";
             if (passenger.medicalCondition === "Yes" && !passenger.medicalRemarks) {

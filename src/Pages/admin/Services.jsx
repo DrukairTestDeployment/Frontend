@@ -324,7 +324,7 @@ function Services() {
               <th>Price(in BTN)</th>
               <th>Status</th>
               <th>Description</th>
-              <th>Actions</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>

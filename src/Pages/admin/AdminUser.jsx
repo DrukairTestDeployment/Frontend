@@ -44,9 +44,6 @@ function AdminUser() {
     const fetchData = async () => {
       try {
         const response = await axios.get('https://helistaging.drukair.com.bt/api/users', {
-          headers: {
-            Authorization: `Bearer ${token}`
-        },
             withCredentials: true
         });
         setUsers(Array.isArray(response.data.data) ? response.data.data : []);

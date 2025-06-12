@@ -399,7 +399,7 @@ function ARoutes() {
               <th>Duration</th>
               <th>Winter Weight (kg)</th>
               <th>Summer Weight (kg)</th>
-              <th>Actions</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>

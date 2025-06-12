@@ -14,7 +14,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     const [priceInBtnOthers, setPriceInBtnOthers] = useState(booking.bookingPriceBTN)
     const paymentTypes = ['Online', 'Bank Transfer', 'Cash', 'MBoB'];
     const bookingStatuses = ['Booked', 'Pending', 'Confirmed'];
-    const bookingTypes = ['Walk-In', 'Online', 'Phone Call', 'Agency'];
+    const bookingTypes = ['Walk-In', 'Online', 'Phone Call', 'Agency','Email'];
 
 
     // Passenger list downloads

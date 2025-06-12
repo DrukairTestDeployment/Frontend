@@ -293,7 +293,7 @@ function Charter() {
               <th>Sl. No</th>
               <th>Charter</th>
               <th>Description</th>
-              <th>Actions</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>

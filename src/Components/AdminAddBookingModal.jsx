@@ -10,7 +10,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
     const genderTypes = ['Male', 'Female', 'Others'];
     const bookingStatuses = ['Booked', 'Pending', 'Confirmed'];
     const paymentTypes = ['Online', 'Bank Transfer', 'Cash', 'MBoB'];
-    const bookingTypes = ['Walk-In', 'Online', 'Phone Call', 'Agency'];
+    const bookingTypes = ['Walk-In', 'Online', 'Phone Call', 'Agency','Email'];
 
     const [pilots, setPilots] = useState([]);
     const [bookings, setBookings] = useState([]);
@@ -889,11 +889,9 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                                             type="number"
                                             name="luggageWeight"
                                             placeholder='Enter Luggage Weight'
-                                            required
                                             value={passengerData.passengers[index]?.luggageWeight || ''}
                                             onChange={(e) => handleChange(e, index)}
                                         />
-                                        {errors[`passengers[${index}].luggageWeight`] && <span className="error">{errors[`passengers[${index}].luggageWeight`]}</span>}
                                     </label>
                                 </div>
 
