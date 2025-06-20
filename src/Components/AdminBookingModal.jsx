@@ -12,6 +12,7 @@ import * as XLSX from "xlsx";
 function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate }) {
     const [priceInUSDOthers, setPriceInUSDOthers] = useState(booking.bookingPriceUSD)
     const [priceInBtnOthers, setPriceInBtnOthers] = useState(booking.bookingPriceBTN)
+    const [pilots, setPilots] = useState([]);
     const paymentTypes = ['Online', 'Bank Transfer', 'Cash', 'MBoB', 'Credit Card'];
     const bookingStatuses = ['Booked', 'Pending', 'Confirmed'];
     const bookingTypes = ['Walk-In', 'Online', 'Phone Call', 'Agency','Email'];
@@ -119,6 +120,27 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
             });
         }
     };
+
+    useEffect(() => {
+        const fetchPilots = async () => {
+            try {
+                const response = await axios.get("http://localhost:4001/api/users", { withCredentials: true });
+                const allPilots = response.data.data.filter(
+                    (user) => user.role.name === "PILOT"
+                );
+                setPilots(allPilots);
+            } catch (error) {
+                Swal.fire({
+                    title: "Error!",
+                    text: "Error fetching pilot data",
+                    icon: "error",
+                    confirmButtonColor: "#1E306D",
+                    confirmButtonText: "OK",
+                });
+            }
+        };
+        fetchPilots();
+    }, [booking]);
 
     const [bookingUpdate, setBookingUpdate] = useState({
         id: booking._id,
