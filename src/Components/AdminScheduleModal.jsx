@@ -27,7 +27,7 @@ function AdminScheduleModal({
     "Completed",
   ];
 
-  const paymentTypes = ['Online', 'Bank Transfer', 'Cash', 'Credit Card'];
+  const paymentTypes = ['Bank Transfer', 'Cash', 'MBoB', 'Credit Card'];
   const [refunds, setRefunds] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [imageError, setImageError] = useState(false);
@@ -1452,49 +1452,32 @@ function AdminScheduleModal({
             </label>
           </div>
 
-          {/* <div className="booking-form-group">
-            {booking.journal_no !== "None" && (
-              <label>
-                Journal Number
-                <input
-                  type="text"
-                  name="journalNumber"
-                  value={formData.journal_no}
-                  onChange={(e) =>
-                    setFormData({ ...formData, journal_no: e.target.value })
-                  }
-
-                />
-              </label>
-            )}
-          </div> */}
-
-          {formData.payment_type === 'Bank Transfer' && (
+          {(formData.payment_type === 'Bank Transfer' || formData.payment_type === 'MBoB') && (
             <div className="booking-form-group">
               <label>
                 Journal Number
                 <input
                   type="text"
-                  name="journalNumber"
+                  name="journal_no"
+                  placeholder="Eg. 134567"
                   value={formData.journal_no}
-                  onChange={(e) =>
-                    setFormData({ ...formData, journal_no: e.target.value })
-                  }
+                  onChange={handleInputChange}
+                  required={formData.payment_type === 'MBoB'}
                 />
               </label>
 
-              {/* Hidden file input */}
+              {/* Hidden File Input */}
               <input
                 type="file"
                 accept="image/*"
                 ref={(ref) => (window.__editScreenshotInput = ref)}
                 onChange={handleMultipleFilesChange}
                 style={{ display: 'none' }}
+                required
               />
             </div>
           )}
-
-          {(formData.payment_type === 'Bank Transfer' || formData.payment_type === 'Credit Card') && paymentScreenshots.length > 0 && (
+          {(formData.payment_type === 'Bank Transfer' || formData.payment_type === 'MBoB') && paymentScreenshots.length > 0 && (
             <div className="screenshot-wrapper">
               {paymentScreenshots.map((img, index) => (
                 <div key={img.id} className="screenshot-preview-box">
@@ -1525,7 +1508,7 @@ function AdminScheduleModal({
             </div>
           )}
 
-          {(formData.payment_type === 'Bank Transfer' || formData.payment_type === 'Credit Card') && (
+          {(formData.payment_type === 'Bank Transfer' || formData.payment_type === 'MBoB') && (
             <button
               type="button"
               onClick={() => window.__editScreenshotInput && window.__editScreenshotInput.click()}
@@ -1535,24 +1518,6 @@ function AdminScheduleModal({
               Add Screenshot +
             </button>
           )}
-
-          {/* {booking.image && (
-            <div className="booking-form-group">
-              <label>
-                Payment Screenshot
-                <img
-                  src={url}
-                  alt="Payment screenshot"
-                  style={{
-                    maxWidth: "200px",
-                    height: "250px",
-                    objectFit: "cover",
-                  }}
-                  onError={handleImageError}
-                />
-              </label>
-            </div>
-          )} */}
 
           <button
             type="submit"

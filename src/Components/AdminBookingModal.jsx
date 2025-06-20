@@ -1327,7 +1327,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                                     placeholder="Eg. 134567"
                                     value={bookingUpdate.journal_no}
                                     onChange={handleInputChange}
-                                    required
+                                    required={bookingUpdate.payment_type === 'MBoB'}
                                 />
                             </label>
 
@@ -1338,6 +1338,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                                 ref={(ref) => (window.__editScreenshotInput = ref)}
                                 onChange={handleMultipleFilesChange}
                                 style={{ display: 'none' }}
+                                required
                             />
                         </div>
                     )}
