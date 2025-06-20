@@ -384,7 +384,6 @@ export function FlightDetails({ secondFormData, setSecondFormData, flightErrors,
                             value={secondFormData.departureTime}
                             onChange={handleChange}
                         />
-                        {flightErrors.departureTime && <span className="error">{flightErrors.departureTime}</span>}
                     </label>
                 </div>
 
@@ -922,9 +921,6 @@ function BookingForm() {
         }
         if (!secondFormData.flightDate || !secondFormData.flightDate.trim()) {
             flightErrors.flightDate = "Flight date is required.";
-        }
-        if (!secondFormData.departureTime || !secondFormData.departureTime.trim()) {
-            flightErrors.departureTime = "Departure time is required.";
         }
         if (!secondFormData.selectedHelipadPermission || !secondFormData.selectedHelipadPermission.trim()) {
             flightErrors.helipadPermission = "Helipad permission is required.";

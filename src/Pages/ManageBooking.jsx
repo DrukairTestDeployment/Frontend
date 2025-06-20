@@ -615,11 +615,11 @@ function ManageBooking() {
             />
           </label>
           <label>
-            Agent CID/Passport
+            CID/Passport
             <input
               type="text"
               value={agentCID}
-              placeholder="Enter Agent CID"
+              placeholder="Enter CID/Passport"
               onChange={(e) => setAgentCID(e.target.value)}
             />
           </label>

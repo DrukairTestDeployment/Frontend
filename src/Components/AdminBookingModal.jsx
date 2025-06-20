@@ -12,7 +12,7 @@ import * as XLSX from "xlsx";
 function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate }) {
     const [priceInUSDOthers, setPriceInUSDOthers] = useState(booking.bookingPriceUSD)
     const [priceInBtnOthers, setPriceInBtnOthers] = useState(booking.bookingPriceBTN)
-    const paymentTypes = ['Online', 'Bank Transfer', 'Cash', 'MBoB'];
+    const paymentTypes = ['Online', 'Bank Transfer', 'Cash', 'MBoB', 'Credit Card'];
     const bookingStatuses = ['Booked', 'Pending', 'Confirmed'];
     const bookingTypes = ['Walk-In', 'Online', 'Phone Call', 'Agency','Email'];
 
@@ -125,7 +125,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
         duration: booking.destination === null
             ? booking.duration
             : booking.destination?.duration || 0,
-
+        assigned_pilot: booking.assigned_pilot ? booking.assigned_pilot : null,
         bookingPriceBTN: booking.bookingPriceBTN,
         bookingPriceUSD: booking.bookingPriceUSD,
         refund_id: booking.refund_id ? booking.refund_id._id : 0,
@@ -960,7 +960,6 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                                         <input
                                             type="number"
                                             name="phoneNumber"
-                                            required
                                             value={passengerList[activeTab]?.contact || ''}
                                             onChange={(e) => {
                                                 const updatedPassengers = [...passengerList];
@@ -1102,22 +1101,21 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                     <div className="booking-form-group">
                         <label>
                             Assigned Pilot
-                            <input
-                                type="text"
-                                name="assignedPilot"
-                                value={booking.assigned_pilot ? booking.assigned_pilot.name : "No Pilots Assigned"}
-                                readOnly
-                            />
+                            <select
+                                name="assigned_pilot"
+                                value={bookingUpdate.assigned_pilot || ""}
+                                onChange={handleInputChange}
+                            >
+                                <option hidden value="">
+                                    {booking.assigned_pilot ? booking.assigned_pilot.name : "Assign a pilot"}
+                                </option>
+                                {pilots.map((pilot) => (
+                                    <option key={pilot._id} value={pilot._id}>
+                                        {pilot.name}
+                                    </option>
+                                ))}
+                            </select>
                         </label>
-                        {/* <label>
-                            Booking Status
-                            <input
-                                type="text"
-                                name="bookingStatus"
-                                value={booking.status}
-                                readOnly
-                            />
-                        </label> */}
 
                         <label>
                             Booking Status
@@ -1324,7 +1322,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
                             <label>
                                 Journal Number
                                 <input
-                                    type="number"
+                                    type="text"
                                     name="journal_no"
                                     placeholder="Eg. 134567"
                                     value={bookingUpdate.journal_no}

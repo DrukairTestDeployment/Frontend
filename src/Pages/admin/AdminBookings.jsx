@@ -457,6 +457,7 @@ function AdminBooking() {
             `https://helistaging.drukair.com.bt/api/bookings/${id}`,
             {
               duration: updatedBookingData.duration,
+              assigned_pilot: updatedBookingData.assigned_pilot || null,
               bookingPriceBTN: updatedBookingData.bookingPriceBTN,
               bookingPriceUSD: updatedBookingData.bookingPriceUSD,
               refund_id: updatedBookingData.refund_id,
@@ -522,6 +523,7 @@ function AdminBooking() {
         try {
           const formData = new FormData();
           formData.append('duration', updatedBookingData.duration);
+          formData.append('assigned_pilot', updatedBookingData.assigned_pilot || null)
           formData.append('bookingPriceBTN', updatedBookingData.bookingPriceBTN);
           formData.append('bookingPriceUSD', updatedBookingData.bookingPriceUSD);
           formData.append('refund_id', updatedBookingData.refund_id);

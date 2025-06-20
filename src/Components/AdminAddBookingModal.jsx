@@ -9,7 +9,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
     const [loading, setLoading] = useState(false);
     const genderTypes = ['Male', 'Female', 'Others'];
     const bookingStatuses = ['Booked', 'Pending', 'Confirmed'];
-    const paymentTypes = ['Online', 'Bank Transfer', 'Cash', 'MBoB'];
+    const paymentTypes = ['Online', 'Bank Transfer', 'Cash', 'MBoB', 'Credit Card'];
     const bookingTypes = ['Walk-In', 'Online', 'Phone Call', 'Agency','Email'];
 
     const [pilots, setPilots] = useState([]);
@@ -778,7 +778,6 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                                     name="departure_time"
                                     value={formData.departure_time}
                                     onChange={handleChange}
-                                    required
                                 />
                             </label>
                         </div>
@@ -902,7 +901,6 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                                             type="text"
                                             name="phoneNumber"
                                             placeholder='########'
-                                            required
                                             value={passengerData.passengers[index]?.phoneNumber || ''}
                                             onChange={(e) => handleChange(e, index)}
                                         />
@@ -1196,7 +1194,6 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                                     name="payment_type"
                                     value={formData.payment_type}
                                     onChange={handleChange}
-                                    required
                                 >
                                     <option value="" disabled>Select Payment Type</option>
                                     {paymentTypes.map((paymentType, index) => (
@@ -1231,7 +1228,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                                 <label>
                                     Journal Number
                                     <input
-                                        type="number"
+                                        type="text"
                                         name="journal_no"
                                         placeholder="Eg. 134567"
                                         value={formData.journal_no}
