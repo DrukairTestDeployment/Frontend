@@ -111,7 +111,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
         bookingStatus: "",
         payment_type: "",
         booking_type: "",
-        cType: "None",
+        cType: "BTN",
         price: 0,
         bookingPriceUSD: 0,
         bookingPriceBTN: 0,
