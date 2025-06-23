@@ -124,7 +124,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, passengers, onUpdate
     useEffect(() => {
         const fetchPilots = async () => {
             try {
-                const response = await axios.get("http://localhost:4001/api/users", { withCredentials: true });
+                const response = await axios.get("https://helistaging.drukair.com.bt/api/users", { withCredentials: true });
                 const allPilots = response.data.data.filter(
                     (user) => user.role.name === "PILOT"
                 );

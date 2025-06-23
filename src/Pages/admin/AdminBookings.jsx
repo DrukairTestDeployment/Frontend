@@ -523,7 +523,9 @@ function AdminBooking() {
         try {
           const formData = new FormData();
           formData.append('duration', updatedBookingData.duration);
-          formData.append('assigned_pilot', updatedBookingData.assigned_pilot || null)
+          if (updatedBookingData?.assigned_pilot !== null) {
+            formData.append('assigned_pilot', updatedBookingData.assigned_pilot?._id);
+          }
           formData.append('bookingPriceBTN', updatedBookingData.bookingPriceBTN);
           formData.append('bookingPriceUSD', updatedBookingData.bookingPriceUSD);
           formData.append('refund_id', updatedBookingData.refund_id);
