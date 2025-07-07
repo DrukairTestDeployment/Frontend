@@ -195,3 +195,42 @@
     padding: 4px 8px;
     cursor: pointer;
 }
+
+/* Routes */
+.route-btn {
+    border: none !important;
+    font-size: 20px !important;
+    background: transparent;
+    width: auto !important;
+}
+
+.passenger-tab.route-tab {
+    width: auto !important;
+    flex: 0 0 auto;
+    overflow: hidden;
+}
+
+.passenger-tab-wrapper .passenger-tab.active button {
+    color: white;
+}
+
+.route-name-ellipsis {
+    padding-right: 20px;
+}
+
+.passenger-tab-wrapper {
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: 8px;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+}
+
+.passenger-tab-wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+
+.passenger-tab-wrapper::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
