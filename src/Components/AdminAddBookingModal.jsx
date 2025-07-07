@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './BookingDetailsModal.css';
-import { IoMdAdd, IoMdRemove } from "react-icons/io";
+import { IoMdAdd, IoMdRemove, IoIosRemoveCircleOutline } from "react-icons/io";
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import HelicopterLoader from './HelicopterLoader';
@@ -10,7 +10,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
     const genderTypes = ['Male', 'Female', 'Others'];
     const bookingStatuses = ['Booked', 'Pending', 'Confirmed'];
     const paymentTypes = ['Online', 'Bank Transfer', 'Cash', 'MBoB', 'Credit Card'];
-    const bookingTypes = ['Walk-In', 'Online', 'Phone Call', 'Agency','Email'];
+    const bookingTypes = ['Walk-In', 'Online', 'Phone Call', 'Agency', 'Email'];
 
     const [pilots, setPilots] = useState([]);
     const [bookings, setBookings] = useState([]);
@@ -22,6 +22,17 @@ function AdminAddBookingModal({ isOpen, onClose }) {
     const [passengers, setPassengers] = useState([{ id: Date.now() }]);
     const [imagePreview, setImagePreview] = useState('');
     const maxFileSize = 5 * 1024 * 1024; // Max size 5MB
+
+    const [weightLimits, setWeightLimits] = useState({
+        summer: 450,
+        winter: 450,
+    });
+
+    const getSeasonFromDate = (dateStr) => {
+        if (!dateStr) return "summer";
+        const month = new Date(dateStr).getMonth() + 1;
+        return (month >= 3 && month <= 8) ? "summer" : "winter";
+    };
 
     const [priceInBTN, setPriceInBtn] = useState("")
     const [priceInUSD, setPriceInUSD] = useState("")
@@ -36,16 +47,279 @@ function AdminAddBookingModal({ isOpen, onClose }) {
     let finalpriceInBTN = Number(priceInBTN * durationf).toFixed(2)
     let finalpriceInUSD = Number(priceInUSD * durationf).toFixed(2)
 
+    // Route
+    const [routeList, setRouteList] = useState([]);
 
-    let carryingCapacity = 0;
-    let flightMonth = 0
-    let winterWeight = 450
-    let summerWeight = 450
+    const [newRouteName, setNewRouteName] = useState('');
+    const [activeRouteIndex, setActiveRouteIndex] = useState(0);
+    const [activePassengerIndex, setActivePassengerIndex] = useState(0);
+    const maxPassengersPerRoute = 6;
+    const medicalIssues = ['Yes', 'No'];
 
-    const summerMonths = [3, 4, 5, 6, 7, 8]
-    const isSummer = summerMonths.includes(flightMonth);
-    carryingCapacity = isSummer ? summerWeight : winterWeight;
+    const addRoute = () => {
+        if (!newRouteName.trim()) return;
+        const newRoute = {
+            id: Date.now(),
+            name: newRouteName.trim(),
+            passengers: [
+                {
+                    name: '',
+                    weight: '',
+                    bagWeight: '',
+                    cid: '',
+                    contact: '',
+                    medIssue: '',
+                    remarks: '',
+                    gender: ''
+                }
+            ],
+        };
+        setRouteList([...routeList, newRoute]);
+        setNewRouteName('');
+        setActiveRouteIndex(routeList.length);
+        setActivePassengerIndex(0);
+    };
 
+    const removeRoute = (id) => {
+        // Unsaved routes
+        const isUnsaved = !id;
+
+        if (isUnsaved) {
+            // Remove from state only
+            const updated = routeList.filter(route => route._id !== id);
+            setRouteList(updated);
+            setActiveRouteIndex(Math.max(0, updated.length - 1));
+            return;
+        }
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you want to remove this route?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, remove it!'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await axios.delete(
+                        `https://helistaging.drukair.com.bt/api/leg/${id}`
+                    );
+
+                    if (response.data.status === "success") {
+                        Swal.fire({
+                            title: "Success!",
+                            text: "Route Removed Successfully",
+                            icon: "success",
+                            confirmButtonColor: "#1E306D",
+                            confirmButtonText: "OK",
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Warning!",
+                            text: "Deletion may not have been successful",
+                            icon: "warning",
+                            confirmButtonColor: "#1E306D",
+                            confirmButtonText: "OK",
+                        });
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        title: "Error!",
+                        text: error.response?.data?.message || "Error deleting route",
+                        icon: "error",
+                        confirmButtonColor: "#1E306D",
+                        confirmButtonText: "OK",
+                    });
+
+                }
+            }
+        });
+    };
+
+    const updateRouteName = (id, newName) => {
+        Swal.fire({
+            title: "",
+            text: "Are you sure you want to update the route name?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#1E306D",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, Update Route Name",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const res = await axios.patch(`https://helistaging.drukair.com.bt/api/leg/${id}`, {
+                        name: newName
+                    });
+                    if (res.data.status === "success") {
+                        Swal.fire({
+                            title: "Success!",
+                            text: "Route Name Updated Successfully",
+                            icon: "success",
+                            confirmButtonColor: "#1E306D",
+                            confirmButtonText: "OK",
+                        });
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        title: "Error!",
+                        text: error.response
+                            ? error.response.data.message
+                            : "An error occurred",
+                        icon: "error",
+                        confirmButtonColor: "#1E306D",
+                        confirmButtonText: "OK",
+                    });
+                }
+            }
+        })
+    };
+
+    const addPassengerToRoute = (routeId) => {
+        setRouteList(routeList.map((route, idx) => {
+            if (route.id === routeId && route.passengers.length < maxPassengersPerRoute) {
+                const newPassengers = [...route.passengers, {
+                    name: '', weight: '', bagWeight: '', cid: '', contact: '', medIssue: '', remarks: '', gender: ''
+                }];
+                if (idx === activeRouteIndex) {
+                    setActivePassengerIndex(newPassengers.length - 1);
+                }
+                return { ...route, passengers: newPassengers };
+            }
+            return route;
+        }));
+    };
+
+    const updatePassenger = (routeId, index, field, value) => {
+        setRouteList(prevRoutes =>
+            prevRoutes.map(route => {
+                if (route._id === routeId) {
+                    const updatedPassengers = [...route.passengers];
+                    updatedPassengers[index][field] = value;
+
+                    // Calculate total weight
+                    const totalWeight = updatedPassengers.reduce((sum, p) =>
+                        sum + (parseFloat(p.weight || 0) + parseFloat(p.bagWeight || 0)), 0
+                    );
+
+                    // Get current season
+                    const season = getSeasonFromDate(formData.flight_date);
+                    const weightLimit = weightLimits[season];
+
+                    if (totalWeight > weightLimit) {
+                        Swal.fire({
+                            title: "Exceeded Weight Limit!",
+                            text: `Total passenger + baggage weight (${totalWeight} kg) exceeds the ${season} limit of ${weightLimit} kg.`,
+                            icon: "error",
+                            confirmButtonColor: "#1E306D",
+                            confirmButtonText: "OK",
+                        });
+                        return route; // prevent update
+                    }
+
+                    return { ...route, passengers: updatedPassengers };
+                }
+                return route;
+            })
+        );
+    };
+
+    const removePassengerFromRoute = (passengerId) => {
+        const isUnsaved = !passengerId;
+
+        if (isUnsaved) {
+            setRouteList(prev =>
+                prev.map((route, i) =>
+                    i === activeRouteIndex
+                        ? {
+                            ...route,
+                            passengers: route.passengers.filter((_, idx) => idx !== activePassengerIndex)
+                        }
+                        : route
+                )
+            );
+            setActivePassengerIndex(0);
+            return;
+        }
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you want to remove this passenger?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, remove it!'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await axios.delete(
+                        `https://helistaging.drukair.com.bt/api/passengers/${passengerId}`
+                    );
+
+                    if (response.data.status === "success") {
+                        Swal.fire({
+                            title: "Success!",
+                            text: "Passenger Deleted Successfully",
+                            icon: "success",
+                            confirmButtonColor: "#1E306D",
+                            confirmButtonText: "OK",
+                        });
+
+                        setRouteList(prev =>
+                            prev.map((route, i) =>
+                                i === activeRouteIndex
+                                    ? {
+                                        ...route,
+                                        passengers: route.passengers.filter((p, idx) => p._id !== passengerId)
+                                    }
+                                    : route
+                            )
+                        );
+
+                        setActivePassengerIndex(0);
+                    } else {
+                        Swal.fire({
+                            title: "Warning!",
+                            text: "Deletion may not have been successful",
+                            icon: "warning",
+                            confirmButtonColor: "#1E306D",
+                            confirmButtonText: "OK",
+                        });
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        title: "Error!",
+                        text: error.response?.data?.message || "Error deleting passenger",
+                        icon: "error",
+                        confirmButtonColor: "#1E306D",
+                        confirmButtonText: "OK",
+                    });
+                }
+            }
+        });
+    };
+
+    const handleRouteDoubleClick = (id, currentName) => {
+        Swal.fire({
+            title: 'Edit Route Name',
+            input: 'text',
+            inputValue: currentName,
+            showCancelButton: true,
+            confirmButtonText: 'Update',
+            preConfirm: (newName) => {
+                if (!newName.trim()) {
+                    Swal.showValidationMessage('Name cannot be empty');
+                }
+                return newName.trim();
+            }
+        }).then(result => {
+            if (result.isConfirmed) {
+                updateRouteName(id, result.value);
+            }
+        });
+    };
+    const [carryingCapacity, setCarryingCapacity] = useState(450);
 
     // Multiple image input
     const [paymentScreenshots, setPaymentScreenshots] = useState([]);
@@ -256,15 +530,23 @@ function AdminAddBookingModal({ isOpen, onClose }) {
 
     const getDuration = async (id) => {
         if (id === "Others") {
-            setDuration(0)
+            setDuration(0);
+            setCarryingCapacity(450); // fallback default
         } else {
             try {
                 const response = await axios.get(`https://helistaging.drukair.com.bt/api/routes/${id}`);
-                const durations = parseInt(response.data.data.duration) / 60
-                formData.duration = response.data.data.duration;
-                setDuration(durations)
-                winterWeight = parseFloat(response.data.data.winterWeight)
-                summerWeight = parseFloat(response.data.data.summerWeight)
+                const data = response.data.data;
+                const durationInHours = parseInt(data.duration) / 60;
+                setDuration(durationInHours);
+                formData.duration = data.duration;
+
+                const winter = parseFloat(data.winterWeight);
+                const summer = parseFloat(data.summerWeight);
+
+                const selectedDate = new Date(formData.flight_date);
+                const isSummer = [3, 4, 5, 6, 7, 8].includes(selectedDate.getMonth() + 1); // months are 0-based
+
+                setCarryingCapacity(isSummer ? summer : winter);
             } catch (error) {
                 Swal.fire({
                     title: "Error!",
@@ -297,33 +579,28 @@ function AdminAddBookingModal({ isOpen, onClose }) {
     }
 
     const validateForm = () => {
-        const newErrors = {};
+        let errorRoute = null;
 
-        if (totalWeight > carryingCapacity) {
-            newErrors.totalWeight = `Total weight exceeds carrying capacity of ${carryingCapacity}kg`;
-        }
+        for (let i = 0; i < routeList.length; i++) {
+            const route = routeList[i];
+            let routeWeight = 0;
 
-        passengerData.passengers.forEach((passenger, index) => {
-            if (passenger.weight && (isNaN(passenger.weight) || passenger.weight <= 0)) {
-                newErrors[`passengers[${index}].weight`] = 'Weight must be a positive number';
-            }
-            if (passenger.luggageWeight && (isNaN(passenger.luggageWeight) || passenger.luggageWeight < 0)) {
-                newErrors[`passengers[${index}].luggageWeight`] = 'Luggage weight must be a non-negative number';
+            for (const p of route.passengers) {
+                routeWeight += Number(p.weight || 0) + Number(p.bagWeight || 0);
             }
 
-            if (totalWeight > carryingCapacity) {
+            if (routeWeight > carryingCapacity) {
+                errorRoute = route.name || `Route ${i + 1}`;
                 Swal.fire({
                     icon: 'error',
                     title: 'Weight Limit Exceeded',
-                    text: `Total weight (${totalWeight}kg) exceeds the carrying capacity of ${carryingCapacity}kg`,
+                    text: `Route "${errorRoute}" exceeds carrying capacity of ${carryingCapacity}Kg with total weight ${routeWeight}Kg.`,
                 });
                 return false;
             }
-        });
+        }
 
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
+        return true;
     };
 
     const handleChange = (e, passengerIndex) => {
@@ -382,26 +659,6 @@ function AdminAddBookingModal({ isOpen, onClose }) {
         };
     }, [imagePreview]);
 
-    const addPassenger = () => {
-        if (passengers.length <= 5) {
-            setPassengers([...passengers, { id: Date.now() }]);
-            setPassengerData(prevData => ({
-                ...prevData,
-                passengers: [...prevData.passengers, {}]
-            }));
-        }
-    };
-
-    const removePassenger = (id, index) => {
-        if (passengers.length > 1) {
-            setPassengers(passengers.filter(passenger => passenger.id !== id));
-            setPassengerData(prevData => ({
-                ...prevData,
-                passengers: prevData.passengers.filter((_, i) => i !== index)
-            }));
-        }
-    };
-
     useEffect(() => {
         calculateTotalWeight();
     }, [passengerData.passengers]);
@@ -413,31 +670,57 @@ function AdminAddBookingModal({ isOpen, onClose }) {
         setTotalWeight(weight);
     };
 
-    const postPassenger = async (id) => {
-        for (const passenger of passengerData.passengers) {
-            try {
-                await axios.post('https://helistaging.drukair.com.bt/api/passengers', {
-                    name: passenger.name,
-                    weight: passenger.weight,
-                    cid: passenger.cidPassport,
-                    bagWeight: passenger.luggageWeight,
-                    gender: passenger.gender,
-                    medIssue: passenger.medicalCondition,
-                    contact: passenger.phoneNumber,
-                    booking_id: id,
-                    remarks: passenger.remarks,
-                    boarding: passenger.boarding,
-                    disembark: passenger.disembark
-                });
-            } catch (error) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: error.response ? error.response.data.message : 'An error occurred',
-                    icon: 'error',
-                    confirmButtonColor: '#1E306D',
-                    confirmButtonText: 'OK'
-                });
+    const postRoute = async (route, id) => {
+        // for (const passenger of passengers) {
+        try {
+            const response = await axios.post("https://helistaging.drukair.com.bt/api/leg", {
+                name: route.name,
+                booking_id: id,
+            });
+            if (response.data.status === "success") {
+                for (const passenger of route.passengers) {
+                    postPassenger(passenger, response.data.data._id, id);
+                }
+            } else {
+                throw new Error(
+                    response.data.message || "Failed to update booking"
+                );
             }
+        } catch (error) {
+            Swal.fire({
+                title: "Error!",
+                text: error.response
+                    ? error.response.data.message
+                    : "An error occurred",
+                icon: "error",
+                confirmButtonColor: "#1E306D",
+                confirmButtonText: "OK",
+            });
+        }
+    }
+
+    const postPassenger = async (passenger, rid, id) => {
+        try {
+            await axios.post('https://helistaging.drukair.com.bt/api/passengers', {
+                name: passenger.name,
+                weight: passenger.weight,
+                cid: passenger.cid,
+                bagWeight: passenger.bagWeight,
+                gender: passenger.gender,
+                medIssue: passenger.medIssue,
+                contact: passenger.contact,
+                booking_id: id,
+                leg_id: rid,
+                remarks: passenger.remarks,
+            });
+        } catch (error) {
+            Swal.fire({
+                title: 'Error!',
+                text: error.response ? error.response.data.message : 'An error occurred',
+                icon: 'error',
+                confirmButtonColor: '#1E306D',
+                confirmButtonText: 'OK'
+            });
         }
     }
 
@@ -492,6 +775,9 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                         });
 
                         if (response.data.status === "success") {
+                            for (const route of routeList) {
+                                postRoute(route, response.data.data._id)
+                            }
                             Swal.fire({
                                 title: "Success!",
                                 text: "Reservation Made Successfully!, A confirmation mail will be sent to your email address",
@@ -500,7 +786,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                                 confirmButtonText: "OK",
                             });
 
-                            postPassenger(response.data.data._id);
+                            // postPassenger(response.data.data._id);
                             onClose();
                             // window.location.reload()
                         }
@@ -560,6 +846,9 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                         });
 
                         if (response.data.status === "success") {
+                            for (const route of routeList) {
+                                await postRoute(route, response.data.data._id)
+                            }
                             Swal.fire({
                                 title: "Success!",
                                 text: "Reservation Made Successfully!, A confirmation mail will be sent to your email address",
@@ -568,7 +857,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                                 confirmButtonText: "OK",
                             });
 
-                            postPassenger(response.data.data._id);
+                            // postPassenger(response.data.data._id);
                             onClose();
                             // window.location.reload()
                         }
@@ -636,11 +925,11 @@ function AdminAddBookingModal({ isOpen, onClose }) {
 
                         <div className="booking-form-group">
                             <label>
-                                CID
+                                CID/Passport
                                 <input
                                     type="text"
                                     name="agent_cid"
-                                    placeholder='Citizenship Identity Number'
+                                    placeholder='Enter CID/Passport'
                                     value={formData.agent_cid}
                                     onChange={handleChange}
                                     required
@@ -836,189 +1125,255 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                             Current total weight: {totalWeight}kg
                         </p>
 
-                        {passengers.map((passenger, index) => (
-                            <div key={passenger.id} className="passengerWrapper">
-                                <p className='passsenger-count'>Passenger {index + 1}</p>
-                                <div className="booking-form-group">
-                                    <label>
-                                        Name
-                                        <input
-                                            type="text"
-                                            name="name"
-                                            required
-                                            placeholder='Enter Passenger Name'
-                                            value={passengerData.passengers[index]?.name || ''}
-                                            onChange={(e) => handleChange(e, index)}
-                                        />
-                                    </label>
-                                    <label>
-                                        Gender
-                                        <select
-                                            name="gender"
-                                            value={passengerData.passengers[index]?.gender || ''}
-                                            onChange={(e) => handleChange(e, index)}
-                                            required
-                                        >
-                                            <option value="" disabled>Select Gender</option>
-                                            {genderTypes.map((genderType, i) => (
-                                                <option key={i} value={genderType}>
-                                                    {genderType}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </label>
-                                </div>
-
-                                <div className="booking-form-group">
-                                    <label>
-                                        Weight(in Kg)
-                                        <input
-                                            type="number"
-                                            name="weight"
-                                            placeholder='Enter Passenger Weight'
-                                            required
-                                            value={passengerData.passengers[index]?.weight || ''}
-                                            onChange={(e) => handleChange(e, index)}
-                                        />
-                                        {errors[`passengers[${index}].weight`] && <span className="error">{errors[`passengers[${index}].weight`]}</span>}
-                                    </label>
-                                    <label>
-                                        Luggage Weight(in Kg)
-                                        <input
-                                            type="number"
-                                            name="luggageWeight"
-                                            placeholder='Enter Luggage Weight'
-                                            value={passengerData.passengers[index]?.luggageWeight || ''}
-                                            onChange={(e) => handleChange(e, index)}
-                                        />
-                                    </label>
-                                </div>
-
-                                <div className="booking-form-group">
-                                    <label>
-                                        Phone Number
-                                        <input
-                                            type="text"
-                                            name="phoneNumber"
-                                            placeholder='########'
-                                            value={passengerData.passengers[index]?.phoneNumber || ''}
-                                            onChange={(e) => handleChange(e, index)}
-                                        />
-                                    </label>
-                                    <label>
-                                        CID/Passport
-                                        <input
-                                            type="text"
-                                            name="cidPassport"
-                                            required
-                                            placeholder='Enter Passenger CID or Passport'
-                                            value={passengerData.passengers[index]?.cidPassport || ''}
-                                            onChange={(e) => handleChange(e, index)}
-                                        />
-                                    </label>
-                                </div>
-                                <div className="booking-form-group">
-                                    <label>
-                                        Boarding Location
-                                        <input
-                                            type="text"
-                                            name="boarding"
-                                            placeholder='Enter your boarding location'
-                                            value={passengerData.passengers[index]?.boarding || ''}
-                                            onChange={(e) => handleChange(e, index)}
-                                        />
-                                    </label>
-                                    <label>
-                                        Disembarking Location
-                                        <input
-                                            type="text"
-                                            name="disembark"
-                                            placeholder='Enter your drop off location'
-                                            value={passengerData.passengers[index]?.disembark || ''}
-                                            onChange={(e) => handleChange(e, index)}
-                                        />
-                                    </label>
-                                </div>
-                                <div className="booking-form-group">
-                                    <label>
-                                        Any medical conditions that would prevent the passenger from flying briefly above 14,000 Ft without oxygen?
-                                        <div className='helipadPermission'>
-                                            <label className='radio-label'>
-                                                <input
-                                                    type="radio"
-                                                    name={`medicalCondition-${index}`}
-                                                    value="Yes"
-                                                    required
-                                                    checked={passengerData.passengers[index]?.medicalCondition === 'Yes'}
-                                                    onChange={() => handleChange({
-                                                        target: {
-                                                            name: 'medicalCondition',
-                                                            value: 'Yes'
-                                                        }
-                                                    }, index)}
-                                                />
-                                                Yes
-                                            </label>
-                                            <label className='radio-label'>
-                                                <input
-                                                    type="radio"
-                                                    name={`medicalCondition-${index}`}
-                                                    value="No"
-                                                    required
-                                                    checked={passengerData.passengers[index]?.medicalCondition === 'No'}
-                                                    onChange={() => handleChange({
-                                                        target: {
-                                                            name: 'medicalCondition',
-                                                            value: 'No'
-                                                        }
-                                                    }, index)}
-                                                />
-                                                No
-                                            </label>
-                                        </div>
-                                    </label>
-                                </div>
-
-                                {passengerData.passengers[index]?.medicalCondition === 'Yes' && (
-                                    <div className="booking-form-group">
-                                        <label>
-                                            Please provide details about the medical condition
-                                            <textarea
-                                                name="remarks"
-                                                placeholder="Enter any medical remarks here"
-                                                value={passengerData.passengers[index]?.remarks || ''}
-                                                onChange={(e) => handleChange(e, index)}
-                                                className='medicalRemarksInput'
-                                            ></textarea>
-                                            {/* {passengerErrors[index]?.medicalRemarks && <span className="error">{passengerErrors[index].medicalRemarks}</span>}  */}
-                                        </label>
+                        <>
+                            <div className="booking-form-group">
+                                <input
+                                    type="text"
+                                    placeholder="Enter route name"
+                                    value={newRouteName}
+                                    onChange={(e) => setNewRouteName(e.target.value)}
+                                />
+                                <button type="button" className="passenger-btn" onClick={addRoute}>
+                                    Add Route
+                                    <div className="passenger-icon-container">
+                                        <IoMdAdd className='passenger-icon' />
                                     </div>
-                                )}
-
-
-                                {index !== 0 && (
-                                    <button
-                                        type="button"
-                                        className='passenger-btn'
-                                        onClick={() => removePassenger(passenger.id, index)}
-                                    >
-                                        Remove Passenger
-                                        <div className="passenger-icon-container">
-                                            <IoMdRemove className='passenger-icon' />
-                                        </div>
-                                    </button>
-                                )}
+                                </button>
                             </div>
-                        ))}
 
-                        {passengers.length <= 5 && (
-                            <button type="button" className='passenger-btn' onClick={addPassenger}>
-                                Add More
-                                <div className="passenger-icon-container">
-                                    <IoMdAdd className='passenger-icon' />
+                            <div className="passenger-tab-wrapper">
+                                {routeList.map((route, index) => (
+                                    <div
+                                        key={route.id}
+                                        className={`passenger-tab route-tab ${index === activeRouteIndex ? 'active' : ''}`}
+                                        onClick={() => {
+                                            setActiveRouteIndex(index);
+                                            setActivePassengerIndex(0);
+                                        }}
+                                        onDoubleClick={() => handleRouteDoubleClick(route._id, route.name)}
+                                    >
+                                        <span className="route-name-ellipsis">{route.name}</span>
+                                        <button
+                                            type="button"
+                                            className='passenger-btn route-btn'
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                removeRoute(route._id, index);
+                                            }}
+                                        >
+                                            <IoIosRemoveCircleOutline className='passenger-icon' />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+
+
+                            {routeList[activeRouteIndex] && (
+                                <div>
+                                    <div className="passenger-tab-wrapper">
+                                        {routeList[activeRouteIndex].passengers.map((_, idx) => (
+                                            <div
+                                                key={idx}
+                                                className={`passenger-tab ${idx === activePassengerIndex ? 'active' : ''}`}
+                                                onClick={() => setActivePassengerIndex(idx)}
+                                            >
+                                                Passenger {idx + 1}
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {routeList[activeRouteIndex].passengers[activePassengerIndex] && (
+                                        <>
+                                            {/* Name & Gender */}
+                                            <div className="booking-form-group">
+                                                <label>
+                                                    Name
+                                                    <input
+                                                        type="text"
+                                                        placeholder='Enter passenger name'
+                                                        value={routeList[activeRouteIndex].passengers[activePassengerIndex].name}
+                                                        onChange={e =>
+                                                            updatePassenger(
+                                                                routeList[activeRouteIndex]._id,
+                                                                activePassengerIndex,
+                                                                'name',
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                    />
+                                                </label>
+                                                <label>
+                                                    Gender
+                                                    <select
+                                                        value={routeList[activeRouteIndex].passengers[activePassengerIndex].gender || ''}
+                                                        onChange={e =>
+                                                            updatePassenger(
+                                                                routeList[activeRouteIndex]._id,
+                                                                activePassengerIndex,
+                                                                'gender',
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                    >
+                                                        <option value="" disabled>Select gender</option>
+                                                        {genderTypes.map(gender => (
+                                                            <option key={gender} value={gender}>{gender}</option>
+                                                        ))}
+                                                    </select>
+                                                </label>
+                                            </div>
+
+                                            {/* Weight & Luggage Weight */}
+                                            <div className="booking-form-group">
+                                                <label>
+                                                    Weight (Kg)
+                                                    <input
+                                                        type="number"
+                                                        placeholder='Enter Passenger Weight'
+                                                        value={routeList[activeRouteIndex].passengers[activePassengerIndex].weight}
+                                                        onChange={e =>
+                                                            updatePassenger(
+                                                                routeList[activeRouteIndex]._id,
+                                                                activePassengerIndex,
+                                                                'weight',
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                    />
+                                                </label>
+                                                <label>
+                                                    Luggage Weight (Kg)
+                                                    <input
+                                                        type="number"
+                                                        placeholder='Enter Luggage Weight'
+                                                        value={routeList[activeRouteIndex].passengers[activePassengerIndex].bagWeight || ''}
+                                                        onChange={e =>
+                                                            updatePassenger(
+                                                                routeList[activeRouteIndex]._id,
+                                                                activePassengerIndex,
+                                                                'bagWeight',
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                    />
+                                                </label>
+                                            </div>
+
+                                            {/* Passport/CID & Phone Number */}
+                                            <div className="booking-form-group">
+                                                <label>
+                                                    Passport/CID
+                                                    <input
+                                                        type="text"
+                                                        placeholder='Enter Passenger Passport/CID'
+                                                        value={routeList[activeRouteIndex].passengers[activePassengerIndex].cid}
+                                                        onChange={e =>
+                                                            updatePassenger(
+                                                                routeList[activeRouteIndex]._id,
+                                                                activePassengerIndex,
+                                                                'cid',
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                    />
+                                                </label>
+                                                <label>
+                                                    Phone Number
+                                                    <input
+                                                        type="number"
+                                                        placeholder='Enter Passenger Phone Number'
+                                                        value={routeList[activeRouteIndex].passengers[activePassengerIndex].contact || ''}
+                                                        onChange={e =>
+                                                            updatePassenger(
+                                                                routeList[activeRouteIndex]._id,
+                                                                activePassengerIndex,
+                                                                'contact',
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                    />
+                                                </label>
+                                            </div>
+
+
+                                            {/* Medical Issues */}
+                                            <div className="booking-form-group">
+                                                <label>
+                                                    Medical Issues
+                                                    <select
+                                                        value={routeList[activeRouteIndex].passengers[activePassengerIndex].medIssue || ''}
+                                                        onChange={e =>
+                                                            updatePassenger(
+                                                                routeList[activeRouteIndex]._id,
+                                                                activePassengerIndex,
+                                                                'medIssue',
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                    >
+                                                        <option value="" disabled>Select Medical Issue</option>
+                                                        {medicalIssues.map(medIssue => (
+                                                            <option key={medIssue} value={medIssue}>{medIssue}</option>
+                                                        ))}
+                                                    </select>
+                                                </label>
+                                            </div>
+
+                                            {/* Medical Remarks (conditional) */}
+                                            {routeList[activeRouteIndex].passengers[activePassengerIndex].medIssue === 'Yes' && (
+                                                <div className="booking-form-group">
+                                                    <label>
+                                                        Please provide details about the medical condition
+                                                        <textarea
+                                                            placeholder="Enter any medical remarks here"
+                                                            value={routeList[activeRouteIndex].passengers[activePassengerIndex].remarks || ''}
+                                                            onChange={e =>
+                                                                updatePassenger(
+                                                                    routeList[activeRouteIndex]._id,
+                                                                    activePassengerIndex,
+                                                                    'remarks',
+                                                                    e.target.value
+                                                                )
+                                                            }
+                                                            className="medicalRemarksInput"
+                                                        ></textarea>
+                                                    </label>
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+
+
+                                    {routeList[activeRouteIndex].passengers.length > 0 && (
+                                        <button
+                                            type="button"
+                                            className='passenger-btn'
+                                            onClick={() => removePassengerFromRoute(routeList[activeRouteIndex]._id, activePassengerIndex)}
+                                            style={{ marginBottom: '20px' }}
+                                        >
+                                            Remove Passenger
+                                            <div className="passenger-icon-container">
+                                                <IoMdRemove className='passenger-icon' />
+                                            </div>
+                                        </button>
+                                    )}
+
+                                    {routeList[activeRouteIndex].passengers.length < maxPassengersPerRoute && (
+
+                                        <button
+                                            type="button"
+                                            className='passenger-btn'
+                                            onClick={() => addPassengerToRoute(routeList[activeRouteIndex].id)}
+                                        >
+                                            Add More
+                                            <div className="passenger-icon-container">
+                                                <IoMdAdd className='passenger-icon' />
+                                            </div>
+                                        </button>
+                                    )}
                                 </div>
-                            </button>
-                        )}
+                            )}
+                        </>
 
                         <div className="whiteSpace"></div>
 
@@ -1223,7 +1578,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
 
                         </div>
 
-                        {(formData.payment_type === 'Bank Transfer' || formData.payment_type==='MBoB')&& (
+                        {(formData.payment_type === 'Bank Transfer' || formData.payment_type === 'MBoB') && (
                             <div className="booking-form-group">
                                 <label>
                                     Journal Number

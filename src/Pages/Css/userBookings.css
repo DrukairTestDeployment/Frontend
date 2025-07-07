@@ -111,6 +111,7 @@
   font-family: "Roman";
   margin-top: 200px;
   text-transform: capitalize;
+  margin-bottom: 80px;
 }
 
 @media (max-width: 1900px) {

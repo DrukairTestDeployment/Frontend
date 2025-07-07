@@ -22,6 +22,8 @@ function AdminBooking() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [agencySearchTerm, setAgencySearchTerm] = useState("");
+  const [legs, setLeg] = useState([]);
+  const [selectedLegs, setSelectedLegs] = useState([]);
   const [passengers, setPassenger] = useState([]);
   const [selectedPassengers, setSelectedPassengers] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -141,6 +143,26 @@ function AdminBooking() {
     };
     fetchBooking();
   }, [sortOrder]);
+
+  useEffect(() => {
+    const fetchLeg = async () => {
+      try {
+        const response = await axios.get(
+          "https://helistaging.drukair.com.bt/api/leg"
+        );
+        setLeg(response.data.data);
+      } catch (error) {
+        Swal.fire({
+          title: "Error!",
+          text: "Error fetching data",
+          icon: "error",
+          confirmButtonColor: "#1E306D",
+          confirmButtonText: "OK",
+        });
+      }
+    };
+    fetchLeg();
+  }, [Bookings]);
 
   useEffect(() => {
     const fetchPassenger = async () => {
@@ -263,6 +285,13 @@ function AdminBooking() {
     });
   };
 
+  const filterLeg = (id) => {
+    const filter = legs.filter(
+      (leg) => leg.booking_id === id
+    );
+    setSelectedLegs(filter);
+  };
+
   const filterPassenger = (id) => {
     const filter = passengers.filter(
       (passenger) => passenger.booking_id === id
@@ -271,6 +300,7 @@ function AdminBooking() {
   };
 
   const openModal = (booking) => {
+    filterLeg(booking._id);
     filterPassenger(booking._id);
     setSelectedBooking(booking);
     setID(booking._id);
@@ -394,53 +424,95 @@ function AdminBooking() {
     setSelectedBookingId(id);
   };
 
-  const postPassenger = async (passenger) => {
+  const postPassenger = async (passenger, rid) => {
     // for (const passenger of passengers) {
-      try {
-        if (passenger._id) {
-          await axios.patch(`https://helistaging.drukair.com.bt/api/passengers/${passenger._id}`, {
-            name: passenger.name,
-            weight: passenger.weight,
-            cid: passenger.cid,
-            bagWeight: passenger.bagWeight,
-            gender: passenger.gender,
-            medIssue: passenger.medIssue,
-            contact: passenger.contact,
-            remarks:passenger.remarks,
-            boarding: passenger.boarding,
-            disembark: passenger.disembark
-          });
-        } else {
-          await axios.post("https://helistaging.drukair.com.bt/api/passengers", {
-            name: passenger.name,
-            weight: passenger.weight,
-            cid: passenger.cid,
-            bagWeight: passenger.bagWeight,
-            gender: passenger.gender,
-            medIssue: passenger.medIssue,
-            contact: passenger.contact,
-            booking_id: id,
-            remarks:passenger.remarks,
-            boarding: passenger.boarding,
-            disembark: passenger.disembark
-          });
-        }
-
-      } catch (error) {
-        Swal.fire({
-          title: "Error!",
-          text: error.response
-            ? error.response.data.message
-            : "An error occurred",
-          icon: "error",
-          confirmButtonColor: "#1E306D",
-          confirmButtonText: "OK",
+    try {
+      if (passenger._id) {
+        await axios.patch(`https://helistaging.drukair.com.bt/api/passengers/${passenger._id}`, {
+          name: passenger.name,
+          weight: passenger.weight,
+          cid: passenger.cid,
+          bagWeight: passenger.bagWeight,
+          gender: passenger.gender,
+          medIssue: passenger.medIssue,
+          contact: passenger.contact,
+          remarks: passenger.remarks,
+        });
+      } else {
+        await axios.post("https://helistaging.drukair.com.bt/api/passengers", {
+          name: passenger.name,
+          weight: passenger.weight,
+          cid: passenger.cid,
+          bagWeight: passenger.bagWeight,
+          gender: passenger.gender,
+          medIssue: passenger.medIssue,
+          contact: passenger.contact,
+          booking_id: id,
+          leg_id: rid,
+          remarks: passenger.remarks,
         });
       }
+
+    } catch (error) {
+      Swal.fire({
+        title: "Error!",
+        text: error.response
+          ? error.response.data.message
+          : "An error occurred",
+        icon: "error",
+        confirmButtonColor: "#1E306D",
+        confirmButtonText: "OK",
+      });
+    }
     // }
   };
 
-  const handleUpdate = async (updatedBookingData, passengers, images) => {
+  const postRoute = async (route) => {
+    // for (const passenger of passengers) {
+    try {
+      if (route._id) {
+        const response = await axios.patch(`https://helistaging.drukair.com.bt/api/leg/${route._id}`, {
+          name: route.name,
+        });
+        if (response.data.status === "success") {
+          for (const passenger of route.passengers) {
+            await postPassenger(passenger, response.data.data._id);
+          }
+        } else {
+          throw new Error(
+            response.data.message || "Failed to update booking"
+          );
+        }
+      } else {
+        const response = await axios.post("https://helistaging.drukair.com.bt/api/leg", {
+          name: route.name,
+          booking_id: id,
+        });
+        if (response.data.status === "success") {
+          for (const passenger of route.passengers) {
+            await postPassenger(passenger, response.data.data._id);
+          }
+        } else {
+          throw new Error(
+            response.data.message || "Failed to update booking"
+          );
+        }
+      }
+
+    } catch (error) {
+      Swal.fire({
+        title: "Error!",
+        text: error.response
+          ? error.response.data.message
+          : "An error occurred",
+        icon: "error",
+        confirmButtonColor: "#1E306D",
+        confirmButtonText: "OK",
+      });
+    }
+  }
+
+  const handleUpdate = async (updatedBookingData, routes, images) => {
     Swal.fire({
       title: "",
       text: "Are you sure you want to make changes to this booking?",
@@ -477,8 +549,8 @@ function AdminBooking() {
               departure_time: updatedBookingData.departure_time,
               permission: updatedBookingData.permission,
 
-              status :updatedBookingData.status,
-              booking_type:updatedBookingData.booking_type,
+              status: updatedBookingData.status,
+              booking_type: updatedBookingData.booking_type,
               // booking_type: booking.booking_type, 
               journal_no: updatedBookingData.journal_no,
               destination: updatedBookingData.destination,
@@ -491,8 +563,8 @@ function AdminBooking() {
           );
 
           if (responsePatch.data.status === "success") {
-            for (const passenger of passengers){
-              await postPassenger(passenger);
+            for (const route of routes) {
+              await postRoute(route);
             }
             Swal.fire({
               title: "",
@@ -555,8 +627,8 @@ function AdminBooking() {
           formData.append('destination', updatedBookingData.destination);
           formData.append('destination_other', updatedBookingData.destination_other);
           formData.append('service_id', typeof updatedBookingData.service_id === 'object'
-                ? updatedBookingData.service_id._id
-                : updatedBookingData.service_id);
+            ? updatedBookingData.service_id._id
+            : updatedBookingData.service_id);
           formData.append('cType', updatedBookingData.cType)
           images.forEach((img) => {
             formData.append('image', img.file); // `images` must match multer.array('images', 10)
@@ -572,8 +644,8 @@ function AdminBooking() {
           );
 
           if (responsePatch.data.status === "success") {
-            for (const passenger of passengers){
-              await postPassenger(passenger);
+            for (const route of routes) {
+              await postRoute(route);
             }
             Swal.fire({
               title: "",
@@ -1170,11 +1242,12 @@ function AdminBooking() {
             onClose={closeAddBookingModal}
           />
 
-          {isModalOpen && selectedBooking && passengers !== null && (
+          {isModalOpen && selectedBooking && Array.isArray(selectedLegs) && (
             <AdminBookingModal
               isModalOpen={isModalOpen}
               onClose={closeModal}
               booking={selectedBooking}
+              legs={selectedLegs}
               passengers={selectedPassengers}
               onUpdate={handleUpdate}
               onOpen={openAgencyModal}

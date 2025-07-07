@@ -9,6 +9,7 @@ import { BsEye, BsEyeSlash } from 'react-icons/bs';
 
 const AdminProfile = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [femail, setEmail] = useState()
 
   const [user, setUser] = useState({
     name: '',
@@ -42,10 +43,11 @@ const AdminProfile = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`https://helistaging.drukair.com.bt/api/users/${id}`,{
+        const response = await axios.get(`https://helistaging.drukair.com.bt/api/users/${id}`, {
           withCredentials: true
         });
         setUser(response.data.data);
+        setEmail(response.data.data.email)
       } catch (error) {
         Swal.fire({
           title: 'Error!',
@@ -90,8 +92,37 @@ const AdminProfile = () => {
     }
   }
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
+  const OTP = async () => {
+    Swal.fire({
+      title: 'Enter OTP',
+      text: 'Please check the otp in your provided mail',
+      input: 'text',
+      showCancelButton: true,
+      confirmButtonText: 'Verify',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.post(`https://helistaging.drukair.com.bt/api/users/verifyOtp`, {
+            email: femail,
+            otp: result.value
+          });
+          if (response.data.status === 'success') {
+            finalUpdate()
+          }
+        } catch (error) {
+          Swal.fire({
+            title: "Error!",
+            text: error.response ? error.response.data.error : "Error saving the booking",
+            icon: "error",
+            confirmButtonColor: "#1E306D",
+            confirmButtonText: "OK",
+          });
+        }
+      }
+    });
+  };
+
+  const finalUpdate = async () => {
     try {
       const response = await axios.patch(`https://helistaging.drukair.com.bt/api/users/${id}`, {
         name: user.name,
@@ -116,6 +147,30 @@ const AdminProfile = () => {
         confirmButtonColor: '#1E306D',
         confirmButtonText: 'OK',
       });
+    }
+  }
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    if (user.email !== femail) {
+      try {
+        const response = await axios.post('https://helistaging.drukair.com.bt/api/users/send-otp', {
+          email: femail
+        });
+        if (response.data.status === 'success') {
+          OTP()
+        }
+      } catch (error) {
+        Swal.fire({
+          title: 'Error!',
+          text: error.response ? error.response.data.message : 'An error occurred during profile update',
+          icon: 'error',
+          confirmButtonColor: '#1E306D',
+          confirmButtonText: 'OK',
+        });
+      }
+    } else {
+      finalUpdate()
     }
   };
 
@@ -267,10 +322,10 @@ const AdminProfile = () => {
       {isPopupOpen && (
         <div className="profile-popup-overlay">
           <div className="profile-popup">
-              <div className='form-title'>Change Password</div>
+            <div className='form-title'>Change Password</div>
             <button className="service-modal-close-button" onClick={togglePopup}>
-                &times;
-              </button>
+              &times;
+            </button>
             <div className="profile-popup-body">
               <div className="password-container">
                 <input

@@ -16,7 +16,6 @@ function OTPEmail() {
 
   useEffect(() => {
     const { email } = location.state || {};
-    console.log(email)
     setEmail(email);
   }, [location]);
 
@@ -35,10 +34,30 @@ function OTPEmail() {
         });
       }
     };
-    if(email){
+    if (email) {
       fetchData();
     }
   }, [email]);
+
+  const verifyOTP = async (enteredOtp) => {
+    try {
+      const response = await axios.post(`https://helistaging.drukair.com.bt/api/users/verifyOtp`, {
+        email: email,
+        otp: enteredOtp
+      });
+      if (response.data.status === 'success') {
+        userStatus(user._id);
+      }
+    } catch (error) {
+      Swal.fire({
+        title: "Error!",
+        text: error.response ? error.response.data.error : "Error saving the booking",
+        icon: "error",
+        confirmButtonColor: "#1E306D",
+        confirmButtonText: "OK",
+      });
+    }
+  }
 
   const handleChange = (e, index) => {
     const value = e.target.value;
@@ -95,8 +114,8 @@ function OTPEmail() {
       setError("");
       const enteredOtp = otp.join("");
 
-      if (user && user.otp === enteredOtp) {
-        userStatus(user._id);
+      if (user && enteredOtp) {
+        verifyOTP(enteredOtp)
       } else {
         Swal.fire({
           title: 'Error!',

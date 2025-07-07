@@ -20,6 +20,8 @@ function AdminSchedule() {
   const [selectedDate, setSelectedDate] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
+  const [legs, setLeg] = useState([]);
+  const [selectedLegs, setSelectedLegs] = useState([]);
   const [passengers, setPassengers] = useState([]);
   const [selectedPassengers, setSelectedPassengers] = useState([]);
   const [selectedCurrency, setSelectedCurrency] = useState("ALL");
@@ -31,7 +33,15 @@ function AdminSchedule() {
     setSelectedPassengers(filtered);
   };
 
+  const filterLeg = (id) => {
+    const filter = legs.filter(
+      (leg) => leg.booking_id === id
+    );
+    setSelectedLegs(filter);
+  };
+
   const openModal = (booking) => {
+    filterLeg(booking._id);
     filterPassengers(booking._id);
     setSelectedBooking(booking);
     setID(booking._id);
@@ -188,53 +198,95 @@ function AdminSchedule() {
     });
   };
 
-  const postPassenger = async (passengers) => {
-    for (const passenger of passengers) {
-      try {
-        if (passenger._id) {
-          await axios.patch(`https://helistaging.drukair.com.bt/api/passengers/${passenger._id}`, {
-            name: passenger.name,
-            weight: passenger.weight,
-            cid: passenger.cid,
-            bagWeight: passenger.bagWeight,
-            gender: passenger.gender,
-            medIssue: passenger.medIssue,
-            contact: passenger.contact,
-            remarks : passenger.remarks,
-            boarding: passenger.boarding,
-            disembark: passenger.disembark
-          });
-        } else {
-          await axios.post("https://helistaging.drukair.com.bt/api/passengers", {
-            name: passenger.name,
-            weight: passenger.weight,
-            cid: passenger.cid,
-            bagWeight: passenger.bagWeight,
-            gender: passenger.gender,
-            medIssue: passenger.medIssue,
-            contact: passenger.contact,
-            booking_id: id,
-            remarks : passenger.remarks,
-            boarding: passenger.boarding,
-            disembark: passenger.disembark
-          });
-        }
-
-      } catch (error) {
-        Swal.fire({
-          title: "Error!",
-          text: error.response
-            ? error.response.data.message
-            : "An error occurred",
-          icon: "error",
-          confirmButtonColor: "#1E306D",
-          confirmButtonText: "OK",
+  const postPassenger = async (passenger, rid) => {
+    // for (const passenger of passengers) {
+    try {
+      if (passenger._id) {
+        await axios.patch(`https://helistaging.drukair.com.bt/api/passengers/${passenger._id}`, {
+          name: passenger.name,
+          weight: passenger.weight,
+          cid: passenger.cid,
+          bagWeight: passenger.bagWeight,
+          gender: passenger.gender,
+          medIssue: passenger.medIssue,
+          contact: passenger.contact,
+          remarks: passenger.remarks,
+        });
+      } else {
+        await axios.post("https://helistaging.drukair.com.bt/api/passengers", {
+          name: passenger.name,
+          weight: passenger.weight,
+          cid: passenger.cid,
+          bagWeight: passenger.bagWeight,
+          gender: passenger.gender,
+          medIssue: passenger.medIssue,
+          contact: passenger.contact,
+          booking_id: id,
+          leg_id: rid,
+          remarks: passenger.remarks,
         });
       }
+
+    } catch (error) {
+      Swal.fire({
+        title: "Error!",
+        text: error.response
+          ? error.response.data.message
+          : "An error occurred",
+        icon: "error",
+        confirmButtonColor: "#1E306D",
+        confirmButtonText: "OK",
+      });
     }
+    // }
   };
 
-  const onUpdate = async (updatedBookingData, passengers, images) => {
+  const postRoute = async (route) => {
+    // for (const passenger of passengers) {
+    try {
+      if (route._id) {
+        const response = await axios.patch(`https://helistaging.drukair.com.bt/api/leg/${route._id}`, {
+          name: route.name,
+        });
+        if (response.data.status === "success") {
+          for (const passenger of route.passengers) {
+            await postPassenger(passenger, response.data.data._id);
+          }
+        } else {
+          throw new Error(
+            response.data.message || "Failed to update booking"
+          );
+        }
+      } else {
+        const response = await axios.post("https://helistaging.drukair.com.bt/api/leg", {
+          name: route.name,
+          booking_id: id,
+        });
+        if (response.data.status === "success") {
+          for (const passenger of route.passengers) {
+            await postPassenger(passenger, response.data.data._id);
+          }
+        } else {
+          throw new Error(
+            response.data.message || "Failed to update booking"
+          );
+        }
+      }
+
+    } catch (error) {
+      Swal.fire({
+        title: "Error!",
+        text: error.response
+          ? error.response.data.message
+          : "An error occurred",
+        icon: "error",
+        confirmButtonColor: "#1E306D",
+        confirmButtonText: "OK",
+      });
+    }
+  }
+
+  const onUpdate = async (updatedBookingData, routes, images) => {
     Swal.fire({
       title: "",
       text: "Are you sure you want to make changes to this booking?",
@@ -283,7 +335,9 @@ function AdminSchedule() {
             }
           );
           if (response.data.status === "success") {
-            await postPassenger(passengers);
+            for (const route of routes) {
+              await postRoute(route);
+            }
             Swal.fire({
               title: "",
               text: "Booking Updated Successfully",
@@ -310,7 +364,7 @@ function AdminSchedule() {
                     departure_time: booking.departure_time,
                     permission: booking.permission,
                     // booking_type: booking.booking_type, 
-                    payment_status :booking.payment_status,
+                    payment_status: booking.payment_status,
                     journal_no: booking.journal_no,
                     latitude: booking.latitude,
                     Longitude: booking.Longitude
@@ -364,7 +418,7 @@ function AdminSchedule() {
           formData.append('latitude', updatedBookingData.latitude);
           formData.append('Longitude', updatedBookingData.Longitude);
           formData.append('duration', updatedBookingData.duration);
-          formData.append('bookingPriceBTN',updatedBookingData.bookingPriceBTN);
+          formData.append('bookingPriceBTN', updatedBookingData.bookingPriceBTN);
           formData.append('bookingPriceUSD', updatedBookingData.bookingPriceUSD);
           formData.append('payable', updatedBookingData.payable || false);
           formData.append('layap', updatedBookingData.layap || false);
@@ -372,13 +426,13 @@ function AdminSchedule() {
           formData.append('destination', updatedBookingData.destination);
           formData.append('destination_other', updatedBookingData.destination_other);
           formData.append('service_id', typeof updatedBookingData.service_id === 'object'
-                ? updatedBookingData.service_id._id
-                : updatedBookingData.service_id);
+            ? updatedBookingData.service_id._id
+            : updatedBookingData.service_id);
           formData.append('cType', updatedBookingData.cType);
           images.forEach((img) => {
             formData.append('image', img.file); // `images` must match multer.array('images', 10)
           });
-              
+
           const response = await axios.patch(
             `https://helistaging.drukair.com.bt/api/bookings/imageupdate/${updatedBookingData._id}`, formData,
             {
@@ -388,7 +442,9 @@ function AdminSchedule() {
             }
           );
           if (response.data.status === "success") {
-            await postPassenger(passengers);
+            for (const route of routes) {
+              await postRoute(route)
+            }
             Swal.fire({
               title: "",
               text: "Booking Updated Successfully",
@@ -407,7 +463,7 @@ function AdminSchedule() {
                   } : null,
                   refund: updatedBookingData.refund,
                   duration: updatedBookingData.duration,
-                  permission:updatedBookingData.permission
+                  permission: updatedBookingData.permission
                 }
                 : booking
             );
@@ -520,6 +576,26 @@ function AdminSchedule() {
     }
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const fetchLeg = async () => {
+      try {
+        const response = await axios.get(
+          "https://helistaging.drukair.com.bt/api/leg"
+        );
+        setLeg(response.data.data);
+      } catch (error) {
+        Swal.fire({
+          title: "Error!",
+          text: "Error fetching data",
+          icon: "error",
+          confirmButtonColor: "#1E306D",
+          confirmButtonText: "OK",
+        });
+      }
+    };
+    fetchLeg();
+  }, [bookings]);
 
   useEffect(() => {
     const fetchPassengers = async () => {
@@ -725,6 +801,7 @@ function AdminSchedule() {
             isOpen={isModalOpen}
             onClose={closeModal}
             booking={selectedBooking}
+            legs={selectedLegs}
             onUpdate={onUpdate}
             passengers={selectedPassengers}
           />

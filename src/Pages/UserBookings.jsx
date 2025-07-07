@@ -24,6 +24,27 @@ function UserBookings() {
   const [commision, setCommision] = useState(0);
   const navigate = useNavigate();
 
+  const [legs, setLegs] = useState([]);
+  const [selectedLegs, setSelectedLegs] = useState([]);
+  useEffect(() => {
+    const fetchLegs = async () => {
+      try {
+        const response = await axios.get("https://helistaging.drukair.com.bt/api/leg");
+        setLegs(response.data.data);
+      } catch (error) {
+        Swal.fire({
+          title: "Error!",
+          text: "Error fetching route data",
+          icon: "error",
+          confirmButtonColor: "#1E306D",
+          confirmButtonText: "OK",
+        });
+      }
+    };
+    fetchLegs();
+  }, []);
+
+
   useEffect(() => {
     const fetchCommision = async () => {
       try {
@@ -117,8 +138,14 @@ function UserBookings() {
     setSelectedPassengers(filter);
   };
 
+  const filterLegs = (id) => {
+    const filtered = legs.filter((leg) => leg.booking_id === id);
+    setSelectedLegs(filtered);
+  };
+
   const openModal = (booking) => {
     filterPassenger(booking._id);
+    filterLegs(booking._id);
     setSelectedBooking(booking);
     setModalOpen(true);
   };
@@ -327,7 +354,9 @@ function UserBookings() {
         onClose={closeModal}
         booking={selectedBooking}
         passengers={selectedPassengers}
+        legs={selectedLegs} 
       />
+
       <Footer />
     </>
   );

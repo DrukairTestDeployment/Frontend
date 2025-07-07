@@ -27,7 +27,6 @@ function OTP() {
       try {
         const response = await axios.get(`https://helistaging.drukair.com.bt/api/users/email/${email}`);
         setUsers(response.data.data);
-        console.log(response)
       } catch (error) {
         Swal.fire({
           title: "Error!",
@@ -38,7 +37,7 @@ function OTP() {
         });
       }
     };
-    if(email){
+    if (email) {
       fetchData();
     }
   }, [email]);
@@ -54,6 +53,34 @@ function OTP() {
       document.getElementById(`otp-${index + 1}`).focus();
     }
   };
+
+  const verifyOTP = async (enteredOtp) => {
+    try {
+      const response = await axios.post(`https://helistaging.drukair.com.bt/api/users/verifyOtp`, {
+        email: email,
+        otp: enteredOtp
+      });
+      if (response.data.status === 'success') {
+        navigate(`/change-password?email=${email}&otp=${enteredOtp}`);
+        Swal.fire({
+          title: 'Success!',
+          text: 'OTP verified successfully. Redirecting to change password.',
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 1000,
+          timerProgressBar: true,
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        title: "Error!",
+        text: error.response ? error.response.data.error : "Error saving the booking",
+        icon: "error",
+        confirmButtonColor: "#1E306D",
+        confirmButtonText: "OK",
+      });
+    }
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -72,16 +99,8 @@ function OTP() {
       const enteredOtp = otp.join("");
       // const user = users.find(user => user.email === email);
 
-      if (user && user.otp === enteredOtp) {
-        navigate(`/change-password?email=${email}&otp=${enteredOtp}`);
-        Swal.fire({
-          title: 'Success!',
-          text: 'OTP verified successfully. Redirecting to change password.',
-          icon: 'success',
-          showConfirmButton: false,
-          timer: 1000,
-          timerProgressBar: true,
-        });
+      if (user && enteredOtp) {
+        verifyOTP(enteredOtp)
       } else {
         Swal.fire({
           title: 'Error!',
