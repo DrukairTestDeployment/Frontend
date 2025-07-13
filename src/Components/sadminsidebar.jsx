@@ -24,7 +24,7 @@ function SadminSidebar() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`https://helistaging.drukair.com.bt/api/users/${id}`);
+                const response = await axios.get(`https://helistaging.drukair.com.bt/api/users/${id}`, {withCredentials:true});
                 setUser(response.data.data);
             } catch (error) {
                 Swal.fire({

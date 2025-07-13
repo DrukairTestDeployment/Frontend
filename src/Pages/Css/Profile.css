@@ -26,6 +26,13 @@
     min-height: 100vh;
 }
 
+.profile-error-message {
+  color: red;
+  font-size: 9px;
+  margin: 10px 0;
+  text-align: center;
+}
+
 /* Main Content */
 .profile-main-content {
     flex: 1;

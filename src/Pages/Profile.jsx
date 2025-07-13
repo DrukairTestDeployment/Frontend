@@ -27,6 +27,7 @@ const Profile = () => {
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState('');
 
   const toggleOldPasswordVisibility = () => {
     setShowOldPassword(!showOldPassword);
@@ -116,7 +117,18 @@ const Profile = () => {
     }
   };
 
+  const validate = () => {
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+    if (!passwordRegex.test(password.newPassword)) {
+      setError("Password must be at least 8 characters long, with one uppercase letter, one number, and one special character.");
+      return false;
+  }
+  setError(""); // Clear previous error
+  return true;
+};
+
   const updatePassword = () => {
+    if (!validate()) return;
     if (password.currentPassword === password.newPassword) {
       Swal.fire({
         title: 'Error!',
@@ -213,6 +225,7 @@ const Profile = () => {
                   <input
                     type="text"
                     name="name"
+                    maxLength="50"
                     value={user.name}
                     onChange={handleChange}
                     placeholder="Enter Your Name"
@@ -223,6 +236,7 @@ const Profile = () => {
                   <input
                     type="email"
                     name="email"
+                    maxLength="100"
                     value={user.email}
                     onChange={handleChange}
                     placeholder="Enter Your Email"
@@ -236,6 +250,7 @@ const Profile = () => {
                   <input
                     type="tel"
                     name="contactNo"
+                    maxLength="20"
                     value={user.contactNo}
                     onChange={handleChange}
                     placeholder="Enter Your Phone Number"
@@ -246,6 +261,7 @@ const Profile = () => {
                   <input
                     type="text"
                     name="address"
+                    maxLength="75"
                     value={user.address}
                     onChange={handleChange}
                     placeholder="Enter Your Address"
@@ -279,6 +295,7 @@ const Profile = () => {
                   <input
                     type={showOldPassword ? 'text' : 'password'}
                     name="currentPassword"
+                    maxLength="128"
                     value={password.currentPassword}
                     onChange={(e) => setPassword({ ...password, currentPassword: e.target.value })}
                     placeholder="Enter Current Password"
@@ -291,6 +308,7 @@ const Profile = () => {
                   <input
                     type={showNewPassword ? 'text' : 'password'}
                     name="newPassword"
+                    maxLength="128"
                     value={password.newPassword}
                     onChange={(e) => setPassword({ ...password, newPassword: e.target.value })}
                     placeholder="Enter New Password"
@@ -303,6 +321,7 @@ const Profile = () => {
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
                     name="confirmPassword"
+                    maxLength="128"
                     value={password.confirmPassword}
                     onChange={(e) => setPassword({ ...password, confirmPassword: e.target.value })}
                     placeholder="Enter Confirm Password"
