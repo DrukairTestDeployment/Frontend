@@ -309,6 +309,7 @@ const PilotProfile = () => {
                   {showNewPassword ? <BsEye size={20} /> : <BsEyeSlash size={20} />}
                 </span>
               </div>
+              {error && <div className="profile-error-message">{error}</div>}
               <div className="password-container">
                 <input
                   type={showConfirmPassword ? 'text' : 'password'}
