@@ -12,9 +12,9 @@ import * as XLSX from "xlsx";
 function AdminScheduleModal({
   isOpen,
   onClose,
-  passengers,
-  legs,
   booking,
+  legs,
+  passengers,
   onUpdate,
 }) {
   const [activeTab, setActiveTab] = useState(0);
@@ -28,7 +28,9 @@ function AdminScheduleModal({
     "Completed",
   ];
 
-  const paymentTypes = ['Bank Transfer', 'Cash', 'MBoB', 'Credit Card'];
+  console.log(booking);
+
+  const paymentTypes = ["Bank Transfer", "Cash", "MBoB", "Credit Card"];
   const [refunds, setRefunds] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [imageError, setImageError] = useState(false);
@@ -42,32 +44,33 @@ function AdminScheduleModal({
   const getSeasonFromDate = (dateStr) => {
     if (!dateStr) return "summer"; // default
     const month = new Date(dateStr).getMonth() + 1; // JS months are 0-indexed
-    return (month >= 3 && month <= 8) ? "summer" : "winter";
+    return month >= 3 && month <= 8 ? "summer" : "winter";
   };
-
   // Passenger list downloads
   const [downloadFormat, setDownloadFormat] = useState("");
 
-  // multiple images 
+  // multiple images
   const [paymentScreenshots, setPaymentScreenshots] = useState([]);
   const maxFileSize = 5 * 1024 * 1024;
 
   // Fields
-  const genderTypes = ['Male', 'Female', 'Others'];
-  const medicalIssues = ['Yes', 'No'];
-  const permissionTypes = ['Yes', 'No'];
+  const genderTypes = ["Male", "Female", "Others"];
+  const medicalIssues = ["Yes", "No"];
+  const permissionTypes = ["Yes", "No"];
 
   const [routeList, setRouteList] = useState([]);
-  const [newRouteName, setNewRouteName] = useState('');
+  const [newRouteName, setNewRouteName] = useState("");
   const [activeRouteIndex, setActiveRouteIndex] = useState(0);
   const [activePassengerIndex, setActivePassengerIndex] = useState(0);
   const maxPassengersPerRoute = 6;
 
   useEffect(() => {
     if (Array.isArray(legs) && Array.isArray(passengers)) {
-      const mapped = legs.map(leg => ({
+      const mapped = legs.map((leg) => ({
         ...leg,
-        passengers: passengers.filter(p => p.leg_id?.toString() === leg._id?.toString())
+        passengers: passengers.filter(
+          (p) => p.leg_id?.toString() === leg._id?.toString()
+        ),
       }));
       setRouteList(mapped);
     }
@@ -79,46 +82,44 @@ function AdminScheduleModal({
       name: newRouteName.trim(),
       passengers: [
         {
-          name: '',
-          weight: '',
-          bagWeight: '',
-          cid: '',
-          contact: '',
-          medIssue: '',
-          remarks: '',
-          gender: ''
-        }
+          name: "",
+          weight: "",
+          bagWeight: "",
+          cid: "",
+          contact: "",
+          medIssue: "",
+          remarks: "",
+          gender: "",
+        },
       ],
     };
     setRouteList([...routeList, newRoute]);
-    setNewRouteName('');
+    setNewRouteName("");
     setActiveRouteIndex(routeList.length);
     setActivePassengerIndex(0);
   };
 
   const removeRoute = (id) => {
-
     // Unsaved routes
     const isUnsaved = !id;
 
     if (isUnsaved) {
       // Remove from state only
-      const updated = routeList.filter(route => route._id !== id);
+      const updated = routeList.filter((route) => route._id !== id);
       setRouteList(updated);
       setActiveRouteIndex(Math.max(0, updated.length - 1));
       return;
     }
 
-
     // saved routes
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you want to remove this route?',
-      icon: 'warning',
+      title: "Are you sure?",
+      text: "Do you want to remove this route?",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, remove it!'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, remove it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -151,7 +152,6 @@ function AdminScheduleModal({
             confirmButtonColor: "#1E306D",
             confirmButtonText: "OK",
           });
-
         }
         // if (activeRouteIndex >= updated.length) {
         //     setActiveRouteIndex(Math.max(0, updated.length - 1));
@@ -160,18 +160,17 @@ function AdminScheduleModal({
     });
   };
 
-  
   // Responsive route changes
-  const cTypes = ['None', 'BTN', 'USD'];
-  const [durationf, setDuration] = useState(0)
+  const cTypes = ["None", "BTN", "USD"];
+  const [durationf, setDuration] = useState(0);
   const [routes, setRoutes] = useState([]);
   const [services, setServices] = useState([]);
   const [finalpriceInBTNOthers, setFinalPriceInBtnOthers] = useState(0);
   const [finalpriceInUSDOthers, setFinalPriceInUSDOthers] = useState(0);
   const [refundChosenPlan, setRefundChosenPlan] = useState(0);
 
-  let winterWeight = 450
-  let summerWeight = 450
+  let winterWeight = 450;
+  let summerWeight = 450;
 
   const updateRouteName = (id, newName) => {
     Swal.fire({
@@ -186,7 +185,7 @@ function AdminScheduleModal({
       if (result.isConfirmed) {
         try {
           const res = await axios.patch(`https://helistaging.drukair.com.bt/api/leg/${id}`, {
-            name: newName
+            name: newName,
           });
           if (res.data.status === "success") {
             Swal.fire({
@@ -209,34 +208,51 @@ function AdminScheduleModal({
           });
         }
       }
-    })
+    });
   };
 
   const addPassengerToRoute = (routeId) => {
-    setRouteList(routeList.map((route, idx) => {
-      if (route._id === routeId && route.passengers?.length < maxPassengersPerRoute) {
-        const newPassengers = [...route.passengers, {
-          name: '', weight: '', bagWeight: '', cid: '', contact: '', medIssue: '', remarks: '', gender: ''
-        }];
-        if (idx === activeRouteIndex) {
-          setActivePassengerIndex(newPassengers.length - 1);
+    setRouteList(
+      routeList.map((route, idx) => {
+        if (
+          route._id === routeId &&
+          route.passengers?.length < maxPassengersPerRoute
+        ) {
+          const newPassengers = [
+            ...route.passengers,
+            {
+              name: "",
+              weight: "",
+              bagWeight: "",
+              cid: "",
+              contact: "",
+              medIssue: "",
+              remarks: "",
+              gender: "",
+            },
+          ];
+          if (idx === activeRouteIndex) {
+            setActivePassengerIndex(newPassengers.length - 1);
+          }
+          return { ...route, passengers: newPassengers };
         }
-        return { ...route, passengers: newPassengers };
-      }
-      return route;
-    }));
+        return route;
+      })
+    );
   };
 
   const updatePassenger = (routeId, index, field, value) => {
-    setRouteList(prevRoutes =>
-      prevRoutes.map(route => {
+    setRouteList((prevRoutes) =>
+      prevRoutes.map((route) => {
         if (route._id === routeId) {
           const updatedPassengers = [...route.passengers];
           updatedPassengers[index][field] = value;
 
           // Calculate total weight
-          const totalWeight = updatedPassengers.reduce((sum, p) =>
-            sum + (parseFloat(p.weight || 0) + parseFloat(p.bagWeight || 0)), 0
+          const totalWeight = updatedPassengers.reduce(
+            (sum, p) =>
+              sum + (parseFloat(p.weight || 0) + parseFloat(p.bagWeight || 0)),
+            0
           );
 
           // Get current season
@@ -261,18 +277,19 @@ function AdminScheduleModal({
     );
   };
 
-
   const removePassengerFromRoute = (passengerId) => {
     const isUnsaved = !passengerId;
 
     if (isUnsaved) {
-      setRouteList(prev =>
+      setRouteList((prev) =>
         prev.map((route, i) =>
           i === activeRouteIndex
             ? {
-              ...route,
-              passengers: route.passengers.filter((_, idx) => idx !== activePassengerIndex)
-            }
+                ...route,
+                passengers: route.passengers.filter(
+                  (_, idx) => idx !== activePassengerIndex
+                ),
+              }
             : route
         )
       );
@@ -281,13 +298,13 @@ function AdminScheduleModal({
     }
 
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you want to remove this passenger?',
-      icon: 'warning',
+      title: "Are you sure?",
+      text: "Do you want to remove this passenger?",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, remove it!'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, remove it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -304,13 +321,15 @@ function AdminScheduleModal({
               confirmButtonText: "OK",
             });
 
-            setRouteList(prev =>
+            setRouteList((prev) =>
               prev.map((route, i) =>
                 i === activeRouteIndex
                   ? {
-                    ...route,
-                    passengers: route.passengers.filter((p, idx) => p._id !== passengerId)
-                  }
+                      ...route,
+                      passengers: route.passengers.filter(
+                        (p, idx) => p._id !== passengerId
+                      ),
+                    }
                   : route
               )
             );
@@ -338,52 +357,54 @@ function AdminScheduleModal({
     });
   };
 
-
   const handleRouteDoubleClick = (id, currentName) => {
     Swal.fire({
-      title: 'Edit Route Name',
-      input: 'text',
+      title: "Edit Route Name",
+      input: "text",
       inputValue: currentName,
       showCancelButton: true,
-      confirmButtonText: 'Update',
+      confirmButtonText: "Update",
       preConfirm: (newName) => {
         if (!newName.trim()) {
-          Swal.showValidationMessage('Name cannot be empty');
+          Swal.showValidationMessage("Name cannot be empty");
         }
         return newName.trim();
-      }
-    }).then(result => {
+      },
+    }).then((result) => {
       if (result.isConfirmed) {
         updateRouteName(id, result.value);
       }
     });
   };
-
   // responsive route changes
   const getDuration = async (id) => {
     if (id === "Others") {
-      setDuration(0)
+      setDuration(0);
     } else {
       try {
-        const response = await axios.get(`https://helistaging.drukair.com.bt/api/routes/${id}`);
-        const durations = parseInt(response.data.data.duration)
+        const response = await axios.get(
+          `https://helistaging.drukair.com.bt/api/routes/${id}`
+        );
+        const durations = parseInt(response.data.data.duration);
         setFormData((prev) => ({
           ...prev,
           duration: durations,
         }));
-        winterWeight = parseFloat(response.data.data.winterWeight)
-        summerWeight = parseFloat(response.data.data.summerWeight)
+        winterWeight = parseFloat(response.data.data.winterWeight);
+        summerWeight = parseFloat(response.data.data.summerWeight);
       } catch (error) {
         Swal.fire({
           title: "Error!",
-          text: error.response ? error.response.data.error : "Error saving the booking",
+          text: error.response
+            ? error.response.data.error
+            : "Error saving the booking",
           icon: "error",
           confirmButtonColor: "#1E306D",
           confirmButtonText: "OK",
         });
       }
     }
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -407,8 +428,10 @@ function AdminScheduleModal({
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await axios.get('https://helistaging.drukair.com.bt/api/services');
-        setServices(Array.isArray(response.data.data) ? response.data.data : []);
+        const response = await axios.get("https://helistaging.drukair.com.bt/api/services");
+        setServices(
+          Array.isArray(response.data.data) ? response.data.data : []
+        );
       } catch (error) {
         Swal.fire({
           title: "Error!",
@@ -426,19 +449,23 @@ function AdminScheduleModal({
   // Price dynamic
   const getPrice = async (id) => {
     try {
-      const response = await axios.get(`https://helistaging.drukair.com.bt/api/services/${id}`);
+      const response = await axios.get(
+        `https://helistaging.drukair.com.bt/api/services/${id}`
+      );
       const priceUSD = response.data.data.priceInUSD;
       const priceBTN = response.data.data.priceInBTN;
 
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         bookingPriceUSD: priceUSD,
-        bookingPriceBTN: priceBTN
+        bookingPriceBTN: priceBTN,
       }));
     } catch (error) {
       Swal.fire({
         title: "Error!",
-        text: error.response ? error.response.data.error : "Error fetching price",
+        text: error.response
+          ? error.response.data.error
+          : "Error fetching price",
         icon: "error",
         confirmButtonColor: "#1E306D",
         confirmButtonText: "OK",
@@ -446,21 +473,17 @@ function AdminScheduleModal({
     }
   };
 
-
   useEffect(() => {
-    if (
-      services.length > 0 &&
-      formData.service_id &&
-      formData.duration > 0
-    ) {
+    if (services.length > 0 && formData.service_id && formData.duration > 0) {
       const selectedService =
-        typeof formData.service_id === 'object'
+        typeof formData.service_id === "object"
           ? formData.service_id
-          : services.find(s => s._id === formData.service_id);
-      console.log(selectedService)
+          : services.find((s) => s._id === formData.service_id);
       if (selectedService) {
-        const calculatedBTN = (Number(selectedService.priceInBTN) * (Number(formData.duration)) / 60);
-        const calculatedUSD = (Number(selectedService.priceInUSD) * (Number(formData.duration)) / 60);
+        const calculatedBTN =
+          (Number(selectedService.priceInBTN) * Number(formData.duration)) / 60;
+        const calculatedUSD =
+          (Number(selectedService.priceInUSD) * Number(formData.duration)) / 60;
 
         setFinalPriceInBtnOthers(calculatedBTN);
         setFinalPriceInUSDOthers(calculatedUSD);
@@ -468,11 +491,11 @@ function AdminScheduleModal({
     }
   }, [services, formData.service_id, formData.duration]);
 
-
-
   const fetchRefundChosen = async (rId) => {
     try {
-      const response = await axios.get(`https://helistaging.drukair.com.bt/api/refund/${rId}`);
+      const response = await axios.get(
+        `https://helistaging.drukair.com.bt/api/refund/${rId}`
+      );
       const refundPlan = response.data.data.plan;
       setRefundChosenPlan(parseFloat(refundPlan) / 100);
     } catch (error) {
@@ -485,7 +508,6 @@ function AdminScheduleModal({
       });
     }
   };
-
 
   useEffect(() => {
     if (booking) {
@@ -503,19 +525,19 @@ function AdminScheduleModal({
         bookingPriceBTN: booking.bookingPriceBTN,
         bookingPriceUSD: booking.bookingPriceUSD,
 
-        // updated 
+        // updated
         agent_name: booking.agent_name,
         agent_contact: booking.agent_contact,
         agent_cid: booking.agent_cid,
         agent_email: booking.agent_email,
         pickup_point: booking.pickup_point,
         ground_time: booking.ground_time,
-        flight_date: booking.flight_date?.includes('/')
-          ? booking.flight_date.split('/').reverse().join('-')
+        flight_date: booking.flight_date?.includes("/")
+          ? booking.flight_date.split("/").reverse().join("-")
           : booking.flight_date,
         departure_time: booking.departure_time,
         permission: booking.permission,
-        // booking_type: booking.booking_type, 
+        // booking_type: booking.booking_type,
         journal_no: booking.journal_no,
         payment_status: booking.payment_status,
 
@@ -525,9 +547,7 @@ function AdminScheduleModal({
         latitude: booking.latitude || "",
         Longitude: booking.Longitude || "",
         service_id: booking.service_id,
-        cType: booking.cType
-
-
+        cType: booking.cType,
       });
       // ✅ Initialize refund percentage on first load
       if (booking.refund_id?.plan) {
@@ -538,25 +558,33 @@ function AdminScheduleModal({
 
   useEffect(() => {
     const fetchImages = async () => {
-      if (booking && booking.payment_type === 'Bank Transfer' && Array.isArray(booking.image)) {
+      if (
+        booking &&
+        (booking.payment_type === "Bank Transfer" || booking.payment_type === "MBoB") &&
+        Array.isArray(booking.image)
+      ) {
         const fetchedImages = [];
 
         for (const img of booking.image) {
           try {
-            const response = await axios.get(`https://helistaging.drukair.com.bt/api/bookings/image/get/${img}`);
+            const response = await axios.get(
+              `https://helistaging.drukair.com.bt/api/bookings/image/get/${img}`
+            );
             const pic = response.data.data;
 
             if (!fetchedImages.includes(pic)) {
               fetchedImages.push({
                 id: `${img}-${Date.now()}-${Math.random()}`,
                 preview: pic,
-                isExisting: true
+                isExisting: true,
               });
             }
           } catch (error) {
             Swal.fire({
               title: "Error!",
-              text: error.response ? error.response.data.error : "Error fetching image",
+              text: error.response
+                ? error.response.data.error
+                : "Error fetching image",
               icon: "error",
               confirmButtonColor: "#1E306D",
               confirmButtonText: "OK",
@@ -570,26 +598,25 @@ function AdminScheduleModal({
     fetchImages();
   }, [booking]);
 
-
   const handleMultipleFilesChange = (event) => {
     const files = Array.from(event.target.files);
-    const validFiles = files.filter(file =>
-      file.type.startsWith('image/') && file.size <= maxFileSize
+    const validFiles = files.filter(
+      (file) => file.type.startsWith("image/") && file.size <= maxFileSize
     );
 
-    const newImages = validFiles.map(file => ({
+    const newImages = validFiles.map((file) => ({
       id: `${file.name}-${Date.now()}-${Math.random()}`,
       file,
       preview: URL.createObjectURL(file),
     }));
 
-    setPaymentScreenshots(prev => [...prev, ...newImages]);
+    setPaymentScreenshots((prev) => [...prev, ...newImages]);
     event.target.value = null;
   };
 
   // Remove any image
   const handleRemoveImage = async (id) => {
-    const image = paymentScreenshots.find(img => img.id === id);
+    const image = paymentScreenshots.find((img) => img.id === id);
 
     if (!image || !image.preview) {
       console.error("Image not found or missing preview URL.");
@@ -599,7 +626,7 @@ function AdminScheduleModal({
     try {
       // Extract S3 key from image.preview
       const url = new URL(image.preview);
-      const imageKey = decodeURIComponent(url.pathname.split('/').pop());
+      const imageKey = decodeURIComponent(url.pathname.split("/").pop());
 
       const response = await axios.delete(
         `https://helistaging.drukair.com.bt/api/bookings/imagedelete/${booking._id}/${imageKey}`
@@ -614,14 +641,13 @@ function AdminScheduleModal({
           confirmButtonText: "OK",
         });
 
-        setPaymentScreenshots(prev => {
-          const filtered = prev.filter(img => img.id !== id);
+        setPaymentScreenshots((prev) => {
+          const filtered = prev.filter((img) => img.id !== id);
           if (!image.isExisting && image.preview) {
             URL.revokeObjectURL(image.preview); // revoke only for newly added ones
           }
           return filtered;
         });
-
       } else {
         Swal.fire({
           title: "Warning!",
@@ -642,15 +668,15 @@ function AdminScheduleModal({
     }
   };
 
-
   useEffect(() => {
     return () => {
-      paymentScreenshots.forEach(img => {
+      paymentScreenshots.forEach((img) => {
         if (img.preview) URL.revokeObjectURL(img.preview);
       });
     };
   }, []);
 
+  // console.log(booking)
 
   useEffect(() => {
     const fetchBooking = async () => {
@@ -658,7 +684,7 @@ function AdminScheduleModal({
         try {
           const date = booking.flight_date;
           const response = await axios.get(
-            'https://helistaging.drukair.com.bt/api/bookings'
+            "https://helistaging.drukair.com.bt/api/bookings"
           );
           const bookings = response.data.data;
           const filteredBookings = bookings.filter(
@@ -682,7 +708,9 @@ function AdminScheduleModal({
   useEffect(() => {
     const fetchPilots = async () => {
       try {
-        const response = await axios.get("https://helistaging.drukair.com.bt/api/users", { withCredentials: true });
+        const response = await axios.get("https://helistaging.drukair.com.bt/api/users", {
+          withCredentials: true,
+        });
         const allPilots = response.data.data.filter(
           (user) => user.role.name === "PILOT"
         );
@@ -737,131 +765,176 @@ function AdminScheduleModal({
   if (!isOpen || !booking) return null;
 
   // Download functions
-  const downloadPassengerCSV = (passengers, booking) => {
-    const csvHeader = [
-      "Name", "Gender", "Weight", "Baggage Weight", "CID/Passport", "Contact No", "Medical Issues", "Remarks"
-    ];
+  const handleDownload = (type) => {
+    if (!type || !routeList || routeList.length === 0) return;
 
-    const csvRows = passengers.map(p => [
-      p.name || '', p.gender || '', p.weight || '', p.bagWeight || '',
-      p.cid || '', p.contact || '', p.medIssue || '', p.remarks || ''
-    ]);
+    if (type === "pdf") {
+      const doc = new jsPDF();
 
-    const headerLines = [
-      `Flight Date: ${booking?.flight_date || ""}`,
-      `Booking ID: ${booking?.bookingID || ""}`,
-      ""
-    ];
+      routeList.forEach((route, idx) => {
+        const passengers = route.passengers || [];
+        const legName = route.name || `Route ${idx + 1}`;
 
-    const csvContent = [
-      ...headerLines,
-      csvHeader.join(","),
-      ...csvRows.map(row => row.map(field => `"${field}"`).join(","))
-    ].join("\n");
+        if (idx > 0) doc.addPage();
 
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.text(`Passenger List - ${legName}`, 14, 15);
 
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", `passenger_list_${booking?.bookingID || 'booking'}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Flight Date: ${booking?.flight_date || ""}`, 14, 25);
+        doc.text(`Booking ID: ${booking?.bookingID || ""}`, 14, 32);
 
-  const downloadPassengerXLSX = (passengers, booking) => {
-    if (!passengers || passengers.length === 0) {
-      Swal.fire("No Data", "There are no passengers to download.", "info");
-      return;
+        const tableColumn = [
+          "Name",
+          "Gender",
+          "Weight",
+          "Baggage Weight",
+          "CID/Passport",
+          "Contact No",
+          "Medical Issues",
+          "Remarks",
+        ];
+
+        const tableRows = passengers.map((p) => [
+          p.name || "",
+          p.gender || "",
+          p.weight || "",
+          p.bagWeight || "",
+          p.cid || "",
+          p.contact || "",
+          p.medIssue || "",
+          p.remarks || "None",
+        ]);
+
+        autoTable(doc, {
+          startY: 40,
+          head: [tableColumn],
+          body: tableRows,
+          styles: { fontSize: 9 },
+          columnStyles: {
+            0: { cellWidth: 30 },
+            4: { cellWidth: 35 },
+            7: { cellWidth: 40 },
+          },
+        });
+      });
+
+      doc.save(`passenger_list_${booking?.bookingID || "booking"}.pdf`);
     }
 
-    const header = [
-      ["Flight Date:", booking.flight_date || ""],
-      ["Booking ID:", booking.bookingID || ""],
-      [], // empty row before table
-      [
-        "Name", "Gender", "Weight", "Baggage Weight",
-        "CID/Passport", "Contact No", "Medical Issues", "Remarks"
-      ]
-    ];
+    if (type === "xlsx") {
+      const workbook = XLSX.utils.book_new();
 
-    const rows = passengers.map(p => [
-      p.name || '',
-      p.gender || '',
-      p.weight || '',
-      p.bagWeight || '',
-      p.cid ? `'${p.cid}` : '', // fix large number formatting
-      p.contact || '',
-      p.medIssue || '',
-      p.remarks || 'None'
-    ]);
+      routeList.forEach((route, idx) => {
+        const passengers = route.passengers || [];
+        const legName = route.name || `Route ${idx + 1}`;
 
-    const data = [...header, ...rows];
+        const sheetHeader = [
+          [`Flight Date:`, booking.flight_date || ""],
+          [`Booking ID:`, booking.bookingID || ""],
+          [`Route:`, legName],
+          [],
+          [
+            "Name",
+            "Gender",
+            "Weight",
+            "Baggage Weight",
+            "CID/Passport",
+            "Contact No",
+            "Medical Issues",
+            "Remarks",
+          ],
+        ];
 
-    const worksheet = XLSX.utils.aoa_to_sheet(data);
+        const rows = passengers.map((p) => [
+          p.name || "",
+          p.gender || "",
+          p.weight || "",
+          p.bagWeight || "",
+          p.cid ? `'${p.cid}` : "",
+          p.contact || "",
+          p.medIssue || "",
+          p.remarks || "None",
+        ]);
 
-    // Optional: set column width
-    worksheet["!cols"] = [
-      { wch: 20 }, { wch: 10 }, { wch: 10 }, { wch: 15 },
-      { wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 30 }
-    ];
+        const data = [...sheetHeader, ...rows];
+        const sheet = XLSX.utils.aoa_to_sheet(data);
+        sheet["!cols"] = [
+          { wch: 20 },
+          { wch: 10 },
+          { wch: 10 },
+          { wch: 15 },
+          { wch: 20 },
+          { wch: 15 },
+          { wch: 15 },
+          { wch: 30 },
+        ];
 
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Passengers");
+        XLSX.utils.book_append_sheet(workbook, sheet, legName.slice(0, 31));
+      });
 
-    XLSX.writeFile(workbook, `passenger_list_${booking.bookingID || "booking"}.xlsx`);
-  };
-
-
-  const downloadPassengerPDF = (passengers, booking) => {
-    const doc = new jsPDF();
-
-    doc.setFontSize(14);
-    doc.setFont("helvetica", "bold");
-    doc.text(`Passenger List`, 14, 15);
-
-    doc.setFontSize(11);
-    doc.setFont("helvetica", "normal");
-    doc.text(`Flight Date: ${booking?.flight_date || ""}`, 14, 25);
-    doc.text(`Booking ID: ${booking?.bookingID || ""}`, 14, 32);
-
-    const tableColumn = [
-      "Name", "Gender", "Weight", "Baggage Weight",
-      "CID/Passport", "Contact No", "Medical Issues", "Remarks"
-    ];
-
-    const tableRows = passengers.map(p => [
-      p.name || '', p.gender || '', p.weight || '', p.bagWeight || '',
-      p.cid || '', p.contact || '', p.medIssue || '', p.remarks || 'None'
-    ]);
-
-    autoTable(doc, {
-      startY: 40,
-      head: [tableColumn],
-      body: tableRows,
-      styles: { fontSize: 9 },
-      columnStyles: {
-        0: { cellWidth: 30 },
-        4: { cellWidth: 35 },
-        7: { cellWidth: 40 }
-      }
-    });
-
-    doc.save(`passenger_list_${booking?.bookingID || 'booking'}.pdf`);
-  };
-
-
-
-  const handleDownload = (type) => {
-    if (!type) return;
+      XLSX.writeFile(
+        workbook,
+        `passenger_list_${booking?.bookingID || "booking"}.xlsx`
+      );
+    }
 
     if (type === "csv") {
-      downloadPassengerCSV(passengerList, booking);
-    } else if (type === "pdf") {
-      downloadPassengerPDF(passengerList, booking);
-    } else if (type === "xlsx") {
-      downloadPassengerXLSX(passengerList, booking);
+      const allRows = [];
+
+      routeList.forEach((route, idx) => {
+        const passengers = route.passengers || [];
+        const legName = route.name || `Route ${idx + 1}`;
+
+        allRows.push(`Flight Date: ${booking?.flight_date || ""}`);
+        allRows.push(`Booking ID: ${booking?.bookingID || ""}`);
+        allRows.push(`Route: ${legName}`);
+        allRows.push("");
+
+        const header = [
+          "Name",
+          "Gender",
+          "Weight",
+          "Baggage Weight",
+          "CID/Passport",
+          "Contact No",
+          "Medical Issues",
+          "Remarks",
+        ];
+        allRows.push(header.join(","));
+
+        passengers.forEach((p) => {
+          const row = [
+            p.name || "",
+            p.gender || "",
+            p.weight || "",
+            p.bagWeight || "",
+            p.cid || "",
+            p.contact || "",
+            p.medIssue || "",
+            p.remarks || "",
+          ];
+          allRows.push(row.map((field) => `"${field}"`).join(","));
+        });
+
+        allRows.push(""); // spacing between routes
+      });
+
+      const blob = new Blob([allRows.join("\n")], {
+        type: "text/csv;charset=utf-8;",
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute(
+        "download",
+        `passenger_list_${booking?.bookingID || "booking"}.csv`
+      );
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   };
 
@@ -908,14 +981,13 @@ function AdminScheduleModal({
                 onChange={(e) =>
                   setFormData({ ...formData, agent_contact: e.target.value })
                 }
-                required
               />
             </label>
           </div>
 
           <div className="booking-form-group">
             <label>
-              CID/Passport
+              CID
               <input
                 type="text"
                 name="agentCid"
@@ -947,7 +1019,9 @@ function AdminScheduleModal({
                 checked={booking.layap}
                 readOnly
               />
-              Are all passengers highlanders? (if all passengers are from Laya,Lunana,Gasa,Merak,Sakteng they will be liable for 50% discount)
+              Are all passengers highlanders? (if all passengers are from
+              Laya,Lunana,Gasa,Merak,Sakteng they will be liable for 50%
+              discount)
             </label>
           </div>
 
@@ -970,7 +1044,11 @@ function AdminScheduleModal({
               Destination
               <select
                 name="destination"
-                value={formData.destination === null ? 'Others' : formData.destination}
+                value={
+                  formData.destination === null
+                    ? "Others"
+                    : formData.destination
+                }
                 onChange={(e) => {
                   const selected = e.target.value;
                   setFormData({
@@ -979,17 +1057,19 @@ function AdminScheduleModal({
                     ...(selected !== "Others" && {
                       destination_other: "",
                       latitude: "",
-                      Longitude: ""
-                    })
+                      Longitude: "",
+                    }),
                   });
                   getDuration(selected);
                 }}
                 required
               >
-                <option value="" disabled>Select an option</option>
+                <option value="" disabled>
+                  Select an option
+                </option>
                 <option value="Others">Others</option>
                 {routes
-                  .filter((route) => route.status === 'Enabled')
+                  .filter((route) => route.status === "Enabled")
                   .map((route) => (
                     <option key={route._id} value={route._id}>
                       {route.sector}
@@ -1012,8 +1092,8 @@ function AdminScheduleModal({
           </div>
 
           {/* Show additional fields if "Others" is selected */}
-          {(formData.destination === 'Others' || formData.destination === null) && (
-
+          {(formData.destination === "Others" ||
+            formData.destination === null) && (
             <>
               <div className="booking-form-group">
                 <label>
@@ -1023,9 +1103,12 @@ function AdminScheduleModal({
                     name="destination_other"
                     value={formData.destination_other || ""}
                     onChange={(e) =>
-                      setFormData({ ...formData, destination_other: e.target.value })
+                      setFormData({
+                        ...formData,
+                        destination_other: e.target.value,
+                      })
                     }
-                    placeholder='Enter Preferred Destination'
+                    placeholder="Enter Preferred Destination"
                     required
                   />
                 </label>
@@ -1103,7 +1186,6 @@ function AdminScheduleModal({
               />
             </label> */}
 
-
             <label>
               Ground Time ("If Required")
               <input
@@ -1129,18 +1211,20 @@ function AdminScheduleModal({
                 name="flightDate"
                 value={
                   formData.flight_date
-                    ? formData.flight_date.split('/').reverse().join('-')
-                    : ''
+                    ? formData.flight_date.split("/").reverse().join("-")
+                    : ""
                 }
                 onChange={(e) =>
-                  setFormData({ ...formData, flight_date: e.target.value.split('-').reverse().join('/') })
+                  setFormData({
+                    ...formData,
+                    flight_date: e.target.value.split("-").reverse().join("/"),
+                  })
                 }
               />
             </label>
           </div>
 
           <div className="booking-form-group">
-
             <label>
               Time of Departure
               <input
@@ -1151,7 +1235,6 @@ function AdminScheduleModal({
                   setFormData({ ...formData, departure_time: e.target.value })
                 }
               />
-
             </label>
 
             <label>
@@ -1159,37 +1242,52 @@ function AdminScheduleModal({
               <select
                 name="permission"
                 value={
-                  formData.permission === true || formData.permission === "true"
-                    ? "Yes"
-                    : formData.permission === false || formData.permission === "false"
-                      ? "No"
-                      : ""
-                }
+                  formData.permission || ""}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    permission: e.target.value === "Yes" ? "true" : "false"
+                    permission: e.target.value === "Yes" ? "true" : "false",
                   })
                 }
                 required
               >
-                <option value="" disabled>Select Permission</option>
+                <option value="" disabled>
+                  Select Permission
+                </option>
                 {permissionTypes.map((permission) => (
-                  <option key={permission} value={permission}>{permission}</option>
+                  <option key={permission} value={permission}>
+                    {permission}
+                  </option>
                 ))}
               </select>
             </label>
-
           </div>
           <div>
-            <label style={{ fontWeight: 'bold', marginTop: '20px', marginBottom: '10px' }}>Download Passenger List:</label>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem' }}>
+            <label
+              style={{
+                fontWeight: "bold",
+                marginTop: "20px",
+                marginBottom: "10px",
+              }}
+            >
+              Download Passenger List:
+            </label>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                marginBottom: "1rem",
+              }}
+            >
               <select
                 value={downloadFormat}
                 onChange={(e) => setDownloadFormat(e.target.value)}
-                style={{ padding: '5px', fontWeight: 'bold' }}
+                style={{ padding: "5px", fontWeight: "bold" }}
               >
-                <option value="" disabled>Select format</option>
+                <option value="" disabled>
+                  Select format
+                </option>
                 <option value="csv">CSV</option>
                 <option value="pdf">PDF</option>
                 <option value="xlsx">XLSX</option>
@@ -1199,17 +1297,14 @@ function AdminScheduleModal({
                 onClick={() => handleDownload(downloadFormat)}
                 className="passenger-btn"
                 disabled={!downloadFormat}
-                style={
-                  {
-                    padding: '0 12px'
-                  }
-                }
+                style={{
+                  padding: "0 12px",
+                }}
               >
                 Download
               </button>
             </div>
           </div>
-
           <div>
             <div className="whiteSpace"></div>
 
@@ -1222,10 +1317,14 @@ function AdminScheduleModal({
                   value={newRouteName}
                   onChange={(e) => setNewRouteName(e.target.value)}
                 />
-                <button type="button" className="passenger-btn" onClick={addRoute}>
+                <button
+                  type="button"
+                  className="passenger-btn"
+                  onClick={addRoute}
+                >
                   Add Route
                   <div className="passenger-icon-container">
-                    <IoMdAdd className='passenger-icon' />
+                    <IoMdAdd className="passenger-icon" />
                   </div>
                 </button>
               </div>
@@ -1234,28 +1333,31 @@ function AdminScheduleModal({
                 {routeList.map((route, index) => (
                   <div
                     key={route._id}
-                    className={`passenger-tab route-tab ${index === activeRouteIndex ? 'active' : ''}`}
+                    className={`passenger-tab route-tab ${
+                      index === activeRouteIndex ? "active" : ""
+                    }`}
                     onClick={() => {
                       setActiveRouteIndex(index);
                       setActivePassengerIndex(0);
                     }}
-                    onDoubleClick={() => handleRouteDoubleClick(route._id, route.name)}
+                    onDoubleClick={() =>
+                      handleRouteDoubleClick(route._id, route.name)
+                    }
                   >
                     <span className="route-name-ellipsis">{route.name}</span>
                     <button
                       type="button"
-                      className='passenger-btn route-btn'
+                      className="passenger-btn route-btn"
                       onClick={(e) => {
                         e.stopPropagation();
                         removeRoute(route._id, index);
                       }}
                     >
-                      <IoIosRemoveCircleOutline className='passenger-icon' />
+                      <IoIosRemoveCircleOutline className="passenger-icon" />
                     </button>
                   </div>
                 ))}
               </div>
-
 
               {routeList[activeRouteIndex] && (
                 <div>
@@ -1263,7 +1365,9 @@ function AdminScheduleModal({
                     {routeList[activeRouteIndex].passengers.map((_, idx) => (
                       <div
                         key={idx}
-                        className={`passenger-tab ${idx === activePassengerIndex ? 'active' : ''}`}
+                        className={`passenger-tab ${
+                          idx === activePassengerIndex ? "active" : ""
+                        }`}
                         onClick={() => setActivePassengerIndex(idx)}
                       >
                         Passenger {idx + 1}
@@ -1271,7 +1375,9 @@ function AdminScheduleModal({
                     ))}
                   </div>
 
-                  {routeList[activeRouteIndex].passengers[activePassengerIndex] && (
+                  {routeList[activeRouteIndex].passengers[
+                    activePassengerIndex
+                  ] && (
                     <>
                       {/* Name & Gender */}
                       <div className="booking-form-group">
@@ -1280,12 +1386,16 @@ function AdminScheduleModal({
                           <input
                             type="text"
                             required
-                            value={routeList[activeRouteIndex].passengers[activePassengerIndex].name}
-                            onChange={e =>
+                            value={
+                              routeList[activeRouteIndex].passengers[
+                                activePassengerIndex
+                              ].name
+                            }
+                            onChange={(e) =>
                               updatePassenger(
                                 routeList[activeRouteIndex]._id,
                                 activePassengerIndex,
-                                'name',
+                                "name",
                                 e.target.value
                               )
                             }
@@ -1295,19 +1405,27 @@ function AdminScheduleModal({
                           Gender
                           <select
                             required
-                            value={routeList[activeRouteIndex].passengers[activePassengerIndex].gender || ''}
-                            onChange={e =>
+                            value={
+                              routeList[activeRouteIndex].passengers[
+                                activePassengerIndex
+                              ].gender || ""
+                            }
+                            onChange={(e) =>
                               updatePassenger(
                                 routeList[activeRouteIndex]._id,
                                 activePassengerIndex,
-                                'gender',
+                                "gender",
                                 e.target.value
                               )
                             }
                           >
-                            <option value="" disabled>Select gender</option>
-                            {genderTypes.map(gender => (
-                              <option key={gender} value={gender}>{gender}</option>
+                            <option value="" disabled>
+                              Select gender
+                            </option>
+                            {genderTypes.map((gender) => (
+                              <option key={gender} value={gender}>
+                                {gender}
+                              </option>
                             ))}
                           </select>
                         </label>
@@ -1320,12 +1438,16 @@ function AdminScheduleModal({
                           <input
                             type="number"
                             required
-                            value={routeList[activeRouteIndex].passengers[activePassengerIndex].weight}
-                            onChange={e =>
+                            value={
+                              routeList[activeRouteIndex].passengers[
+                                activePassengerIndex
+                              ].weight
+                            }
+                            onChange={(e) =>
                               updatePassenger(
                                 routeList[activeRouteIndex]._id,
                                 activePassengerIndex,
-                                'weight',
+                                "weight",
                                 e.target.value
                               )
                             }
@@ -1335,12 +1457,16 @@ function AdminScheduleModal({
                           Luggage Weight (Kg)
                           <input
                             type="number"
-                            value={routeList[activeRouteIndex].passengers[activePassengerIndex].bagWeight || ''}
-                            onChange={e =>
+                            value={
+                              routeList[activeRouteIndex].passengers[
+                                activePassengerIndex
+                              ].bagWeight || ""
+                            }
+                            onChange={(e) =>
                               updatePassenger(
                                 routeList[activeRouteIndex]._id,
                                 activePassengerIndex,
-                                'bagWeight',
+                                "bagWeight",
                                 e.target.value
                               )
                             }
@@ -1355,12 +1481,16 @@ function AdminScheduleModal({
                           <input
                             type="text"
                             required
-                            value={routeList[activeRouteIndex].passengers[activePassengerIndex].cid}
-                            onChange={e =>
+                            value={
+                              routeList[activeRouteIndex].passengers[
+                                activePassengerIndex
+                              ].cid
+                            }
+                            onChange={(e) =>
                               updatePassenger(
                                 routeList[activeRouteIndex]._id,
                                 activePassengerIndex,
-                                'cid',
+                                "cid",
                                 e.target.value
                               )
                             }
@@ -1370,12 +1500,16 @@ function AdminScheduleModal({
                           Phone Number
                           <input
                             type="number"
-                            value={routeList[activeRouteIndex].passengers[activePassengerIndex].contact || ''}
-                            onChange={e =>
+                            value={
+                              routeList[activeRouteIndex].passengers[
+                                activePassengerIndex
+                              ].contact || ""
+                            }
+                            onChange={(e) =>
                               updatePassenger(
                                 routeList[activeRouteIndex]._id,
                                 activePassengerIndex,
-                                'contact',
+                                "contact",
                                 e.target.value
                               )
                             }
@@ -1389,37 +1523,51 @@ function AdminScheduleModal({
                           Medical Issues
                           <select
                             required
-                            value={routeList[activeRouteIndex].passengers[activePassengerIndex].medIssue || ''}
-                            onChange={e =>
+                            value={
+                              routeList[activeRouteIndex].passengers[
+                                activePassengerIndex
+                              ].medIssue || ""
+                            }
+                            onChange={(e) =>
                               updatePassenger(
                                 routeList[activeRouteIndex]._id,
                                 activePassengerIndex,
-                                'medIssue',
+                                "medIssue",
                                 e.target.value
                               )
                             }
                           >
-                            <option value="" disabled>Select Medical Issue</option>
-                            {medicalIssues.map(medIssue => (
-                              <option key={medIssue} value={medIssue}>{medIssue}</option>
+                            <option value="" disabled>
+                              Select Medical Issue
+                            </option>
+                            {medicalIssues.map((medIssue) => (
+                              <option key={medIssue} value={medIssue}>
+                                {medIssue}
+                              </option>
                             ))}
                           </select>
                         </label>
                       </div>
 
                       {/* Medical Remarks (conditional) */}
-                      {routeList[activeRouteIndex].passengers[activePassengerIndex].medIssue === 'Yes' && (
+                      {routeList[activeRouteIndex].passengers[
+                        activePassengerIndex
+                      ].medIssue === "Yes" && (
                         <div className="booking-form-group">
                           <label>
                             Please provide details about the medical condition
                             <textarea
                               placeholder="Enter any medical remarks here"
-                              value={routeList[activeRouteIndex].passengers[activePassengerIndex].remarks || ''}
-                              onChange={e =>
+                              value={
+                                routeList[activeRouteIndex].passengers[
+                                  activePassengerIndex
+                                ].remarks || ""
+                              }
+                              onChange={(e) =>
                                 updatePassenger(
                                   routeList[activeRouteIndex]._id,
                                   activePassengerIndex,
-                                  'remarks',
+                                  "remarks",
                                   e.target.value
                                 )
                               }
@@ -1431,38 +1579,44 @@ function AdminScheduleModal({
                     </>
                   )}
 
-
                   {routeList[activeRouteIndex].passengers.length > 0 && (
                     <button
                       type="button"
-                      className='passenger-btn'
-                      onClick={() => removePassengerFromRoute(routeList[activeRouteIndex].passengers[activePassengerIndex]._id)}
-                      style={{ marginBottom: '20px' }}
+                      className="passenger-btn"
+                      onClick={() =>
+                        removePassengerFromRoute(
+                          routeList[activeRouteIndex].passengers[
+                            activePassengerIndex
+                          ]._id
+                        )
+                      }
+                      style={{ marginBottom: "20px" }}
                     >
                       Remove Passenger
                       <div className="passenger-icon-container">
-                        <IoMdRemove className='passenger-icon' />
+                        <IoMdRemove className="passenger-icon" />
                       </div>
                     </button>
                   )}
 
-                  {routeList[activeRouteIndex].passengers.length < maxPassengersPerRoute && (
-
+                  {routeList[activeRouteIndex].passengers.length <
+                    maxPassengersPerRoute && (
                     <button
                       type="button"
-                      className='passenger-btn'
-                      onClick={() => addPassengerToRoute(routeList[activeRouteIndex]._id)}
+                      className="passenger-btn"
+                      onClick={() =>
+                        addPassengerToRoute(routeList[activeRouteIndex]._id)
+                      }
                     >
                       Add More
                       <div className="passenger-icon-container">
-                        <IoMdAdd className='passenger-icon' />
+                        <IoMdAdd className="passenger-icon" />
                       </div>
                     </button>
                   )}
                 </div>
               )}
             </>
-
           </div>
           <div className="whiteSpace"></div>
           <p className="booking-break-header">Extra Details</p>
@@ -1475,7 +1629,9 @@ function AdminScheduleModal({
                 onChange={handleInputChange}
               >
                 <option hidden value="">
-                  {booking.assigned_pilot ? booking.assigned_pilot.name : "Assign a pilot"}
+                  {booking.assigned_pilot
+                    ? booking.assigned_pilot.name
+                    : "Assign a pilot"}
                 </option>
                 {pilots.map((pilot) => (
                   <option key={pilot._id} value={pilot._id}>
@@ -1522,15 +1678,16 @@ function AdminScheduleModal({
                   const selected = e.target.value;
                   setFormData({
                     ...formData,
-                    service_id: selected
+                    service_id: selected,
                   });
                   getPrice(selected);
                 }}
               >
-
-                <option value="" disabled>Select Service Type</option>
+                <option value="" disabled>
+                  Select Service Type
+                </option>
                 {services
-                  .filter((service) => service.status === 'Enabled')
+                  .filter((service) => service.status === "Enabled")
                   .map((service) => (
                     <option key={service._id} value={service._id}>
                       {service.name}
@@ -1558,7 +1715,7 @@ function AdminScheduleModal({
                 value={formData.refund_id || ""}
                 onChange={handleInputChange}
                 required
-              // readOnly
+                // readOnly
               >
                 <option value="">Select refund policy</option>
                 {refunds.map((refund) => (
@@ -1590,11 +1747,11 @@ function AdminScheduleModal({
               Payment Status
               <select
                 value={formData.payment_status}
-                name='payment_status'
+                name="payment_status"
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    payment_status: e.target.value
+                    payment_status: e.target.value,
                   })
                 }
               >
@@ -1602,22 +1759,28 @@ function AdminScheduleModal({
                 <option value="Not paid">Not Paid</option>
                 <option value="Credit">Credit</option>
               </select>
-
             </label>
-            <label>  Currency Type
+
+            <label>
+              {" "}
+              Currency Type
               <select
                 name="name"
                 value={formData.cType}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    cType: e.target.value
+                    cType: e.target.value,
                   })
                 }
               >
-                <option value="" disabled>Select Currency Type</option>
+                <option value="" disabled>
+                  Select Currency Type
+                </option>
                 {cTypes.map((cType) => (
-                  <option key={cType} value={cType}>{cType}</option>
+                  <option key={cType} value={cType}>
+                    {cType}
+                  </option>
                 ))}
               </select>
             </label>
@@ -1653,7 +1816,10 @@ function AdminScheduleModal({
                 value={
                   refundChosenPlan === 0
                     ? Number(finalpriceInBTNOthers).toFixed(2)
-                    : Number(finalpriceInBTNOthers - (finalpriceInBTNOthers * refundChosenPlan)).toFixed(2)
+                    : Number(
+                        finalpriceInBTNOthers -
+                          finalpriceInBTNOthers * refundChosenPlan
+                      ).toFixed(2)
                 }
                 readOnly
               />
@@ -1666,13 +1832,15 @@ function AdminScheduleModal({
                 value={
                   refundChosenPlan === 0
                     ? Number(finalpriceInUSDOthers).toFixed(2)
-                    : Number(finalpriceInUSDOthers - (finalpriceInUSDOthers * refundChosenPlan)).toFixed(2)
+                    : Number(
+                        finalpriceInUSDOthers -
+                          finalpriceInUSDOthers * refundChosenPlan
+                      ).toFixed(2)
                 }
                 readOnly
               />
             </label>
           </div>
-
 
           <div className="booking-form-group">
             <label>
@@ -1703,7 +1871,8 @@ function AdminScheduleModal({
             </label>
           </div>
 
-          {(formData.payment_type === 'Bank Transfer' || formData.payment_type === 'MBoB') && (
+          {(formData.payment_type === "Bank Transfer" ||
+            formData.payment_type === "MBoB") && (
             <div className="booking-form-group">
               <label>
                 Journal Number
@@ -1713,7 +1882,7 @@ function AdminScheduleModal({
                   placeholder="Eg. 134567"
                   value={formData.journal_no}
                   onChange={handleInputChange}
-                  required={formData.payment_type === 'MBoB'}
+                  required={formData.payment_type === "MBoB"}
                 />
               </label>
 
@@ -1723,59 +1892,86 @@ function AdminScheduleModal({
                 accept="image/*"
                 ref={(ref) => (window.__editScreenshotInput = ref)}
                 onChange={handleMultipleFilesChange}
-                style={{ display: 'none' }}
-                required
+                style={{ display: "none" }}
               />
             </div>
           )}
-          {(formData.payment_type === 'Bank Transfer' || formData.payment_type === 'MBoB') && paymentScreenshots.length > 0 && (
-            <div className="screenshot-wrapper">
-              {paymentScreenshots.map((img, index) => (
-                <div key={img.id} className="screenshot-preview-box">
-                  <img src={img.preview ? img.preview : img} alt={`Screenshot ${index + 1}`} className="screenshot-img" />
-                  <button
-                    type="button"
-                    className="remove-btn"
-                    onClick={() => {
-                      Swal.fire({
-                        title: 'Are you sure?',
-                        text: 'Do you really want to delete this image?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#3085d6',
-                        confirmButtonText: 'Yes, delete it!'
-                      }).then((result) => {
-                        if (result.isConfirmed) {
-                          handleRemoveImage(img.id);
-                        }
-                      });
-                    }}
-                  >
-                    ✖
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
+          {(formData.payment_type === "Bank Transfer" ||
+            formData.payment_type === "MBoB") &&
+            paymentScreenshots.length > 0 && (
+              <div className="screenshot-wrapper">
+                {paymentScreenshots.map((img, index) => (
+                  <div key={img.id} className="screenshot-preview-box">
+                    <img
+                      src={img.preview ? img.preview : img}
+                      alt={`Screenshot ${index + 1}`}
+                      className="screenshot-img"
+                    />
+                    <button
+                      type="button"
+                      className="remove-btn"
+                      onClick={() => {
+                        Swal.fire({
+                          title: "Are you sure?",
+                          text: "Do you really want to delete this image?",
+                          icon: "warning",
+                          showCancelButton: true,
+                          confirmButtonColor: "#d33",
+                          cancelButtonColor: "#3085d6",
+                          confirmButtonText: "Yes, delete it!",
+                        }).then((result) => {
+                          if (result.isConfirmed) {
+                            handleRemoveImage(img.id);
+                          }
+                        });
+                      }}
+                    >
+                      ✖
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
 
-          {(formData.payment_type === 'Bank Transfer' || formData.payment_type === 'MBoB') && (
+          {(formData.payment_type === "Bank Transfer" ||
+            formData.payment_type === "MBoB") && (
             <button
               type="button"
-              onClick={() => window.__editScreenshotInput && window.__editScreenshotInput.click()}
+              onClick={() =>
+                window.__editScreenshotInput &&
+                window.__editScreenshotInput.click()
+              }
               className="passenger-btn"
-              style={{ margin: '1rem 0' }}
+              style={{ margin: "1rem 0" }}
             >
               Add Screenshot +
             </button>
           )}
+
+          {/* {booking.image && (
+            <div className="booking-form-group">
+              <label>
+                Payment Screenshot
+                <img
+                  src={url}
+                  alt="Payment screenshot"
+                  style={{
+                    maxWidth: "200px",
+                    height: "250px",
+                    objectFit: "cover",
+                  }}
+                  onError={handleImageError}
+                />
+              </label>
+            </div>
+          )} */}
 
           <button
             type="submit"
             className="admin-booking-modal-btn admin-schedule-modal-btn"
             onClick={(e) => {
               e.preventDefault();
-              const images = paymentScreenshots.filter(img => img.file);
+              const images = paymentScreenshots.filter((img) => img.file);
               onUpdate(formData, routeList, images);
             }}
           >

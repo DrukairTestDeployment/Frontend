@@ -9,11 +9,12 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 
+
 function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, onUpdate }) {
     const [priceInUSDOthers, setPriceInUSDOthers] = useState(booking.bookingPriceUSD)
     const [priceInBtnOthers, setPriceInBtnOthers] = useState(booking.bookingPriceBTN)
+    const paymentTypes = ['Bank Transfer', 'Cash', 'MBoB', 'Credit Card'];
     const [pilots, setPilots] = useState([]);
-    const paymentTypes = ['Online', 'Bank Transfer', 'Cash', 'MBoB', 'Credit Card'];
     const bookingStatuses = ['Booked', 'Pending', 'Confirmed'];
     const bookingTypes = ['Walk-In', 'Online', 'Phone Call', 'Agency', 'Email'];
 
@@ -24,11 +25,9 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
 
     const getSeasonFromDate = (dateStr) => {
         if (!dateStr) return "summer";
-        const month = new Date(dateStr).getMonth() + 1;
+        const month = new Date(dateStr).getMonth() + 1; 
         return (month >= 3 && month <= 8) ? "summer" : "winter";
     };
-    // Passenger list downloads
-    const [downloadFormat, setDownloadFormat] = useState("");
 
 
     // Responsive route changes
@@ -41,6 +40,10 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
     // const [images, setImages] = useState([])
     const [paymentScreenshots, setPaymentScreenshots] = useState([]);
 
+    // Passenger list downloads
+    const [downloadFormat, setDownloadFormat] = useState("");
+
+    // Dynamic routes
     const [routeList, setRouteList] = useState([]);
     const [newRouteName, setNewRouteName] = useState('');
     const [activeRouteIndex, setActiveRouteIndex] = useState(0);
@@ -331,6 +334,8 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
         });
     };
 
+    // End of block
+
     const getDuration = async (id) => {
         if (id === "Others") {
             setDuration(0)
@@ -346,6 +351,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
                     summer: parseFloat(response.data.data.summerWeight),
                     winter: parseFloat(response.data.data.winterWeight),
                 });
+          
             } catch (error) {
                 Swal.fire({
                     title: "Error!",
@@ -419,6 +425,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
         }
     };
 
+    // fetch pilots
     useEffect(() => {
         const fetchPilots = async () => {
             try {
@@ -468,6 +475,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
         permission: booking.permission,
         // booking_type: booking.booking_type, 
         journal_no: booking.journal_no,
+
         status: booking.status,
         booking_type: booking.booking_type,
 
@@ -511,7 +519,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
     // Load existing image into state on mount
     useEffect(() => {
         const fetchImages = async () => {
-            if (booking.payment_type === 'Bank Transfer' && Array.isArray(booking.image)) {
+            if ((booking.payment_type === 'Bank Transfer' || booking.payment_type === 'MBoB') && Array.isArray(booking.image)) {
                 const fetchedImages = [];
 
                 for (const img of booking.image) {
@@ -699,16 +707,14 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
 
     if (!isModalOpen || !booking) return null;
 
-
-    // Download functions
     const downloadPassengerCSV = (passengers, booking) => {
         const csvHeader = [
-            "Name", "Gender", "Weight", "Baggage Weight", "CID/Passport", "Contact No", "Medical Issues", "Remarks"
+            "Name", "Gender", "Weight", "Luggage Weight", "CID/Passport", "Contact No", "Medical Issues", "Remarks"
         ];
 
         const csvRows = passengers.map(p => [
             p.name || '', p.gender || '', p.weight || '', p.bagWeight || '',
-            p.cid || '', p.contact || '', p.medIssue || '', p.remarks || ''
+            p.cid || '', p.contact || '', p.medIssue || '', p.remarks || '',
         ]);
 
         const headerLines = [
@@ -758,7 +764,8 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
             p.cid ? `'${p.cid}` : '', // fix large number formatting
             p.contact || '',
             p.medIssue || '',
-            p.remarks || 'None'
+            p.remarks || 'None',
+
         ]);
 
         const data = [...header, ...rows];
@@ -776,7 +783,6 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
 
         XLSX.writeFile(workbook, `passenger_list_${booking.bookingID || "booking"}.xlsx`);
     };
-
 
     const downloadPassengerPDF = (passengers, booking) => {
         const doc = new jsPDF();
@@ -814,8 +820,6 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
 
         doc.save(`passenger_list_${booking?.bookingID || 'booking'}.pdf`);
     };
-
-
 
     const handleDownload = (type) => {
         if (!type) return;
@@ -871,7 +875,6 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
                                 onChange={(e) =>
                                     setBookingUpdate({ ...bookingUpdate, agent_contact: e.target.value })
                                 }
-                                required
                             />
                         </label>
                     </div>
@@ -918,6 +921,19 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
 
                     <p className='booking-break-header'>Flight Logistics</p>
                     <div className="booking-form-group">
+                        {/* <label>
+                            Destination
+                            <input
+                                type="text"
+                                name="destination"
+                                // value={booking.destination === null ? booking.destination_other : booking.destination.sector}
+                                // readOnly
+                                value={bookingUpdate.destination}
+                                onChange={(e) =>
+                                    setBookingUpdate({ ...bookingUpdate, destination: e.target.value })
+                                }
+                            />
+                        </label> */}
                         <label>
                             Destination
                             <select
@@ -1055,12 +1071,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
                             <select
                                 name="permission"
                                 value={
-                                    bookingUpdate.permission === true || bookingUpdate.permission === "true"
-                                        ? "Yes"
-                                        : bookingUpdate.permission === false || bookingUpdate.permission === "false"
-                                            ? "No"
-                                            : ""
-                                }
+                                    bookingUpdate.permission || ""}
                                 onChange={(e) =>
                                     setBookingUpdate({
                                         ...bookingUpdate,
@@ -1077,6 +1088,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
                         </label>
                     </div>
 
+                    {/* Passengelist download button */}
                     <div>
                         <label style={{ fontWeight: 'bold', marginTop: '20px', marginBottom: '10px' }}>Download Passenger List:</label>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem' }}>
@@ -1107,6 +1119,8 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
                     </div>
 
                     <div className="whiteSpace"></div>
+
+                    {/* Routes Block */}
                     <>
                         <div className="booking-form-group">
                             <input
@@ -1148,6 +1162,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
                                 </div>
                             ))}
                         </div>
+
 
                         {routeList[activeRouteIndex] && (
                             <div>
@@ -1354,9 +1369,21 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
                             </div>
                         )}
                     </>
+
                     <div className="whiteSpace"></div>
+
                     <p className='booking-break-header'>Extra Details</p>
                     <div className="booking-form-group">
+                        {/* <label>
+                            Assigned Pilot
+                            <input
+                                type="text"
+                                name="assignedPilot"
+                                value={booking.assigned_pilot ? booking.assigned_pilot.name : "No Pilots Assigned"}
+                                readOnly
+                            />
+                        </label> */}
+
                         <label>
                             Assigned Pilot
                             <select
@@ -1392,7 +1419,6 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
                                 ))}
                             </select>
                         </label>
-
                     </div>
 
                     <div className="booking-form-group">
@@ -1423,7 +1449,6 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
                             </select>
                         </label>
 
-
                         <label>
                             Booking Type
                             <select
@@ -1440,7 +1465,6 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
                                     </option>
                                 ))}
                             </select>
-
                         </label>
                     </div>
 
@@ -1514,7 +1538,6 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
                                 <option value="Credit">Credit</option>
                             </select>
                         </label>
-
                     </div>
                     <div className="booking-form-group">
                         <label>
@@ -1540,8 +1563,6 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
                             />
                         </label>
                     </div>
-
-
 
                     <div className="booking-form-group">
                         <label>
@@ -1596,7 +1617,6 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
                                 ref={(ref) => (window.__editScreenshotInput = ref)}
                                 onChange={handleMultipleFilesChange}
                                 style={{ display: 'none' }}
-                                required
                             />
                         </div>
                     )}
@@ -1649,6 +1669,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
                         type="submit"
                         className="admin-booking-modal-btn admin-schedule-modal-btn"
                         onClick={(e) => {
+
                             e.preventDefault();
                             if (bookingUpdate.status === 'Confirmed' && bookingUpdate.payment_status === 'Not paid') {
                                 Swal.fire({
@@ -1659,8 +1680,10 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
                                     showConfirmButton: true
                                 });
                             } else {
+
                                 const images = paymentScreenshots.filter(img => img.file);
                                 onUpdate(bookingUpdate, routeList, images);
+
                             }
                         }}
                     >

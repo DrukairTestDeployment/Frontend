@@ -84,15 +84,14 @@ function AdminDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("https://helistaging.drukair.com.bt/api/bookings", {
-          withCredentials: true
-        });
+        const response = await axios.get("https://helistaging.drukair.com.bt/api/bookings/");
         const paidBookings = response.data.data.filter(
           booking =>
             (booking.payment_status === "Paid" || booking.payment_status === "Credit") &&
             booking.status !== "Cancelled" &&
             booking.status !== "Declined"
         );
+
         const bookings = paidBookings.length;
         const mainBookings = paidBookings
 
@@ -101,26 +100,24 @@ function AdminDashboard() {
         let revenueBTN = 0;
 
         for (const booking of mainBookings) {
-          const servicePrice = parseInt(booking.price, 10);
+          const servicePrice = parseFloat(booking.price);
 
           if (isNaN(servicePrice)) {
             console.error(`Invalid price for booking: ${booking}`);
             continue;
           } 
 
-          if (booking.cType === "USD") {
+          if (booking.cType?.toUpperCase() === "USD") {
             if (booking.refund_id?.plan) {
-              const refundAmount = booking.refund_id.plan / 100;
-              const refundAmounts = servicePrice * refundAmount
-              revenueUSD += servicePrice - refundAmounts;
+              const refundPercent = parseFloat(booking.refund_id.plan) / 100;
+              revenueUSD += servicePrice * (1 - refundPercent);
             } else {
               revenueUSD += servicePrice;
             }
           } else {
             if (booking.refund_id?.plan) {
-              const refundAmount = booking.refund_id.plan / 100;
-              const refundAmounts = servicePrice * refundAmount
-              revenueBTN += servicePrice - refundAmounts;
+              const refundPercent = parseFloat(booking.refund_id.plan) / 100;
+              revenueBTN += servicePrice * (1 - refundPercent);
             } else {
               revenueBTN += servicePrice;
             }

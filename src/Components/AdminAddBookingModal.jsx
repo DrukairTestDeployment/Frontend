@@ -11,7 +11,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
     const bookingStatuses = ['Booked', 'Pending', 'Confirmed'];
     const paymentTypes = ['Online', 'Bank Transfer', 'Cash', 'MBoB', 'Credit Card'];
     const bookingTypes = ['Walk-In', 'Online', 'Phone Call', 'Agency', 'Email'];
-
+    const cTypes = ["BTN", "USD"];
     const [pilots, setPilots] = useState([]);
     const [bookings, setBookings] = useState([]);
     const [routes, setRoutes] = useState([]);
@@ -24,13 +24,13 @@ function AdminAddBookingModal({ isOpen, onClose }) {
     const maxFileSize = 5 * 1024 * 1024; // Max size 5MB
 
     const [weightLimits, setWeightLimits] = useState({
-        summer: 450,
-        winter: 450,
-    });
-
+            summer: 450,
+            winter: 450,
+        });
+    
     const getSeasonFromDate = (dateStr) => {
         if (!dateStr) return "summer";
-        const month = new Date(dateStr).getMonth() + 1;
+        const month = new Date(dateStr).getMonth() + 1; 
         return (month >= 3 && month <= 8) ? "summer" : "winter";
     };
 
@@ -339,7 +339,6 @@ function AdminAddBookingModal({ isOpen, onClose }) {
 
         setPaymentScreenshots(prev => [...prev, ...newImages]);
 
-        // ✅ Reset input value so selecting the same file again works
         event.target.value = null;
 
     };
@@ -385,7 +384,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
         bookingStatus: "",
         payment_type: "",
         booking_type: "",
-        cType: "BTN",
+        cType: "",
         price: 0,
         bookingPriceUSD: 0,
         bookingPriceBTN: 0,
@@ -559,6 +558,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
         }
     }
 
+
     const getPrice = async (id) => {
         try {
             const response = await axios.get(`https://helistaging.drukair.com.bt/api/services/${id}`);
@@ -577,6 +577,35 @@ function AdminAddBookingModal({ isOpen, onClose }) {
             });
         }
     }
+
+    // const validateForm = () => {
+    //     const newErrors = {};
+
+    //     if (totalWeight > carryingCapacity) {
+    //         newErrors.totalWeight = `Total weight exceeds carrying capacity of ${carryingCapacity}kg`;
+    //     }
+
+
+    //     passengerData.passengers.forEach((passenger, index) => {
+
+    //         if (passenger.luggageWeight && (passenger.luggageWeight < 0)) {
+    //             newErrors[`passengers[${index}].luggageWeight`] = 'Luggage weight must be a non-negative number';
+    //         }
+
+    //         if (totalWeight > carryingCapacity) {
+    //             Swal.fire({
+    //                 icon: 'error',
+    //                 title: 'Weight Limit Exceeded',
+    //                 text: `Total weight (${totalWeight}kg) exceeds the carrying capacity of ${carryingCapacity}kg`,
+    //             });
+    //             return false;
+    //         }
+    //     });
+
+
+    //     setErrors(newErrors);
+    //     return Object.keys(newErrors).length === 0;
+    // };
 
     const validateForm = () => {
         let errorRoute = null;
@@ -603,6 +632,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
         return true;
     };
 
+
     const handleChange = (e, passengerIndex) => {
         const { name, value } = e.target;
         if (passengerIndex !== undefined) {
@@ -627,29 +657,29 @@ function AdminAddBookingModal({ isOpen, onClose }) {
         return prefix + randomDigits;
     }
 
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
+    // const handleFileChange = (event) => {
+    //     const file = event.target.files[0];
 
-        if (file) {
-            if (!file.type.startsWith('image/')) {
-                alert("Please upload a valid image file.");
-                return;
-            }
+    //     if (file) {
+    //         if (!file.type.startsWith('image/')) {
+    //             alert("Please upload a valid image file.");
+    //             return;
+    //         }
 
-            if (file.size > maxFileSize) {
-                alert("File size should not exceed 5MB.");
-                return;
-            }
+    //         if (file.size > maxFileSize) {
+    //             alert("File size should not exceed 5MB.");
+    //             return;
+    //         }
 
-            setFormData((prevData) => ({
-                ...prevData,
-                paymentScreenShot: file,
-            }));
+    //         setFormData((prevData) => ({
+    //             ...prevData,
+    //             paymentScreenShot: file,
+    //         }));
 
-            const previewUrl = URL.createObjectURL(file);
-            setImagePreview(previewUrl);
-        }
-    };
+    //         const previewUrl = URL.createObjectURL(file);
+    //         setImagePreview(previewUrl);
+    //     }
+    // };
 
     useEffect(() => {
         return () => {
@@ -671,63 +701,62 @@ function AdminAddBookingModal({ isOpen, onClose }) {
     };
 
     const postRoute = async (route, id) => {
-        // for (const passenger of passengers) {
-        try {
-            const response = await axios.post("https://helistaging.drukair.com.bt/api/leg", {
-                name: route.name,
-                booking_id: id,
-            });
-            if (response.data.status === "success") {
-                for (const passenger of route.passengers) {
-                    postPassenger(passenger, response.data.data._id, id);
-                }
-            } else {
-                throw new Error(
-                    response.data.message || "Failed to update booking"
-                );
+    // for (const passenger of passengers) {
+      try {
+          const response = await axios.post("https://helistaging.drukair.com.bt/api/leg", {
+            name: route.name,
+            booking_id: id,
+          });
+          if (response.data.status === "success") {
+            for (const passenger of route.passengers) {
+              postPassenger(passenger, response.data.data._id, id);
             }
-        } catch (error) {
-            Swal.fire({
-                title: "Error!",
-                text: error.response
-                    ? error.response.data.message
-                    : "An error occurred",
-                icon: "error",
-                confirmButtonColor: "#1E306D",
-                confirmButtonText: "OK",
-            });
-        }
+          } else {
+            throw new Error(
+              response.data.message || "Failed to update booking"
+            );
+          }
+      } catch (error) {
+        Swal.fire({
+          title: "Error!",
+          text: error.response
+            ? error.response.data.message
+            : "An error occurred",
+          icon: "error",
+          confirmButtonColor: "#1E306D",
+          confirmButtonText: "OK",
+        });
+      }
     }
 
     const postPassenger = async (passenger, rid, id) => {
-        try {
-            await axios.post('https://helistaging.drukair.com.bt/api/passengers', {
-                name: passenger.name,
-                weight: passenger.weight,
-                cid: passenger.cid,
-                bagWeight: passenger.bagWeight,
-                gender: passenger.gender,
-                medIssue: passenger.medIssue,
-                contact: passenger.contact,
-                booking_id: id,
-                leg_id: rid,
-                remarks: passenger.remarks,
-            });
-        } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: error.response ? error.response.data.message : 'An error occurred',
-                icon: 'error',
-                confirmButtonColor: '#1E306D',
-                confirmButtonText: 'OK'
-            });
-        }
+            try {
+                await axios.post('https://helistaging.drukair.com.bt/api/passengers', {
+                    name: passenger.name,
+                    weight: passenger.weight,
+                    cid: passenger.cid,
+                    bagWeight: passenger.bagWeight,
+                    gender: passenger.gender,
+                    medIssue: passenger.medIssue,
+                    contact: passenger.contact,
+                    booking_id: id,
+                    leg_id: rid,
+                    remarks: passenger.remarks,
+                });
+            } catch (error) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: error.response ? error.response.data.message : 'An error occurred',
+                    icon: 'error',
+                    confirmButtonColor: '#1E306D',
+                    confirmButtonText: 'OK'
+                });
+            }
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validateForm()) {
-            console.log(passengerData.passengers)
             Swal.fire({
                 title: "",
                 text: "Are you sure you want to book?",
@@ -737,7 +766,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                 cancelButtonColor: "#d33",
                 confirmButtonText: "Yes, book!"
             }).then(async (result) => {
-                if (result.isConfirmed && formData.payment_type !== "Bank Transfer") {
+                if (result.isConfirmed && (formData.payment_type !== "Bank Transfer" && formData.payment_type !== "MBoB")) {
                     setLoading(true);
                     try {
                         const priceCheck = formData.payment_type === "Cash" ? "BTN" : formData.cType
@@ -775,7 +804,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                         });
 
                         if (response.data.status === "success") {
-                            for (const route of routeList) {
+                            for (const route of routeList){
                                 postRoute(route, response.data.data._id)
                             }
                             Swal.fire({
@@ -785,7 +814,6 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                                 confirmButtonColor: "#1E306D",
                                 confirmButtonText: "OK",
                             });
-
                             // postPassenger(response.data.data._id);
                             onClose();
                             // window.location.reload()
@@ -801,7 +829,15 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                     } finally {
                         setLoading(false)
                     }
-                } else if (result.isConfirmed && formData.payment_type === "Bank Transfer") {
+                } else if (result.isConfirmed && (formData.payment_type === "Bank Transfer" || formData.payment_type === "MBoB")) {
+                    if (paymentScreenshots.length === 0) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Screenshot Required',
+                            text: 'Please upload at least one payment screenshot.',
+                        });
+                        return;
+                    }
                     setLoading(true)
                     try {
                         formData.bookingID = generateBookingId();
@@ -846,7 +882,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                         });
 
                         if (response.data.status === "success") {
-                            for (const route of routeList) {
+                            for (const route of routeList){
                                 await postRoute(route, response.data.data._id)
                             }
                             Swal.fire({
@@ -862,10 +898,9 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                             // window.location.reload()
                         }
                     } catch (error) {
-                        console.log(error)
                         Swal.fire({
                             title: "Error!",
-                            text: error.response ? error.response.data.message : "Error making the reservation",
+                            text: error.response ? error.response.data.error : "Error making the reservation",
                             icon: "error",
                             confirmButtonColor: "#1E306D",
                             confirmButtonText: "OK",
@@ -917,9 +952,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                                     placeholder='#########'
                                     value={formData.agent_contact}
                                     onChange={handleChange}
-                                    required
                                 />
-                                {errors.agentPhone && <span className="error">{errors.agentPhone}</span>}
                             </label>
                         </div>
 
@@ -1431,6 +1464,24 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                                     ))}
                                 </select>
                             </label>
+                            <label>
+                                Currency Type
+                                <select
+                                    name="cType"
+                                    value={formData.cType}
+                                    onChange={handleChange}
+                                    required
+                                >
+                                    <option value="" disabled>
+                                        Select Currency Type
+                                    </option>
+                                        {cTypes.map((permission) => (
+                                        <option key={permission} value={permission}>
+                                            {permission}
+                                        </option>
+                                        ))}
+                                </select>
+                            </label>
                         </div>
 
                         {durationf === 0 ?
@@ -1512,7 +1563,6 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                                         >
                                             <option value="Paid">Paid</option>
                                             <option value="Not paid">Not Paid</option>
-                                            <option value="Credit">Credit</option>
                                         </select>
                                     </label>
                                 </div>
@@ -1588,7 +1638,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                                         placeholder="Eg. 134567"
                                         value={formData.journal_no}
                                         onChange={handleChange}
-                                        required
+                                        required={formData.payment_type == 'MBoB'}
                                     />
                                 </label>
 
@@ -1596,7 +1646,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                                 <input
                                     type="file"
                                     accept="image/*"
-                                    ref={(ref) => (window.__screenshotInput = ref)} // global trigger
+                                    ref={(ref) => (window.__screenshotInput = ref)}
                                     onChange={handleMultipleFilesChange}
                                     style={{ display: 'none' }}
                                 />
