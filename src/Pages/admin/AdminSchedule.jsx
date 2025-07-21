@@ -86,7 +86,7 @@ function AdminSchedule() {
       'Baggage Weight (Kg)': passenger.bagWeight,
       'Passport/CID': passenger.cid,
       'Contact No': passenger.contact,
-      'Medical Issue': passenger.medIssue || 'None'
+      'Medical Issue': passenger.medIssue || 'None',
     }));
     sheets['Passengers'] = passengerData;
 
@@ -211,6 +211,8 @@ function AdminSchedule() {
           medIssue: passenger.medIssue,
           contact: passenger.contact,
           remarks: passenger.remarks,
+          boarding: passenger.boarding,
+          disembark: passenger.disembark
         });
       } else {
         await axios.post("https://helistaging.drukair.com.bt/api/passengers", {
@@ -224,6 +226,8 @@ function AdminSchedule() {
           booking_id: id,
           leg_id: rid,
           remarks: passenger.remarks,
+          boarding: passenger.boarding,
+          disembark: passenger.disembark
         });
       }
 
@@ -296,7 +300,7 @@ function AdminSchedule() {
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, Update Booking"
     }).then(async (result) => {
-      if (result.isConfirmed && updatedBookingData.payment_type !== 'Bank Transfer') {
+      if (result.isConfirmed && (updatedBookingData.payment_type !== 'Bank Transfer' && updatedBookingData.payment_type !== 'MBoB')) {
         setLoading(true);
         try {
           const response = await axios.patch(
@@ -363,7 +367,7 @@ function AdminSchedule() {
                     flight_date: booking.flight_date,
                     departure_time: booking.departure_time,
                     permission: booking.permission,
-                    // booking_type: booking.booking_type, 
+                    // booking_type: booking.booking_type,
                     payment_status: booking.payment_status,
                     journal_no: booking.journal_no,
                     latitude: booking.latitude,
@@ -391,7 +395,7 @@ function AdminSchedule() {
         } finally {
           setLoading(false)
         }
-      } else if (result.isConfirmed && updatedBookingData.payment_type === "Bank Transfer") {
+      } else if (result.isConfirmed && (updatedBookingData.payment_type === "Bank Transfer" || updatedBookingData.payment_type === 'MBoB')) {
         setLoading(true);
         try {
           const formData = new FormData();
@@ -802,8 +806,9 @@ function AdminSchedule() {
             onClose={closeModal}
             booking={selectedBooking}
             legs={selectedLegs}
+            passengers = {selectedPassengers}
             onUpdate={onUpdate}
-            passengers={selectedPassengers}
+            
           />
         </>
       )}
