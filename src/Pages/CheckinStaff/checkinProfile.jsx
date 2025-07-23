@@ -9,6 +9,8 @@ import { BsEye, BsEyeSlash } from 'react-icons/bs';
 
 const CheckinProfile = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [femail, setEmail] = useState()
+
   const [user, setUser] = useState({
     name: '',
     email: '',
@@ -45,6 +47,7 @@ const CheckinProfile = () => {
       try {
         const response = await axios.get(`https://helistaging.drukair.com.bt/api/users/${id}`, { withCredentials: true });
         setUser(response.data.data);
+        setEmail(response.data.data.email)
       } catch (error) {
         Swal.fire({
           title: 'Error!',
@@ -89,8 +92,37 @@ const CheckinProfile = () => {
     }
   }
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
+  const OTP = async () => {
+    Swal.fire({
+      title: 'Enter OTP',
+      text: 'Please check the otp in your provided mail',
+      input: 'text',
+      showCancelButton: true,
+      confirmButtonText: 'Verify',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.post(`https://helistaging.drukair.com.bt/api/users/verifyOtp`, {
+            email: femail,
+            otp: result.value
+          });
+          if (response.data.status === 'success') {
+            finalUpdate()
+          }
+        } catch (error) {
+          Swal.fire({
+            title: "Error!",
+            text: error.response ? error.response.data.error : "Error saving the booking",
+            icon: "error",
+            confirmButtonColor: "#1E306D",
+            confirmButtonText: "OK",
+          });
+        }
+      }
+    });
+  };
+
+  const finalUpdate = async () => {
     try {
       const response = await axios.patch(`https://helistaging.drukair.com.bt/api/users/${id}`, {
         name: user.name,
@@ -98,14 +130,17 @@ const CheckinProfile = () => {
         contactNo: user.contactNo,
         address: user.address,
       });
-      if (response.data.status === "success") {
+      if (response.data.status === 'success') {
         Swal.fire({
           title: 'Success!',
           text: 'User Detail Updated Successfully',
           icon: 'success',
           confirmButtonColor: '#1E306D',
-          confirmButtonText: 'OK'
+          confirmButtonText: 'OK',
         });
+        if (user.email !== femail) {
+          logout();
+        }
       }
     } catch (error) {
       Swal.fire({
@@ -115,6 +150,31 @@ const CheckinProfile = () => {
         confirmButtonColor: '#1E306D',
         confirmButtonText: 'OK',
       });
+    }
+  }
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    if (user.email !== femail) {
+      try {
+        const response = await axios.post('https://helistaging.drukair.com.bt/api/users/email-otp', {
+          email: femail,
+          newEmail: user.email
+        });
+        if (response.data.status === 'success') {
+          OTP()
+        }
+      } catch (error) {
+        Swal.fire({
+          title: 'Error!',
+          text: error.response ? error.response.data.message : 'An error occurred during profile update',
+          icon: 'error',
+          confirmButtonColor: '#1E306D',
+          confirmButtonText: 'OK',
+        });
+      }
+    } else {
+      finalUpdate()
     }
   }
 

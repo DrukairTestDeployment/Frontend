@@ -139,6 +139,9 @@ const AdminProfile = () => {
           confirmButtonColor: '#1E306D',
           confirmButtonText: 'OK',
         });
+        if (user.email !== femail) {
+          logout();
+        }
       }
     } catch (error) {
       Swal.fire({
@@ -155,8 +158,9 @@ const AdminProfile = () => {
     e.preventDefault();
     if (user.email !== femail) {
       try {
-        const response = await axios.post('https://helistaging.drukair.com.bt/api/users/send-otp', {
-          email: femail
+        const response = await axios.post('https://helistaging.drukair.com.bt/api/users/email-otp', {
+          email: femail,
+          newEmail: user.email
         });
         if (response.data.status === 'success') {
           OTP()
