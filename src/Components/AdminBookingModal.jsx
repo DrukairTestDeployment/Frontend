@@ -707,89 +707,21 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
 
     if (!isModalOpen || !booking) return null;
 
-    const downloadPassengerCSV = (passengers, booking) => {
-        const csvHeader = [
-            "Name", "Gender", "Weight", "Luggage Weight", "CID/Passport", "Contact No", "Medical Issues", "Remarks"
-        ];
+    const handleDownload = (type) => {
+    if (!type || !routeList || routeList.length === 0) return;
 
-        const csvRows = passengers.map(p => [
-            p.name || '', p.gender || '', p.weight || '', p.bagWeight || '',
-            p.cid || '', p.contact || '', p.medIssue || '', p.remarks || '',
-        ]);
+    if (type === "pdf") {
+      const doc = new jsPDF();
 
-        const headerLines = [
-            `Flight Date: ${booking?.flight_date || ""}`,
-            `Booking ID: ${booking?.bookingID || ""}`,
-            ""
-        ];
+      routeList.forEach((route, idx) => {
+        const passengers = route.passengers || [];
+        const legName = route.name || `Route ${idx + 1}`;
 
-        const csvContent = [
-            ...headerLines,
-            csvHeader.join(","),
-            ...csvRows.map(row => row.map(field => `"${field}"`).join(","))
-        ].join("\n");
-
-        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-        const url = URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
-        link.setAttribute("href", url);
-        link.setAttribute("download", `passenger_list_${booking?.bookingID || 'booking'}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-
-    const downloadPassengerXLSX = (passengers, booking) => {
-        if (!passengers || passengers.length === 0) {
-            Swal.fire("No Data", "There are no passengers to download.", "info");
-            return;
-        }
-
-        const header = [
-            ["Flight Date:", booking.flight_date || ""],
-            ["Booking ID:", booking.bookingID || ""],
-            [], // empty row before table
-            [
-                "Name", "Gender", "Weight", "Baggage Weight",
-                "CID/Passport", "Contact No", "Medical Issues", "Remarks"
-            ]
-        ];
-
-        const rows = passengers.map(p => [
-            p.name || '',
-            p.gender || '',
-            p.weight || '',
-            p.bagWeight || '',
-            p.cid ? `'${p.cid}` : '', // fix large number formatting
-            p.contact || '',
-            p.medIssue || '',
-            p.remarks || 'None',
-
-        ]);
-
-        const data = [...header, ...rows];
-
-        const worksheet = XLSX.utils.aoa_to_sheet(data);
-
-        // Optional: set column width
-        worksheet["!cols"] = [
-            { wch: 20 }, { wch: 10 }, { wch: 10 }, { wch: 15 },
-            { wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 30 }
-        ];
-
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Passengers");
-
-        XLSX.writeFile(workbook, `passenger_list_${booking.bookingID || "booking"}.xlsx`);
-    };
-
-    const downloadPassengerPDF = (passengers, booking) => {
-        const doc = new jsPDF();
+        if (idx > 0) doc.addPage();
 
         doc.setFontSize(14);
         doc.setFont("helvetica", "bold");
-        doc.text(`Passenger List`, 14, 15);
+        doc.text(`Passenger List - ${legName}`, 14, 15);
 
         doc.setFontSize(11);
         doc.setFont("helvetica", "normal");
@@ -797,41 +729,156 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
         doc.text(`Booking ID: ${booking?.bookingID || ""}`, 14, 32);
 
         const tableColumn = [
-            "Name", "Gender", "Weight", "Baggage Weight",
-            "CID/Passport", "Contact No", "Medical Issues", "Remarks"
+          "Name",
+          "Gender",
+          "Weight",
+          "Baggage Weight",
+          "CID/Passport",
+          "Contact No",
+          "Medical Issues",
+          "Remarks",
         ];
 
-        const tableRows = passengers.map(p => [
-            p.name || '', p.gender || '', p.weight || '', p.bagWeight || '',
-            p.cid || '', p.contact || '', p.medIssue || '', p.remarks || 'None'
+        const tableRows = passengers.map((p) => [
+          p.name || "",
+          p.gender || "None",
+          p.weight || "0",
+          p.bagWeight || "0",
+          p.cid || "None",
+          p.contact || "None",
+          p.medIssue || "None",
+          p.remarks || "None",
         ]);
 
         autoTable(doc, {
-            startY: 40,
-            head: [tableColumn],
-            body: tableRows,
-            styles: { fontSize: 9 },
-            columnStyles: {
-                0: { cellWidth: 30 },
-                4: { cellWidth: 35 },
-                7: { cellWidth: 40 }
-            }
+          startY: 40,
+          head: [tableColumn],
+          body: tableRows,
+          styles: { fontSize: 9 },
+          columnStyles: {
+            0: { cellWidth: 30 },
+            4: { cellWidth: 35 },
+            7: { cellWidth: 40 },
+          },
+        });
+      });
+
+      doc.save(`passenger_list_${booking?.bookingID || "booking"}.pdf`);
+    }
+
+    if (type === "xlsx") {
+      const workbook = XLSX.utils.book_new();
+
+      routeList.forEach((route, idx) => {
+        const passengers = route.passengers || [];
+        const legName = route.name || `Route ${idx + 1}`;
+
+        const sheetHeader = [
+          [`Flight Date:`, booking.flight_date || ""],
+          [`Booking ID:`, booking.bookingID || ""],
+          [`Route:`, legName],
+          [],
+          [
+            "Name",
+            "Gender",
+            "Weight",
+            "Baggage Weight",
+            "CID/Passport",
+            "Contact No",
+            "Medical Issues",
+            "Remarks",
+          ],
+        ];
+
+        const rows = passengers.map((p) => [
+          p.name || "",
+          p.gender || "None",
+          p.weight || "0",
+          p.bagWeight || "0",
+          p.cid ? `'${p.cid}` : "None",
+          p.contact || "None",
+          p.medIssue || "None",
+          p.remarks || "None",
+        ]);
+
+        const data = [...sheetHeader, ...rows];
+        const sheet = XLSX.utils.aoa_to_sheet(data);
+        sheet["!cols"] = [
+          { wch: 20 },
+          { wch: 10 },
+          { wch: 10 },
+          { wch: 15 },
+          { wch: 20 },
+          { wch: 15 },
+          { wch: 15 },
+          { wch: 30 },
+        ];
+
+        XLSX.utils.book_append_sheet(workbook, sheet, legName.slice(0, 31));
+      });
+
+      XLSX.writeFile(
+        workbook,
+        `passenger_list_${booking?.bookingID || "booking"}.xlsx`
+      );
+    }
+
+    if (type === "csv") {
+      const allRows = [];
+
+      routeList.forEach((route, idx) => {
+        const passengers = route.passengers || [];
+        const legName = route.name || `Route ${idx + 1}`;
+
+        allRows.push(`Flight Date: ${booking?.flight_date || ""}`);
+        allRows.push(`Booking ID: ${booking?.bookingID || ""}`);
+        allRows.push(`Route: ${legName}`);
+        allRows.push("");
+
+        const header = [
+          "Name",
+          "Gender",
+          "Weight",
+          "Baggage Weight",
+          "CID/Passport",
+          "Contact No",
+          "Medical Issues",
+          "Remarks",
+        ];
+        allRows.push(header.join(","));
+
+        passengers.forEach((p) => {
+          const row = [
+            p.name || "",
+            p.gender || "None",
+            p.weight || "0",
+            p.bagWeight || "0",
+            p.cid || "None",
+            p.contact || "None",
+            p.medIssue || "None",
+            p.remarks || "None",
+          ];
+          allRows.push(row.map((field) => `"${field}"`).join(","));
         });
 
-        doc.save(`passenger_list_${booking?.bookingID || 'booking'}.pdf`);
-    };
+        allRows.push(""); // spacing between routes
+      });
 
-    const handleDownload = (type) => {
-        if (!type) return;
-
-        if (type === "csv") {
-            downloadPassengerCSV(passengerList, booking);
-        } else if (type === "pdf") {
-            downloadPassengerPDF(passengerList, booking);
-        } else if (type === "xlsx") {
-            downloadPassengerXLSX(passengerList, booking);
-        }
-    };
+      const blob = new Blob([allRows.join("\n")], {
+        type: "text/csv;charset=utf-8;",
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute(
+        "download",
+        `passenger_list_${booking?.bookingID || "booking"}.csv`
+      );
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
 
     return (
         <div className="booking-modal-overlay">

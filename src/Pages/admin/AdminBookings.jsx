@@ -116,7 +116,7 @@ function AdminBooking() {
         const fetchedBookings = response.data.data || [];
 
         const processedBookings = fetchedBookings
-          .filter((booking) => booking.status === "Booked")
+          .filter((booking) => booking.status === "Booked" || booking.status === "Pending")
           .sort((a, b) => {
             const dateA = new Date(a.flight_date);
             const dateB = new Date(b.flight_date);

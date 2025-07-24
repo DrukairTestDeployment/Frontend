@@ -539,7 +539,7 @@ function AdminSchedule() {
         const response = await axios.get('https://helistaging.drukair.com.bt/api/bookings');
         const fetchedBookings = response.data.data || [];
         const processedBookings = fetchedBookings
-          .filter((booking) => booking.status !== "Booked")
+          .filter((booking) => booking.status !== "Booked" && booking.status !== "Pending")
           .sort((a, b) => {
             const dateA = new Date(a.flight_date);
             const dateB = new Date(b.flight_date);
@@ -554,7 +554,7 @@ function AdminSchedule() {
               ...booking.assigned_pilot,
               name: booking.assigned_pilot.name || 'Not Assigned'
             } : null
-          })).filter(booking => booking.status !== "Booked");
+          })).filter(booking => booking.status !== "Booked" && booking.status !== "Pending");
 
         setBookings(processedBookings);
 
