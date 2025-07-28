@@ -87,98 +87,25 @@ function AdminAddBookingModal({ isOpen, onClose }) {
   };
 
   const removeRoute = (id) => {
-    // Unsaved routes
-    const isUnsaved = !id;
-
-    if (isUnsaved) {
+    if (id) {
       // Remove from state only
-      const updated = routeList.filter((route) => route._id !== id);
+      const updated = routeList.filter((route) => route.id !== id);
       setRouteList(updated);
       setActiveRouteIndex(Math.max(0, updated.length - 1));
       return;
     }
-    Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to remove this route?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, remove it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await axios.delete(
-            `https://helistaging.drukair.com.bt/api/leg/${id}`
-          );
-
-          if (response.data.status === "success") {
-            Swal.fire({
-              title: "Success!",
-              text: "Route Removed Successfully",
-              icon: "success",
-              confirmButtonColor: "#1E306D",
-              confirmButtonText: "OK",
-            });
-          } else {
-            Swal.fire({
-              title: "Warning!",
-              text: "Deletion may not have been successful",
-              icon: "warning",
-              confirmButtonColor: "#1E306D",
-              confirmButtonText: "OK",
-            });
-          }
-        } catch (error) {
-          Swal.fire({
-            title: "Error!",
-            text: error.response?.data?.message || "Error deleting route",
-            icon: "error",
-            confirmButtonColor: "#1E306D",
-            confirmButtonText: "OK",
-          });
-        }
-      }
-    });
   };
 
   const updateRouteName = (id, newName) => {
-    Swal.fire({
-      title: "",
-      text: "Are you sure you want to update the route name?",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "#1E306D",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, Update Route Name",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const res = await axios.patch(`https://helistaging.drukair.com.bt/api/leg/${id}`, {
-            name: newName,
-          });
-          if (res.data.status === "success") {
-            Swal.fire({
-              title: "Success!",
-              text: "Route Name Updated Successfully",
-              icon: "success",
-              confirmButtonColor: "#1E306D",
-              confirmButtonText: "OK",
-            });
-          }
-        } catch (error) {
-          Swal.fire({
-            title: "Error!",
-            text: error.response
-              ? error.response.data.message
-              : "An error occurred",
-            icon: "error",
-            confirmButtonColor: "#1E306D",
-            confirmButtonText: "OK",
-          });
-        }
-      }
-    });
+    if (id) {
+        // Just update local state
+      setRouteList((prevRoutes) =>
+        prevRoutes.map((route) =>
+          route.id === id ? { ...route, name: newName } : route
+        )
+      );
+      return  
+    }
   };
 
   const addPassengerToRoute = (routeId) => {
@@ -264,9 +191,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
   };
 
   const removePassengerFromRoute = (passengerId) => {
-    const isUnsaved = !passengerId;
-
-    if (isUnsaved) {
+    if (passengerId) {
       setRouteList((prev) =>
         prev.map((route, i) =>
           i === activeRouteIndex
@@ -282,64 +207,6 @@ function AdminAddBookingModal({ isOpen, onClose }) {
       setActivePassengerIndex(0);
       return;
     }
-    Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to remove this passenger?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, remove it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await axios.delete(
-            `https://helistaging.drukair.com.bt/api/passengers/${passengerId}`
-          );
-
-          if (response.data.status === "success") {
-            Swal.fire({
-              title: "Success!",
-              text: "Passenger Deleted Successfully",
-              icon: "success",
-              confirmButtonColor: "#1E306D",
-              confirmButtonText: "OK",
-            });
-
-            setRouteList((prev) =>
-              prev.map((route, i) =>
-                i === activeRouteIndex
-                  ? {
-                      ...route,
-                      passengers: route.passengers.filter(
-                        (p, idx) => p._id !== passengerId
-                      ),
-                    }
-                  : route
-              )
-            );
-
-            setActivePassengerIndex(0);
-          } else {
-            Swal.fire({
-              title: "Warning!",
-              text: "Deletion may not have been successful",
-              icon: "warning",
-              confirmButtonColor: "#1E306D",
-              confirmButtonText: "OK",
-            });
-          }
-        } catch (error) {
-          Swal.fire({
-            title: "Error!",
-            text: error.response?.data?.message || "Error deleting passenger",
-            icon: "error",
-            confirmButtonColor: "#1E306D",
-            confirmButtonText: "OK",
-          });
-        }
-      }
-    });
   };
 
   const handleRouteDoubleClick = (id, currentName) => {
@@ -1335,7 +1202,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                       setActivePassengerIndex(0);
                     }}
                     onDoubleClick={() =>
-                      handleRouteDoubleClick(route._id, route.name)
+                      handleRouteDoubleClick(route._id || route.id, route.name)
                     }
                   >
                     <span className="route-name-ellipsis">{route.name}</span>
@@ -1344,7 +1211,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                       className="passenger-btn route-btn"
                       onClick={(e) => {
                         e.stopPropagation();
-                        removeRoute(route._id, index);
+                        removeRoute(route._id || route.id, index);
                       }}
                     >
                       <IoIosRemoveCircleOutline className="passenger-icon" />
@@ -1582,7 +1449,7 @@ function AdminAddBookingModal({ isOpen, onClose }) {
                       className="passenger-btn"
                       onClick={() =>
                         removePassengerFromRoute(
-                          routeList[activeRouteIndex]._id,
+                          routeList[activeRouteIndex]._id || routeList[activeRouteIndex].id,
                           activePassengerIndex
                         )
                       }

@@ -55,7 +55,7 @@ export function Personal({ formData, setFormData, agentErrors }) {
         try {
           const response = await axios.get(
             `https://helistaging.drukair.com.bt/api/users/${id}`
-          );
+          , {withCredentials: true});
           if (response.data.data.role.name === "USER") {
             setUser(response.data.data);
           }
@@ -492,67 +492,22 @@ export function FlightDetails({
 }
 
 export function PassengerDetails({
-  thirdFormData,
-  setThirdFormData,
-  passengerErrors,
-  passengers,
-  setPassengers,
-  setPassengerErrors,
+  flightDate,
   routeList,
   setRouteList,
   getRouteWeight,
 }) {
   const [totalWeight, setTotalWeight] = useState(0);
   const summerMonths = [3, 4, 5, 6, 7, 8];
-  const calculateTotalWeight = () => {
-    const weight = routeList.reduce((sum, route) => {
-      return (
-        sum +
-        route.passengers.reduce(
-          (innerSum, p) =>
-            innerSum + (Number(p.weight) || 0) + (Number(p.bagWeight) || 0),
-          0
-        )
-      );
-    }, 0);
-    setTotalWeight(weight);
-  };
+  const [weightLimits, setWeightLimits] = useState({
+      summer: 450,
+      winter: 450,
+  });
 
-  useEffect(() => {
-    calculateTotalWeight();
-  }, [routeList]);
-
-  const handleChange = (e, index) => {
-    const { name, value } = e.target;
-    setThirdFormData((prevData) => {
-      const updatedPassengers = [...prevData.passengers];
-      updatedPassengers[index] = {
-        ...updatedPassengers[index],
-        [name]: value,
-      };
-      return {
-        ...prevData,
-        passengers: updatedPassengers,
-      };
-    });
-  };
-
-  const addPassenger = () => {
-    setPassengers([...passengers, { id: Date.now() }]);
-    setThirdFormData((prevData) => ({
-      ...prevData,
-      passengers: [...prevData.passengers, {}],
-    }));
-  };
-
-  const removePassenger = (id, index) => {
-    if (passengers.length > 1) {
-      setPassengers(passengers.filter((passenger) => passenger.id !== id));
-      setThirdFormData((prevData) => ({
-        ...prevData,
-        passengers: prevData.passengers.filter((_, i) => i !== index),
-      }));
-    }
+  const getSeasonFromDate = (dateStr) => {
+    if (!dateStr) return "summer";
+    const month = new Date(dateStr).getMonth() + 1;
+    return month >= 3 && month <= 8 ? "summer" : "winter";
   };
 
   const [newRouteName, setNewRouteName] = useState("");
@@ -574,8 +529,6 @@ export function PassengerDetails({
           contact: "",
           medIssue: "",
           remarks: "",
-          boarding: "",
-          disembark: "",
           gender: "",
         },
       ],
@@ -586,32 +539,26 @@ export function PassengerDetails({
     setActivePassengerIndex(0);
   };
 
-  const removeRoute = (id, index) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to remove this route?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, remove it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const updated = routeList.filter((route) => route.id !== id);
-        setRouteList(updated);
-        if (activeRouteIndex >= updated.length) {
-          setActiveRouteIndex(Math.max(0, updated.length - 1));
-        }
-      }
-    });
+  const removeRoute = (id) => {
+    if (id) {
+      // Remove from state only
+      const updated = routeList.filter((route) => route.id !== id);
+      setRouteList(updated);
+      setActiveRouteIndex(Math.max(0, updated.length - 1));
+      return;
+    }
   };
 
   const updateRouteName = (id, newName) => {
-    setRouteList(
-      routeList.map((route) =>
-        route.id === id ? { ...route, name: newName } : route
-      )
-    );
+    if (id) {
+        // Just update local state
+      setRouteList((prevRoutes) =>
+        prevRoutes.map((route) =>
+          route.id === id ? { ...route, name: newName } : route
+        )
+      );
+      return  
+    }
   };
 
   const addPassengerToRoute = (routeId) => {
@@ -631,8 +578,6 @@ export function PassengerDetails({
               contact: "",
               medIssue: "",
               remarks: "",
-              boarding: "",
-              disembark: "",
               gender: "",
             },
           ];
@@ -647,44 +592,74 @@ export function PassengerDetails({
   };
 
   const updatePassenger = (routeId, index, field, value) => {
-    setRouteList(
-      routeList.map((route) => {
-        if (route.id === routeId) {
-          const updatedPassengers = [...route.passengers];
-          updatedPassengers[index][field] = value;
-          return { ...route, passengers: updatedPassengers };
-        }
-        return route;
-      })
-    );
-  };
-
-  const removePassengerFromRoute = (routeId, index) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to remove this passenger?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, remove it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setRouteList(
-          routeList.map((route) => {
-            if (route.id === routeId) {
-              const updated = [...route.passengers];
-              updated.splice(index, 1);
-              return { ...route, passengers: updated };
+      setRouteList((prevRoutes) =>
+        prevRoutes.map((route) => {
+          // Support both saved and unsaved route IDs
+          const matchId = route._id || route.id;
+          if (matchId === routeId) {
+            const updatedPassengers = [...route.passengers];
+  
+            // Guard against undefined passenger index
+            if (!updatedPassengers[index]) {
+              updatedPassengers[index] = {
+                name: "",
+                weight: "",
+                bagWeight: "",
+                cid: "",
+                contact: "",
+                medIssue: "",
+                remarks: "",
+                gender: "",
+              };
             }
-            return route;
-          })
-        );
-        if (index === activePassengerIndex) {
-          setActivePassengerIndex(Math.max(0, index - 1));
-        }
-      }
-    });
+  
+            updatedPassengers[index][field] = value;
+  
+            // Calculate total weight
+            const totalWeight = updatedPassengers.reduce(
+              (sum, p) =>
+                sum + (parseFloat(p.weight || 0) + parseFloat(p.bagWeight || 0)),
+              0
+            );
+  
+            const season = getSeasonFromDate(flightDate);
+            const weightLimit = weightLimits[season];
+  
+            if (totalWeight > weightLimit) {
+              Swal.fire({
+                title: "Exceeded Weight Limit!",
+                text: `Total passenger + baggage weight (${totalWeight} kg) exceeds the ${season} limit of ${weightLimit} kg.`,
+                icon: "error",
+                confirmButtonColor: "#1E306D",
+                confirmButtonText: "OK",
+              });
+              return route; // prevent update
+            }
+  
+            return { ...route, passengers: updatedPassengers };
+          }
+          return route;
+        })
+      );
+    };
+
+  const removePassengerFromRoute = (passengerId) => {
+    if (passengerId) {
+      setRouteList((prev) =>
+        prev.map((route, i) =>
+          i === activeRouteIndex
+            ? {
+                ...route,
+                passengers: route.passengers.filter(
+                  (_, idx) => idx !== activePassengerIndex
+                ),
+              }
+            : route
+        )
+      );
+      setActivePassengerIndex(0);
+      return;
+    }
   };
 
   const handleRouteDoubleClick = (id, currentName) => {
@@ -766,7 +741,7 @@ export function PassengerDetails({
                   setActivePassengerIndex(0);
                 }}
                 onDoubleClick={() =>
-                  handleRouteDoubleClick(route.id, route.name)
+                  handleRouteDoubleClick(route._id || route.id, route.name)
                 }
               >
                 <span className="route-name-ellipsis">{route.name}</span>
@@ -775,7 +750,7 @@ export function PassengerDetails({
                   className="passenger-btn route-btn"
                   onClick={(e) => {
                     e.stopPropagation();
-                    removeRoute(route.id, index);
+                    removeRoute(route._id || route.id, index);
                   }}
                 >
                   <IoIosRemoveCircleOutline className="passenger-icon" />
@@ -941,50 +916,6 @@ export function PassengerDetails({
                     </label>
                   </div>
 
-                  {/* Boarding & Disembarking Location */}
-                  <div className="booking-form-group">
-                    <label>
-                      Boarding Location
-                      <input
-                        type="text"
-                        placeholder="Enter your boarding location"
-                        value={
-                          routeList[activeRouteIndex].passengers[
-                            activePassengerIndex
-                          ].boarding || ""
-                        }
-                        onChange={(e) =>
-                          updatePassenger(
-                            routeList[activeRouteIndex].id,
-                            activePassengerIndex,
-                            "boarding",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </label>
-                    <label>
-                      Disembarking Location
-                      <input
-                        type="text"
-                        placeholder="Enter your drop off location"
-                        value={
-                          routeList[activeRouteIndex].passengers[
-                            activePassengerIndex
-                          ].disembark || ""
-                        }
-                        onChange={(e) =>
-                          updatePassenger(
-                            routeList[activeRouteIndex].id,
-                            activePassengerIndex,
-                            "disembark",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </label>
-                  </div>
-
                   {/* Medical Issues */}
                   <div className="booking-form-group">
                     <label>
@@ -1046,15 +977,15 @@ export function PassengerDetails({
                 </>
               )}
 
-              {routeList[activeRouteIndex].passengers.length > 1 && (
+              {routeList[activeRouteIndex].passengers.length > 0 && (
                 <button
                   type="button"
                   className="passenger-btn"
                   onClick={() =>
                     removePassengerFromRoute(
-                      routeList[activeRouteIndex].id,
-                      activePassengerIndex
-                    )
+                          routeList[activeRouteIndex]._id || routeList[activeRouteIndex].id,
+                          activePassengerIndex
+                        )
                   }
                   style={{ marginBottom: "20px" }}
                 >
@@ -1287,8 +1218,6 @@ function BookingForm() {
           contact: "",
           medIssue: "",
           remarks: "",
-          boarding: "",
-          disembark: "",
           gender: "",
         },
       ],
@@ -1332,12 +1261,21 @@ function BookingForm() {
 
   const today = getTodayDate();
 
-  const getRouteWeight = (route) => {
-    return route.passengers.reduce(
-      (sum, p) => sum + Number(p.weight || 0) + Number(p.bagWeight || 0),
-      0
-    );
-  };
+  const getRouteWeight = (routeId) => {
+  const route = routeList.find(
+    (route) => (route._id || route.id) === routeId
+  );
+
+  if (!route || !route.passengers) {
+    return 0; // or handle it however you want
+  }
+
+  return route.passengers.reduce(
+    (total, passenger) => total + Number(passenger.weight || 0),
+    0
+  );
+};
+
 
   const validateLegWeights = () => {
     for (let i = 0; i < routeList.length; i++) {
@@ -1465,33 +1403,30 @@ function BookingForm() {
     return <HelicopterLoader />;
   }
 
-  const postPassenger = async (bookingId) => {
-    for (const route of routeList) {
-      for (const p of route.passengers) {
-        try {
-          await axios.post("https://helistaging.drukair.com.bt/api/passengers", {
-            name: p.name,
-            weight: p.weight,
-            cid: p.cid,
-            bagWeight: p.bagWeight,
-            gender: p.gender,
-            medIssue: p.medIssue,
-            contact: p.contact,
-            remarks: p.remarks,
-            boarding: p.boarding,
-            disembark: p.disembark,
-            booking_id: bookingId,
-          });
-        } catch (error) {
-          Swal.fire({
-            title: "Error!",
-            text: error.response?.data?.message || "Error saving passenger",
-            icon: "error",
-            confirmButtonColor: "#1E306D",
-            confirmButtonText: "OK",
-          });
-        }
-      }
+  const postPassenger = async (passenger, rid, id) => {
+    try {
+      await axios.post("https://helistaging.drukair.com.bt/api/passengers", {
+        name: passenger.name,
+        weight: passenger.weight,
+        cid: passenger.cid,
+        bagWeight: passenger.bagWeight,
+        gender: passenger.gender,
+        medIssue: passenger.medIssue,
+        contact: passenger.contact,
+        booking_id: id,
+        leg_id: rid,
+        remarks: passenger.remarks,
+      });
+    } catch (error) {
+      Swal.fire({
+        title: "Error!",
+        text: error.response
+          ? error.response.data.message
+          : "An error occurred",
+        icon: "error",
+        confirmButtonColor: "#1E306D",
+        confirmButtonText: "OK",
+      });
     }
   };
 
@@ -1530,6 +1465,33 @@ function BookingForm() {
     }
   }
 
+  const postRoute = async (route, id) => {
+      // for (const passenger of passengers) {
+      try {
+        const response = await axios.post("https://helistaging.drukair.com.bt/api/leg", {
+          name: route.name,
+          booking_id: id,
+        });
+        if (response.data.status === "success") {
+          for (const passenger of route.passengers) {
+            postPassenger(passenger, response.data.data._id, id);
+          }
+        } else {
+          throw new Error(response.data.message || "Failed to update booking");
+        }
+      } catch (error) {
+        Swal.fire({
+          title: "Error!",
+          text: error.response
+            ? error.response.data.message
+            : "An error occurred",
+          icon: "error",
+          confirmButtonColor: "#1E306D",
+          confirmButtonText: "OK",
+        });
+      }
+    };
+
   const saveBooking = async () => {
     setLoading(true);
     try {
@@ -1567,7 +1529,9 @@ function BookingForm() {
       });
 
       if (response.data.status === "success") {
-        await postPassenger(response.data.data._id);
+        for (const route of routeList) {
+          postRoute(route, response.data.data._id);
+        }
         Swal.fire({
           title: "Success!",
           text: "Reservation placed successfully!",
@@ -1619,12 +1583,7 @@ function BookingForm() {
       case 3:
         return (
           <PassengerDetails
-            thirdFormData={thirdFormData}
-            setThirdFormData={setThirdFormData}
-            passengerErrors={passengerErrors}
-            passengers={passengers}
-            setPassengers={setPassengers}
-            // setPassengerErrors={setPassengerErrors}
+            flightDate = {secondFormData.flightDate}
             routeList={routeList}
             setRouteList={setRouteList}
             getRouteWeight={getRouteWeight}

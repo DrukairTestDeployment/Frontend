@@ -416,7 +416,9 @@ function AdminSchedule() {
           formData.append('agent_email', updatedBookingData.agent_email);
           formData.append('pickup_point', updatedBookingData.pickup_point);
           formData.append('ground_time', updatedBookingData.ground_time);
-          formData.append('flight_date', updatedBookingData.flight_date);
+          formData.append('flight_date', updatedBookingData.flight_date?.includes('/')
+                ? updatedBookingData.flight_date.split('/').reverse().join('-')
+                : updatedBookingData.flight_date);
           formData.append('departure_time', updatedBookingData.departure_time);
           formData.append('permission', updatedBookingData.permission);
           formData.append('latitude', updatedBookingData.latitude);
