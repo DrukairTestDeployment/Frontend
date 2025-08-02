@@ -448,27 +448,6 @@ function ManageBooking() {
 
                 <div className="booking-form-group">
                   <label>
-                    Boarding Location
-                    <input
-                      type="text"
-                      name="boarding"
-                      placeholder='Enter your boarding location'
-                      value={passengers[activeTab].boarding || ""}
-                    />
-                  </label>
-                  <label>
-                    Disembarking Location
-                    <input
-                      type="text"
-                      name="disembarking"
-                      placeholder='Enter your drop off location'
-                      value={passengers[activeTab].disembark || ""}
-                    />
-                  </label>
-                </div>
-
-                <div className="booking-form-group">
-                  <label>
                     Medical Issue
                     <input
                       type="text"

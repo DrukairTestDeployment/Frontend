@@ -211,8 +211,6 @@ function AdminSchedule() {
           medIssue: passenger.medIssue,
           contact: passenger.contact,
           remarks: passenger.remarks,
-          boarding: passenger.boarding,
-          disembark: passenger.disembark
         });
       } else {
         await axios.post("https://helistaging.drukair.com.bt/api/passengers", {
@@ -226,8 +224,6 @@ function AdminSchedule() {
           booking_id: id,
           leg_id: rid,
           remarks: passenger.remarks,
-          boarding: passenger.boarding,
-          disembark: passenger.disembark
         });
       }
 
