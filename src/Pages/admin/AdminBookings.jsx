@@ -603,7 +603,9 @@ function AdminBooking() {
           formData.append('payment_type', updatedBookingData.payment_type);
           formData.append('image', updatedBookingData.paymentScreenShot);
           formData.append('journal_no', updatedBookingData.journal_no);
-
+          if (updatedBookingData?.assigned_pilot !== null) {
+            formData.append('assigned_pilot', updatedBookingData.assigned_pilot);
+          }
           // updated 
           formData.append('agent_name', updatedBookingData.agent_name);
           formData.append('agent_contact', updatedBookingData.agent_contact);

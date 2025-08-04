@@ -398,7 +398,7 @@ function AdminSchedule() {
           formData.append('payment_type', updatedBookingData.payment_type);
           formData.append('status', updatedBookingData.status);
           if (updatedBookingData?.assigned_pilot !== null) {
-            formData.append('assigned_pilot', updatedBookingData.assigned_pilot?._id);
+            formData.append('assigned_pilot', updatedBookingData.assigned_pilot);
           }
           formData.append('refund_id', updatedBookingData.refund_id);
           formData.append('image', updatedBookingData.paymentScreenShot);

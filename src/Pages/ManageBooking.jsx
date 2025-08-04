@@ -34,6 +34,33 @@ function ManageBooking() {
     { key: "completed", label: "Completed", icon: BsArrowUpLeftSquare },
     { key: "cancelled", label: "Cancelled", icon: RxCross2 },
   ];
+
+  const [legs, setLeg] = useState([])
+  const [activeRouteIndex, setActiveRouteIndex] = useState(0);
+  const [activePassengerIndex, setActivePassengerIndex] = useState(0);
+  useEffect(() => {
+    const fetchLeg = async () => {
+      try {
+        const response = await axios.get(
+          "https://helistaging.drukair.com.bt/api/leg"
+        );
+        setLeg(response.data.data);
+      } catch (error) {
+        Swal.fire({
+          title: "Error!",
+          text: "Error fetching data",
+          icon: "error",
+          confirmButtonColor: "#1E306D",
+          confirmButtonText: "OK",
+        });
+      }
+    };
+    fetchLeg();
+  }, [selectedBooking]);
+
+  console.log(legs)
+
+  console.log(selectedBooking)
   const pad = (number) => {
     return number < 10 ? "0" + number : number;
   };
@@ -204,6 +231,13 @@ function ManageBooking() {
       return index <= currentStatusIndex ? "#E35205" : "#1E306D";
     };
 
+    if (!selectedBooking) return null;
+
+    const legsGrouped = legs.map((leg) => ({
+      ...leg,
+      passengers: passengers.filter(p => p.leg_id === leg._id)
+    }));
+
     const visibleStatuses = isCancelled
       ? [...statuses.slice(0, 2), statuses.find((s) => s.key === "cancelled")]
       : statuses.filter((status) => status.key !== "cancelled");
@@ -363,120 +397,130 @@ function ManageBooking() {
             </label>
           </div>
 
-          <div>
+          <>
+            <p className="booking-break-header">Routes and Passengers</p>
             <div className="passenger-tab-wrapper">
-              {passengers && passengers.length > 0 ? (
-                passengers.map((passenger, index) => (
-                  <div
-                    key={index}
-                    className={`passenger-tab ${activeTab === index ? "active" : ""
-                      }`}
-                    onClick={() => setActiveTab(index)}
-                  >
-                    Passenger {index + 1}
-                  </div>
-                ))
-              ) : (
-                <p>No passengers found</p>
-              )}
+              {legs.map((route, index) => (
+                <div
+                  key={route._id}
+                  className={`passenger-tab route-tab ${index === activeRouteIndex ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveRouteIndex(index);
+                    setActivePassengerIndex(0);
+                  }}
+                >
+                  <span className="route-name-ellipsis">{route.name}</span>
+                </div>
+              ))}
             </div>
 
-            {passengers && passengers[activeTab] && (
-              <>
-                <div className="booking-form-group">
-                  <label>
-                    Name
-                    <input
-                      type="text"
-                      name="passengerName"
-                      value={passengers[activeTab].name || ""}
-                      readOnly
-                    />
-                  </label>
-                  <label>
-                    Gender
-                    <input
-                      type="text"
-                      name="gender"
-                      value={passengers[activeTab].gender || ""}
-                      readOnly
-                    />
-                  </label>
+            {legsGrouped[activeRouteIndex] && (
+              <div>
+                <div className="passenger-tab-wrapper">
+                  {legsGrouped[activeRouteIndex].passengers.map((_, idx) => (
+                    <div
+                      key={idx}
+                      className={`passenger-tab ${idx === activePassengerIndex ? 'active' : ''}`}
+                      onClick={() => setActivePassengerIndex(idx)}
+                    >
+                      Passenger {idx + 1}
+                    </div>
+                  ))}
                 </div>
 
-                <div className="booking-form-group">
-                  <label>
-                    Weight (Kg)
-                    <input
-                      type="number"
-                      name="weight"
-                      value={passengers[activeTab].weight || ""}
-                      readOnly
-                    />
-                  </label>
-                  <label>
-                    Baggage Weight (Kg)
-                    <input
-                      type="number"
-                      name="luggageWeight"
-                      value={passengers[activeTab].bagWeight || ""}
-                      readOnly
-                    />
-                  </label>
-                </div>
+                {legsGrouped[activeRouteIndex].passengers[activePassengerIndex] && (
+                  <>
+                    {/* Name & Gender */}
+                    <div className="booking-form-group">
+                      <label>
+                        Name
+                        <input
+                          type="text"
+                          readOnly
+                          value={legsGrouped[activeRouteIndex].passengers[activePassengerIndex].name || ""}
+                        />
+                      </label>
+                      <label>
+                        Gender
+                        <input
+                          readOnly
+                          type="text"
+                          value={legsGrouped[activeRouteIndex].passengers[activePassengerIndex].gender || ''}
+                        />
+                      </label>
+                    </div>
 
-                <div className="booking-form-group">
-                  <label>
-                    Passport/CID
-                    <input
-                      type="text"
-                      name="cidPassport"
-                      value={passengers[activeTab].cid || ""}
-                      readOnly
-                    />
-                  </label>
-                  <label>
-                    Contact No
-                    <input
-                      type="tel"
-                      name="phoneNumber"
-                      value={passengers[activeTab].contact || ""}
-                      readOnly
-                    />
-                  </label>
-                </div>
+                    {/* Weight & Luggage */}
+                    <div className="booking-form-group">
+                      <label>
+                        Weight (Kg)
+                        <input
+                          type="text"
+                          readOnly
+                          value={legsGrouped[activeRouteIndex].passengers[activePassengerIndex].weight || ""}
+                        />
+                      </label>
+                      <label>
+                        Baggage Weight (Kg)
+                        <input
+                          type="text"
+                          readOnly
+                          value={legsGrouped[activeRouteIndex].passengers[activePassengerIndex].bagWeight || ""}
+                        />
+                      </label>
+                    </div>
 
-                <div className="booking-form-group">
-                  <label>
-                    Medical Issue
-                    <input
-                      type="text"
-                      name="medicalIssue"
-                      value={
-                        passengers[activeTab].medIssue || ""
-                      }
-                      readOnly
-                    />
-                  </label>
-                </div>
+                    {/* CID & Contact */}
+                    <div className="booking-form-group">
+                      <label>
+                        CID/Passport
+                        <input
+                          type="text"
+                          readOnly
+                          value={legsGrouped[activeRouteIndex].passengers[activePassengerIndex].cid || ""}
+                        />
+                      </label>
+                      <label>
+                        Contact No
+                        <input
+                          type="text"
+                          readOnly
+                          value={legsGrouped[activeRouteIndex].passengers[activePassengerIndex].contact || ""}
+                        />
+                      </label>
+                    </div>
 
-                {passengers[activeTab]?.medIssue === 'Yes' && (
-                  <div className="booking-form-group">
-                    <label>
-                      Medical condition description
-                      <textarea
-                        name="remarks"
-                        placeholder="Enter any medical remarks here"
-                        value={passengers[activeTab]?.remarks || ''}
-                        className="medicalRemarksInput"
-                        readOnly
-                      ></textarea>
-                    </label>
-                  </div>
+                    {/* Medical Issue */}
+                    <div className="booking-form-group">
+                      <label>
+                        Medical Issue
+                        <input
+                          type="text"
+                          readOnly
+                          value={legsGrouped[activeRouteIndex].passengers[activePassengerIndex].medIssue || ""}
+                        />
+                      </label>
+                    </div>
+
+                    {/* Medical Remarks (if applicable) */}
+                    {legsGrouped[activeRouteIndex].passengers[activePassengerIndex].medIssue === 'Yes' && (
+                      <div className="booking-form-group">
+                        <label>
+                          Medical Remarks
+                          <textarea
+                            readOnly
+                            className="medicalRemarksInput"
+                            value={legsGrouped[activeRouteIndex].passengers[activePassengerIndex].remarks || ""}
+                          />
+                        </label>
+                      </div>
+                    )}
+                  </>
                 )}
-              </>
+              </div>
             )}
-          </div>
+
+          </>
 
           <p className="booking-break-header">Extra Details</p>
           <div className="booking-form-group">
