@@ -38,29 +38,7 @@ function ManageBooking() {
   const [legs, setLeg] = useState([])
   const [activeRouteIndex, setActiveRouteIndex] = useState(0);
   const [activePassengerIndex, setActivePassengerIndex] = useState(0);
-  useEffect(() => {
-    const fetchLeg = async () => {
-      try {
-        const response = await axios.get(
-          "https://helistaging.drukair.com.bt/api/leg"
-        );
-        setLeg(response.data.data);
-      } catch (error) {
-        Swal.fire({
-          title: "Error!",
-          text: "Error fetching data",
-          icon: "error",
-          confirmButtonColor: "#1E306D",
-          confirmButtonText: "OK",
-        });
-      }
-    };
-    fetchLeg();
-  }, [selectedBooking]);
-
-  console.log(legs)
-
-  console.log(selectedBooking)
+  
   const pad = (number) => {
     return number < 10 ? "0" + number : number;
   };
@@ -137,6 +115,7 @@ function ManageBooking() {
           setActiveTab(0);
           setSearchMessage("");
           fetchPassengers(response.data.data._id);
+          fetchLeg(response.data.data._id);
         } else {
           setSelectedBooking(null);
           setSearchMessage("There is no flight with this booking ID");
@@ -175,6 +154,26 @@ function ManageBooking() {
         confirmButtonText: "OK",
       });
     }
+  };
+
+  const fetchLeg = async (id) => {
+      try {
+        const response = await axios.get(
+          "https://helistaging.drukair.com.bt/api/leg"
+        );
+        const filter = response.data.data.filter(
+          (leg) => leg.booking_id === id
+        );
+        setLeg(filter);
+      } catch (error) {
+        Swal.fire({
+          title: "Error!",
+          text: "Error fetching data",
+          icon: "error",
+          confirmButtonColor: "#1E306D",
+          confirmButtonText: "OK",
+        });
+      }
   };
 
   const handlePaymentType = async () => {
