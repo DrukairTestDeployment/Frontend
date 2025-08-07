@@ -289,6 +289,34 @@ function CheckinSchedule() {
   };
 
   const onUpdate = async (updatedBookingData, routes, images) => {
+    let price = 0;
+    if (
+      updatedBookingData.payment_status === "Paid" &&
+      (!updatedBookingData.cType || updatedBookingData.cType === "None")
+    ) {
+      Swal.fire({
+        title: "Missing Currency Type",
+        text: "Please select a currency type",
+        icon: "warning",
+      });
+      return;
+    }
+
+    if (parseInt(updatedBookingData.duration) === 0) {
+      Swal.fire({
+        title: "Missing duration",
+        text: "Please enter the duration",
+        icon: "warning",
+      });
+      return;
+    }
+
+    if (updatedBookingData.cType === "USD") {
+      price = updatedBookingData.bookingPriceUSD;
+    } else if (updatedBookingData.cType === "BTN") {
+      price = updatedBookingData.bookingPriceBTN;
+    }
+
     Swal.fire({
       title: "",
       text: "Are you sure you want to make changes to this booking?",
@@ -338,6 +366,7 @@ function CheckinSchedule() {
               destination_other: updatedBookingData.destination_other,
               service_id: updatedBookingData.service_id,
               cType: updatedBookingData.cType,
+              price
             }
           );
           if (response.data.status === "success") {
@@ -377,6 +406,7 @@ function CheckinSchedule() {
                           journal_no: booking.journal_no,
                           latitude: booking.latitude,
                           Longitude: booking.Longitude,
+                          price,
                         }
                       : null,
                     refund: updatedBookingData.refund,
@@ -463,6 +493,7 @@ function CheckinSchedule() {
               : updatedBookingData.service_id
           );
           formData.append("cType", updatedBookingData.cType);
+          formData.append("price", price);
           images.forEach((img) => {
             formData.append("image", img.file); // `images` must match multer.array('images', 10)
           });

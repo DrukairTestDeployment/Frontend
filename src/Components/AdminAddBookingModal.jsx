@@ -8,7 +8,7 @@ import HelicopterLoader from "./HelicopterLoader";
 function AdminAddBookingModal({ isOpen, onClose }) {
   const [loading, setLoading] = useState(false);
   const genderTypes = ["Male", "Female", "Others"];
-  const bookingStatuses = ["Booked", "Pending", "Confirmed"];
+  const bookingStatuses = ["Booked", "Confirmed"];
   const paymentTypes = [
     "Online",
     "Bank Transfer",

@@ -13,9 +13,13 @@ import * as XLSX from "xlsx";
 function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, onUpdate }) {
     const [priceInUSDOthers, setPriceInUSDOthers] = useState(booking.bookingPriceUSD)
     const [priceInBtnOthers, setPriceInBtnOthers] = useState(booking.bookingPriceBTN)
-    const paymentTypes = ['Bank Transfer', 'Cash', 'MBoB', 'Credit Card'];
+    const paymentTypes = ["Online",
+        "Bank Transfer",
+        "Cash",
+        "MBoB",
+        "Credit Card",];
     const [pilots, setPilots] = useState([]);
-    const bookingStatuses = ['Booked', 'Pending', 'Confirmed'];
+    const bookingStatuses = ['Booked', 'Confirmed'];
     const bookingTypes = ['Walk-In', 'Online', 'Phone Call', 'Agency', 'Email'];
 
     const [weightLimits, setWeightLimits] = useState({
@@ -25,7 +29,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
 
     const getSeasonFromDate = (dateStr) => {
         if (!dateStr) return "summer";
-        const month = new Date(dateStr).getMonth() + 1; 
+        const month = new Date(dateStr).getMonth() + 1;
         return (month >= 3 && month <= 8) ? "summer" : "winter";
     };
 
@@ -351,7 +355,7 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
                     summer: parseFloat(response.data.data.summerWeight),
                     winter: parseFloat(response.data.data.winterWeight),
                 });
-          
+
             } catch (error) {
                 Swal.fire({
                     title: "Error!",
@@ -708,177 +712,177 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
     if (!isModalOpen || !booking) return null;
 
     const handleDownload = (type) => {
-    if (!type || !routeList || routeList.length === 0) return;
+        if (!type || !routeList || routeList.length === 0) return;
 
-    if (type === "pdf") {
-      const doc = new jsPDF();
+        if (type === "pdf") {
+            const doc = new jsPDF();
 
-      routeList.forEach((route, idx) => {
-        const passengers = route.passengers || [];
-        const legName = route.name || `Route ${idx + 1}`;
+            routeList.forEach((route, idx) => {
+                const passengers = route.passengers || [];
+                const legName = route.name || `Route ${idx + 1}`;
 
-        if (idx > 0) doc.addPage();
+                if (idx > 0) doc.addPage();
 
-        doc.setFontSize(14);
-        doc.setFont("helvetica", "bold");
-        doc.text(`Passenger List - ${legName}`, 14, 15);
+                doc.setFontSize(14);
+                doc.setFont("helvetica", "bold");
+                doc.text(`Passenger List - ${legName}`, 14, 15);
 
-        doc.setFontSize(11);
-        doc.setFont("helvetica", "normal");
-        doc.text(`Flight Date: ${booking?.flight_date || ""}`, 14, 25);
-        doc.text(`Booking ID: ${booking?.bookingID || ""}`, 14, 32);
+                doc.setFontSize(11);
+                doc.setFont("helvetica", "normal");
+                doc.text(`Flight Date: ${booking?.flight_date || ""}`, 14, 25);
+                doc.text(`Booking ID: ${booking?.bookingID || ""}`, 14, 32);
 
-        const tableColumn = [
-          "Name",
-          "Gender",
-          "Weight",
-          "Baggage Weight",
-          "CID/Passport",
-          "Contact No",
-          "Medical Issues",
-          "Remarks",
-        ];
+                const tableColumn = [
+                    "Name",
+                    "Gender",
+                    "Weight",
+                    "Baggage Weight",
+                    "CID/Passport",
+                    "Contact No",
+                    "Medical Issues",
+                    "Remarks",
+                ];
 
-        const tableRows = passengers.map((p) => [
-          p.name || "",
-          p.gender || "None",
-          p.weight || "0",
-          p.bagWeight || "0",
-          p.cid || "None",
-          p.contact || "None",
-          p.medIssue || "None",
-          p.remarks || "None",
-        ]);
+                const tableRows = passengers.map((p) => [
+                    p.name || "",
+                    p.gender || "None",
+                    p.weight || "0",
+                    p.bagWeight || "0",
+                    p.cid || "None",
+                    p.contact || "None",
+                    p.medIssue || "None",
+                    p.remarks || "None",
+                ]);
 
-        autoTable(doc, {
-          startY: 40,
-          head: [tableColumn],
-          body: tableRows,
-          styles: { fontSize: 9 },
-          columnStyles: {
-            0: { cellWidth: 30 },
-            4: { cellWidth: 35 },
-            7: { cellWidth: 40 },
-          },
-        });
-      });
+                autoTable(doc, {
+                    startY: 40,
+                    head: [tableColumn],
+                    body: tableRows,
+                    styles: { fontSize: 9 },
+                    columnStyles: {
+                        0: { cellWidth: 30 },
+                        4: { cellWidth: 35 },
+                        7: { cellWidth: 40 },
+                    },
+                });
+            });
 
-      doc.save(`passenger_list_${booking?.bookingID || "booking"}.pdf`);
-    }
+            doc.save(`passenger_list_${booking?.bookingID || "booking"}.pdf`);
+        }
 
-    if (type === "xlsx") {
-      const workbook = XLSX.utils.book_new();
+        if (type === "xlsx") {
+            const workbook = XLSX.utils.book_new();
 
-      routeList.forEach((route, idx) => {
-        const passengers = route.passengers || [];
-        const legName = route.name || `Route ${idx + 1}`;
+            routeList.forEach((route, idx) => {
+                const passengers = route.passengers || [];
+                const legName = route.name || `Route ${idx + 1}`;
 
-        const sheetHeader = [
-          [`Flight Date:`, booking.flight_date || ""],
-          [`Booking ID:`, booking.bookingID || ""],
-          [`Route:`, legName],
-          [],
-          [
-            "Name",
-            "Gender",
-            "Weight",
-            "Baggage Weight",
-            "CID/Passport",
-            "Contact No",
-            "Medical Issues",
-            "Remarks",
-          ],
-        ];
+                const sheetHeader = [
+                    [`Flight Date:`, booking.flight_date || ""],
+                    [`Booking ID:`, booking.bookingID || ""],
+                    [`Route:`, legName],
+                    [],
+                    [
+                        "Name",
+                        "Gender",
+                        "Weight",
+                        "Baggage Weight",
+                        "CID/Passport",
+                        "Contact No",
+                        "Medical Issues",
+                        "Remarks",
+                    ],
+                ];
 
-        const rows = passengers.map((p) => [
-          p.name || "",
-          p.gender || "None",
-          p.weight || "0",
-          p.bagWeight || "0",
-          p.cid ? `'${p.cid}` : "None",
-          p.contact || "None",
-          p.medIssue || "None",
-          p.remarks || "None",
-        ]);
+                const rows = passengers.map((p) => [
+                    p.name || "",
+                    p.gender || "None",
+                    p.weight || "0",
+                    p.bagWeight || "0",
+                    p.cid ? `'${p.cid}` : "None",
+                    p.contact || "None",
+                    p.medIssue || "None",
+                    p.remarks || "None",
+                ]);
 
-        const data = [...sheetHeader, ...rows];
-        const sheet = XLSX.utils.aoa_to_sheet(data);
-        sheet["!cols"] = [
-          { wch: 20 },
-          { wch: 10 },
-          { wch: 10 },
-          { wch: 15 },
-          { wch: 20 },
-          { wch: 15 },
-          { wch: 15 },
-          { wch: 30 },
-        ];
+                const data = [...sheetHeader, ...rows];
+                const sheet = XLSX.utils.aoa_to_sheet(data);
+                sheet["!cols"] = [
+                    { wch: 20 },
+                    { wch: 10 },
+                    { wch: 10 },
+                    { wch: 15 },
+                    { wch: 20 },
+                    { wch: 15 },
+                    { wch: 15 },
+                    { wch: 30 },
+                ];
 
-        XLSX.utils.book_append_sheet(workbook, sheet, legName.slice(0, 31));
-      });
+                XLSX.utils.book_append_sheet(workbook, sheet, legName.slice(0, 31));
+            });
 
-      XLSX.writeFile(
-        workbook,
-        `passenger_list_${booking?.bookingID || "booking"}.xlsx`
-      );
-    }
+            XLSX.writeFile(
+                workbook,
+                `passenger_list_${booking?.bookingID || "booking"}.xlsx`
+            );
+        }
 
-    if (type === "csv") {
-      const allRows = [];
+        if (type === "csv") {
+            const allRows = [];
 
-      routeList.forEach((route, idx) => {
-        const passengers = route.passengers || [];
-        const legName = route.name || `Route ${idx + 1}`;
+            routeList.forEach((route, idx) => {
+                const passengers = route.passengers || [];
+                const legName = route.name || `Route ${idx + 1}`;
 
-        allRows.push(`Flight Date: ${booking?.flight_date || ""}`);
-        allRows.push(`Booking ID: ${booking?.bookingID || ""}`);
-        allRows.push(`Route: ${legName}`);
-        allRows.push("");
+                allRows.push(`Flight Date: ${booking?.flight_date || ""}`);
+                allRows.push(`Booking ID: ${booking?.bookingID || ""}`);
+                allRows.push(`Route: ${legName}`);
+                allRows.push("");
 
-        const header = [
-          "Name",
-          "Gender",
-          "Weight",
-          "Baggage Weight",
-          "CID/Passport",
-          "Contact No",
-          "Medical Issues",
-          "Remarks",
-        ];
-        allRows.push(header.join(","));
+                const header = [
+                    "Name",
+                    "Gender",
+                    "Weight",
+                    "Baggage Weight",
+                    "CID/Passport",
+                    "Contact No",
+                    "Medical Issues",
+                    "Remarks",
+                ];
+                allRows.push(header.join(","));
 
-        passengers.forEach((p) => {
-          const row = [
-            p.name || "",
-            p.gender || "None",
-            p.weight || "0",
-            p.bagWeight || "0",
-            p.cid || "None",
-            p.contact || "None",
-            p.medIssue || "None",
-            p.remarks || "None",
-          ];
-          allRows.push(row.map((field) => `"${field}"`).join(","));
-        });
+                passengers.forEach((p) => {
+                    const row = [
+                        p.name || "",
+                        p.gender || "None",
+                        p.weight || "0",
+                        p.bagWeight || "0",
+                        p.cid || "None",
+                        p.contact || "None",
+                        p.medIssue || "None",
+                        p.remarks || "None",
+                    ];
+                    allRows.push(row.map((field) => `"${field}"`).join(","));
+                });
 
-        allRows.push(""); // spacing between routes
-      });
+                allRows.push(""); // spacing between routes
+            });
 
-      const blob = new Blob([allRows.join("\n")], {
-        type: "text/csv;charset=utf-8;",
-      });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.setAttribute("href", url);
-      link.setAttribute(
-        "download",
-        `passenger_list_${booking?.bookingID || "booking"}.csv`
-      );
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  };
+            const blob = new Blob([allRows.join("\n")], {
+                type: "text/csv;charset=utf-8;",
+            });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute(
+                "download",
+                `passenger_list_${booking?.bookingID || "booking"}.csv`
+            );
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    };
 
     return (
         <div className="booking-modal-overlay">
@@ -1523,14 +1527,47 @@ function AdminBookingModal({ isModalOpen, onClose, booking, legs, passengers, on
                                 name="duration"
                                 value={bookingUpdate.duration}
                                 onChange={(e) => {
-                                    setBookingUpdate((prev) => ({
-                                        ...prev,
-                                        duration: e.target.value,
-                                    }));
+                                    const newDuration = Number(e.target.value);
+                                    setBookingUpdate((prev) => {
+                                        const selectedService =
+                                            typeof prev.service_id === "object"
+                                                ? prev.service_id
+                                                : services.find((s) => s._id === prev.service_id);
+
+                                        let updatedPrices = {};
+                                        if (
+                                            (prev.destination === "Others" ||
+                                                prev.destination === null) &&
+                                            selectedService
+                                        ) {
+                                            const priceBTN =
+                                                (selectedService.priceInBTN * newDuration) / 60;
+                                            const priceUSD =
+                                                (selectedService.priceInUSD * newDuration) / 60;
+
+                                            setFinalPriceInBtnOthers(priceBTN);
+                                            setFinalPriceInUSDOthers(priceUSD);
+
+                                            updatedPrices = {
+                                                bookingPriceBTN: priceBTN,
+                                                bookingPriceUSD: priceUSD,
+                                            };
+                                        }
+
+                                        return {
+                                            ...prev,
+                                            duration: newDuration,
+                                            ...updatedPrices,
+                                        };
+                                    });
                                 }}
-                                disabled={bookingUpdate.destination !== "Others"}
+                                disabled={
+                                    bookingUpdate.destination !== "Others" &&
+                                    bookingUpdate.destination !== null
+                                }
                             />
                         </label>
+
 
                         <label>  Currency Type
                             <select

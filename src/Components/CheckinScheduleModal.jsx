@@ -1685,12 +1685,44 @@ function CheckinScheduleModal({
                 name="duration"
                 value={formData.duration}
                 onChange={(e) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    duration: e.target.value,
-                  }));
+                  const newDuration = Number(e.target.value);
+                  setFormData((prev) => {
+                    const selectedService =
+                      typeof prev.service_id === "object"
+                        ? prev.service_id
+                        : services.find((s) => s._id === prev.service_id);
+
+                    let updatedPrices = {};
+                    if (
+                      (prev.destination === "Others" ||
+                        prev.destination === null) &&
+                      selectedService
+                    ) {
+                      const priceBTN =
+                        (selectedService.priceInBTN * newDuration) / 60;
+                      const priceUSD =
+                        (selectedService.priceInUSD * newDuration) / 60;
+
+                      setFinalPriceInBtnOthers(priceBTN);
+                      setFinalPriceInUSDOthers(priceUSD);
+
+                      updatedPrices = {
+                        bookingPriceBTN: priceBTN,
+                        bookingPriceUSD: priceUSD,
+                      };
+                    }
+
+                    return {
+                      ...prev,
+                      duration: newDuration,
+                      ...updatedPrices,
+                    };
+                  });
                 }}
-                disabled={formData.destination !== "Others"}
+                disabled={
+                  formData.destination !== "Others" &&
+                  formData.destination !== null
+                }
               />
             </label>
           </div>
